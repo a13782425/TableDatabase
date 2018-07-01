@@ -129,7 +129,6 @@ public class ExportTableEditor : EditorWindow
 
     private void GetString(string fieldType, object obj, ref string str)
     {
-        Debug.LogError(fieldType);
         switch (fieldType)
         {
             case "Vector2":

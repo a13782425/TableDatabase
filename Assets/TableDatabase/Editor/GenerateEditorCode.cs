@@ -58,7 +58,8 @@ public class GenerateEditorCode
         {
             if (!string.IsNullOrEmpty(_currentConfig.Description))
             {
-                templateText = templateText.Replace("$(SelectName)", "data." + _currentConfig.Description + ".ToString()");
+                //object.Equals(data.PlayerId, null) ? "null" : data.PlayerId.ToString()
+                templateText = templateText.Replace("$(SelectName)", "object.Equals(data." + _currentConfig.Description + ", null) ? \"null\" : data." + _currentConfig.Description + ".ToString()");
             }
             else
             {

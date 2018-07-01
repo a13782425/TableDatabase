@@ -128,6 +128,10 @@ public class TableDatabaseUtils
         path = Path.GetDirectoryName(path);
         _editorPath = Path.GetFullPath(path);
         path = Path.Combine(path, "Config") + "/TableConfig.asset";
+        if (!Directory.Exists(_editorPath + "/Config"))
+        {
+            Directory.CreateDirectory(_editorPath + "/Config");
+        }
         if (!File.Exists(path))
         {
             _tableConfigSerializeData = ScriptableObject.CreateInstance<TableConfigSerializeData>();

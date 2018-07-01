@@ -208,7 +208,7 @@ public class $(DataClassName)DataEditor : EditorWindow
         GUILayout.EndHorizontal();
         GUILayout.Space(5);
         GUILayout.BeginHorizontal();
-        if (GUILayout.Button("?"))
+        if (GUILayout.Button("◀"))
         {
             if (_pageNum != 1)
             {
@@ -218,7 +218,7 @@ public class $(DataClassName)DataEditor : EditorWindow
         GUI.color = Color.black;
         GUILayout.Label(_pageNum + "/" + _pageMaxNum, "InvisibleButton");
         GUI.color = Color.white;
-        if (GUILayout.Button("?"))
+        if (GUILayout.Button("▶"))
         {
             if (_pageNum < _pageMaxNum)
             {

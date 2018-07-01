@@ -66,6 +66,7 @@ public class CreateTableEditor : EditorWindow
         if (GUILayout.Button("添加", "OL Plus"))
         {
             _tempTableConfig = new TableConfig();
+            _tempTableConfig.HasPrimaryKey = true;
             TableDatabaseUtils.TableConfigSerializeData.TableConfigList.Add(_tempTableConfig);
             _selectConfigIndex = TableDatabaseUtils.TableConfigSerializeData.TableConfigList.Count - 1;
             GUI.FocusControl("DataList");

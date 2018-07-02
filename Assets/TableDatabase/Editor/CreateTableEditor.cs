@@ -159,8 +159,16 @@ public class CreateTableEditor : EditorWindow
             if (_tempTableConfig.HasDescription)
             {
                 string[] desArray = TableDatabaseUtils.GetDescription(_tempTableConfig);
-                _tempTableConfig.DescriptionIndex = EditorGUILayout.Popup(_tempTableConfig.DescriptionIndex, desArray, GUILayout.Width(INFO_POPUP_WIDTH));
-                _tempTableConfig.Description = desArray[_tempTableConfig.DescriptionIndex];
+                if (desArray.Length == 0)
+                {
+                    GUILayout.Label("没有合适的字段", GUILayout.Width(INFO_POPUP_WIDTH));
+                    _tempTableConfig.Description = "";
+                }
+                else
+                {
+                    _tempTableConfig.DescriptionIndex = EditorGUILayout.Popup(_tempTableConfig.DescriptionIndex, desArray, GUILayout.Width(INFO_POPUP_WIDTH));
+                    _tempTableConfig.Description = desArray[_tempTableConfig.DescriptionIndex];
+                }
             }
             GUILayout.Space(5);
             GUILayout.Label("主键：", GUILayout.Width(INFO_LABEL_WIDTH));

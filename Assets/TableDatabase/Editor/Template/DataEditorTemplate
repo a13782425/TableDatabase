@@ -194,7 +194,7 @@ public class $(DataClassName)DataEditor : EditorWindow
         GUILayout.FlexibleSpace();
         GUILayout.BeginHorizontal();
         GUILayout.Label("显示个数:");
-        int tempShowCount = EditorGUILayout.IntSlider(_onceShowCount, 0, 100);
+        int tempShowCount = EditorGUILayout.IntSlider(_onceShowCount, 1, 100);
         if (tempShowCount != _onceShowCount)
         {
             _onceShowCount = tempShowCount;

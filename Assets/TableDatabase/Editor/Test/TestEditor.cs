@@ -54,6 +54,40 @@ public class TestEditor : EditorWindow
         GUILayout.EndVertical();
         GUILayout.EndArea();
         //GUILayout.EndHorizontal();
+
+        if (GUI.enabled)
+        {
+            Debug.LogError(Event.current.type);
+            switch (Event.current.type)
+            {
+                case EventType.Used:
+                    isMouseInSearch = GUI.GetNameOfFocusedControl() == "SearchText";
+                    //if (GUI.GetNameOfFocusedControl() != "SearchText" && isMouseInSearch)
+                    //{
+                    //    GUI.FocusControl("GUIArea");
+                    //    isMouseInSearch = false;
+                    //}
+                    //else if (GUI.GetNameOfFocusedControl() == "SearchText")
+                    //{
+                    //    isMouseInSearch = true;
+                    //}
+                    break;
+                case EventType.mouseUp:
+                    if (0 == GUIUtility.hotControl)
+                    {
+                        if (GUI.GetNameOfFocusedControl() == "SearchText" && isMouseInSearch)
+                        {
+                            GUI.FocusControl("GUIArea");
+                            isMouseInSearch = false;
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
         if (Event.current.keyCode == KeyCode.Escape)
         {
             GUI.FocusControl("GUIArea");
@@ -69,7 +103,8 @@ public class TestEditor : EditorWindow
         for (int i = 0; i < 100; i++)
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Label("dasdasdasdasdasdas" + i, GUILayout.Width(_areaWidht));
+            GUILayout.TextField("dasda", GUILayout.Width(_areaWidht));
+            //GUILayout.Label("dasdasdasdasdasdas" + i, GUILayout.Width(_areaWidht));
             GUILayout.EndHorizontal();
         }
 
@@ -102,6 +137,10 @@ public class TestEditor : EditorWindow
         GUI.EndScrollView();
     }
 
+    Rect rect;
+    Vector2 vec; bool isMouseInSearch;
+
+    int searchId = -1;
     /// <summary>
     /// 显示搜索
     /// </summary>
@@ -115,9 +154,15 @@ public class TestEditor : EditorWindow
         GUI.color = new Color(1, 1, 1, 0);
         _searchFieldIndex = EditorGUI.Popup(new Rect(10, 25, 10, 14), _searchFieldIndex, _searchFieldArray);
         GUI.color = Color.white;
-        GUI.SetNextControlName("SeachText");
+        GUI.SetNextControlName("SearchText");
         string str = GUILayout.TextField(_searchValue, "ToolbarSeachTextFieldPopup");
-        if (string.IsNullOrEmpty(str) && GUI.GetNameOfFocusedControl() != "SeachText")
+        if (searchId < 0)
+        {
+            searchId = GUIUtility.GetControlID(FocusType.Passive, GUILayoutUtility.GetLastRect());
+        }
+
+        //bool isMouseInSearch = Event.current.type == EventType.Used;
+        if ((string.IsNullOrEmpty(str) && GUI.GetNameOfFocusedControl() != "SearchText") && 0 == GUIUtility.hotControl)
         {
             GUI.color = new Color(0.8f, 0.8f, 0.8f);
             GUI.Label(new Rect(25, 30, 90, 12), _searchFieldArray[_searchFieldIndex], "RL Element");

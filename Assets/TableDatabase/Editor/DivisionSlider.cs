@@ -42,7 +42,7 @@ public class DivisionSlider : IEnumerable<float>
         for (int i = 0; i < sizes.Length; i++)
         {
             offsets[i] = (offset += sizes[i]);
-            minSizes[i] = 0f;
+            minSizes[i] = 10f;
             maxSizes[i] = float.MaxValue;
         }
     }
@@ -392,6 +392,10 @@ public class DivisionSlider : IEnumerable<float>
         }
         else if (GUI.enabled)
         {
+            if (e.type == EventType.ignore)
+            {
+                draggingSlider = false;
+            }
             if (e.type == EventType.MouseDown)
             {
                 if (mouseInside)

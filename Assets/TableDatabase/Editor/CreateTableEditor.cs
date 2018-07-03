@@ -108,7 +108,7 @@ public class CreateTableEditor : EditorWindow
             if (!string.IsNullOrEmpty(config.DataPath))
             {
                 File.Delete(Path.GetFullPath(config.DataPath));
-                string editorPath = TableDatabaseUtils.EditorPath + "/TableEditor/" + config.TableName + "EditorData.cs";
+                string editorPath = TableDatabaseUtils.EditorFullPath + "/TableEditor/" + config.TableName + "EditorData.cs";
                 if (File.Exists(editorPath))
                 {
                     File.Delete(editorPath);

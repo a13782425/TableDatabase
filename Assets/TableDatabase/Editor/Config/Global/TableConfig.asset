@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f96f98dbc2e329449ec312867111da9, type: 3}
+  m_Name: TableConfig
+  m_EditorClassIdentifier: 
+  Setting:
+    IsUseSpace: 0
+    ColumnWidth: 150
+    SplitVecChar: '|'
+    SplitListChar: ','
+  TableConfigList:
+  - TableName: PlayerInfo
+    ShowName: 
+    CodePath: D:\Git\TableDatabase\Assets/PlayerInfoSerializeData.cs
+    DataPath: Assets/PlayerInfo.asset
+    HasDescription: 0
+    DescriptionIndex: 0
+    Description: 
+    HasPrimaryKey: 1
+    PrimaryKey: Id
+    PrimaryIndex: 1
+    PrimaryType: int
+    FieldList:
+    - Name: Id
+      ShowName: 
+      FieldType: int
+      FieldIndex: 0
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 1
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 
+    - Name: PlayerName
+      ShowName: 
+      FieldType: string
+      FieldIndex: 2
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 1
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 
+    - Name: Icon
+      ShowName: 
+      FieldType: Sprite
+      FieldIndex: 8
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 1
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 
+    - Name: Backinfo
+      ShowName: 
+      FieldType: List
+      FieldIndex: 11
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 1
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 
+    - Name: Pos
+      ShowName: 
+      FieldType: Vector3
+      FieldIndex: 6
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 1
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 
+    - Name: Rot
+      ShowName: 
+      FieldType: Quaternion
+      FieldIndex: 7
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 1
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 
+    - Name: Cloths
+      ShowName: 
+      FieldType: List
+      FieldIndex: 11
+      GenericType: Texture
+      GenericIndex: 8
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 1
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 

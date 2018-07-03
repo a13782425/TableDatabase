@@ -12,8 +12,8 @@ public class TableConfigSerializeData : ScriptableObject
 [System.Serializable]
 public class TableSetting
 {
-    
     public bool IsUseSpace = false;
+    public float ColumnWidth = 150;
     public string SplitVecChar = "|";
     public string SplitListChar = ",";
 }

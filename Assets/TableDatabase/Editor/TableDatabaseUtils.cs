@@ -12,6 +12,20 @@ public class TableDatabaseUtils
 
     public static string[] GenericType = new string[] { "int", "float", "string", "bool", "Vector2", "Vector3", "Quaternion", "Sprite", "Texture", "GameObject" };
 
+    private static string _editorPullPath;
+
+    public static string EditorFullPath
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(_editorPullPath))
+            {
+                GetGlobalSerializeData();
+            }
+            return _editorPullPath;
+        }
+    }
+
     private static string _editorPath;
     public static string EditorPath
     {
@@ -19,7 +33,7 @@ public class TableDatabaseUtils
         {
             if (string.IsNullOrEmpty(_editorPath))
             {
-                GetTableConfigSerializeData();
+                GetGlobalSerializeData();
             }
             return _editorPath;
         }
@@ -33,9 +47,23 @@ public class TableDatabaseUtils
         {
             if (_tableConfigSerializeData == null)
             {
-                GetTableConfigSerializeData();
+                GetGlobalSerializeData();
             }
             return _tableConfigSerializeData;
+        }
+    }
+
+    private static PrimaryKeySerializeData _primaryKeySerializeData = null;
+
+    public static PrimaryKeySerializeData PrimaryKeySerializeData
+    {
+        get
+        {
+            if (_primaryKeySerializeData == null)
+            {
+                GetGlobalSerializeData();
+            }
+            return _primaryKeySerializeData;
         }
     }
 
@@ -111,13 +139,12 @@ public class TableDatabaseUtils
         return keys.ToArray();
     }
 
-    public static void ShowIntField()
-    {
-
-    }
 
 
-    private static void GetTableConfigSerializeData()
+    /// <summary>
+    /// 获取全局
+    /// </summary>
+    private static void GetGlobalSerializeData()
     {
         string[] guids = AssetDatabase.FindAssets(typeof(CreateTableEditor).Name);
         if (guids.Length != 1)
@@ -126,24 +153,36 @@ public class TableDatabaseUtils
         }
         string path = AssetDatabase.GUIDToAssetPath(guids[0]);
         path = Path.GetDirectoryName(path);
-        _editorPath = Path.GetFullPath(path);
-        path = Path.Combine(path, "Config") + "/TableConfig.asset";
-        if (!Directory.Exists(_editorPath + "/Config"))
+        _editorPath = path;
+        _editorPullPath = Path.GetFullPath(path);
+        string configPath = Path.Combine(path, "Config/Global") + "/TableConfig.asset";
+        string keyPath = Path.Combine(path, "Config/Global") + "/PrimaryKey.asset";
+        if (!Directory.Exists(_editorPullPath + "/Config/Global"))
         {
-            Directory.CreateDirectory(_editorPath + "/Config");
+            Directory.CreateDirectory(_editorPullPath + "/Config/Global");
         }
-        if (!File.Exists(path))
+        if (!File.Exists(configPath))
         {
             _tableConfigSerializeData = ScriptableObject.CreateInstance<TableConfigSerializeData>();
-            AssetDatabase.CreateAsset(_tableConfigSerializeData, path);
+            AssetDatabase.CreateAsset(_tableConfigSerializeData, configPath);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
         else
         {
-            _tableConfigSerializeData = AssetDatabase.LoadAssetAtPath<TableConfigSerializeData>(path);
+            _tableConfigSerializeData = AssetDatabase.LoadAssetAtPath<TableConfigSerializeData>(configPath);
         }
+        if (!File.Exists(keyPath))
+        {
+            _primaryKeySerializeData = ScriptableObject.CreateInstance<PrimaryKeySerializeData>();
+            AssetDatabase.CreateAsset(_primaryKeySerializeData, keyPath);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+        else
+        {
+            _primaryKeySerializeData = AssetDatabase.LoadAssetAtPath<PrimaryKeySerializeData>(keyPath);
+        }
+
     }
-
-
 }

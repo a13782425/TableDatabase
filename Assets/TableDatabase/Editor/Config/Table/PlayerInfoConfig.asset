@@ -11,10 +11,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b89ad7cb6b85e3e4abb54b7f8ac7f207, type: 3}
   m_Name: PlayerInfoConfig
   m_EditorClassIdentifier: 
-  PlayerIdColumnWidth: 150
-  PlayerNameColumnWidth: 150
-  IconColumnWidth: 150
-  PosColumnWidth: 150
-  RotColumnWidth: 150
-  SonColumnWidth: 150
-  PlayerEnumColumnWidth: 150
+  ColumnsWidth:
+  - 75
+  - 111
+  - 101
+  - 99
+  - 105
+  - 113.82532
+  - 129.17468
+  - 150

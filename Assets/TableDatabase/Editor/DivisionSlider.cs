@@ -69,6 +69,15 @@ public class DivisionSlider : IEnumerable<float>
             SetSize(index, value);
         }
     }
+    public float GetOffset()
+    {
+        float f = 0;
+        for (int i = 0; i < offsets.Length; i++)
+        {
+            f += offsets[i];
+        }
+        return f;
+    }
 
     public float GetOffset(int index)
     {
@@ -195,9 +204,9 @@ public class DivisionSlider : IEnumerable<float>
         }
     }
 
-    private void Slide(int index, float delta)
+    private void Slide(int index, float delta, float windowsOffset = 0)
     {
-        float newOffset = offsets[index] + delta;
+        float newOffset = offsets[index] + delta + windowsOffset;
 
         if (delta > 0)
         {
@@ -351,14 +360,14 @@ public class DivisionSlider : IEnumerable<float>
     //		}
     //	}
 
-    public void DoHorizontalSliders(Rect area)
+    public void DoHorizontalSliders(Rect area, float windowsOffset = 0f)
     {
         for (int i = 0; i < offsets.Length - 1; i++)
         {
-            float newOffset = HorizontalSlider(area, offsets[i] + area.x, sliderSize) - area.x;
+            float newOffset = HorizontalSlider(area, offsets[i] + area.x, sliderSize, windowsOffset) - area.x;
             if (newOffset != offsets[i])
             {
-                Slide(i, newOffset - offsets[i]);
+                Slide(i, newOffset - offsets[i], windowsOffset);
             }
         }
     }
@@ -378,11 +387,11 @@ public class DivisionSlider : IEnumerable<float>
 
     static bool draggingSlider;
     static int draggedControl;
-    static public float HorizontalSlider(Rect area, float value, float size, GUIStyle style = null)
+    static public float HorizontalSlider(Rect area, float value, float size, float windowsOffset = 0f, GUIStyle style = null)
     {
         Event e = Event.current;
         int id = GUIUtility.GetControlID(FocusType.Passive);
-        Rect sliderArea = new Rect(value - size / 2f, area.y, size, area.height);
+        Rect sliderArea = new Rect(value - size / 2f - windowsOffset, area.y, size, area.height);
         bool dragOn = draggingSlider && id == draggedControl;
         bool mouseInside = sliderArea.Contains(e.mousePosition);
         if (e.type == EventType.Repaint)

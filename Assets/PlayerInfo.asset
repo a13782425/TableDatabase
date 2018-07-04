@@ -11,4 +11,137 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bd6a4bab1c24f746bbc854749fd816e, type: 3}
   m_Name: PlayerInfo
   m_EditorClassIdentifier: 
-  DataList: []
+  DataList:
+  - Id: 0
+    PlayerName: 
+    Icon: {fileID: 0}
+    Backinfo: 
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+    Cloths: []
+  - Id: 0
+    PlayerName: 
+    Icon: {fileID: 0}
+    Backinfo: 
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+    Cloths: []
+  - Id: 0
+    PlayerName: 
+    Icon: {fileID: 0}
+    Backinfo: 
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+    Cloths: []
+  - Id: 0
+    PlayerName: 
+    Icon: {fileID: 0}
+    Backinfo: 
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+    Cloths: []
+  - Id: 0
+    PlayerName: 
+    Icon: {fileID: 0}
+    Backinfo: 
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+    Cloths: []
+  - Id: 0
+    PlayerName: 
+    Icon: {fileID: 0}
+    Backinfo: 
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+    Cloths: []
+  - Id: 0
+    PlayerName: 
+    Icon: {fileID: 0}
+    Backinfo: 
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+    Cloths: []
+  - Id: 0
+    PlayerName: 
+    Icon: {fileID: 0}
+    Backinfo: 
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+    Cloths: []
+  - Id: 0
+    PlayerName: 
+    Icon: {fileID: 0}
+    Backinfo: 
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+    Cloths: []
+  - Id: 0
+    PlayerName: 
+    Icon: {fileID: 0}
+    Backinfo: 
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+    Cloths: []
+  - Id: 0
+    PlayerName: 
+    Icon: {fileID: 0}
+    Backinfo: 
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+    Cloths: []
+  - Id: 0
+    PlayerName: 
+    Icon: {fileID: 0}
+    Backinfo: 
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+    Cloths: []
+  - Id: 0
+    PlayerName: 
+    Icon: {fileID: 0}
+    Backinfo: 
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+    Cloths: []
+  - Id: 0
+    PlayerName: 
+    Icon: {fileID: 0}
+    Backinfo: 
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+    Cloths: []
+  - Id: 0
+    PlayerName: 
+    Icon: {fileID: 0}
+    Backinfo: 
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+    Cloths: []
+  - Id: 0
+    PlayerName: 
+    Icon: {fileID: 0}
+    Backinfo: 
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+    Cloths: []
+  - Id: 0
+    PlayerName: 
+    Icon: {fileID: 0}
+    Backinfo: 
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+    Cloths: []
+  - Id: 0
+    PlayerName: 
+    Icon: {fileID: 0}
+    Backinfo: 
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+    Cloths: []
+  - Id: 0
+    PlayerName: 
+    Icon: {fileID: 0}
+    Backinfo: 
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+    Cloths: []

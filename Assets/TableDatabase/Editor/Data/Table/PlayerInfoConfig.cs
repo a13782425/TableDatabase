@@ -13,11 +13,13 @@ using UnityEngine;
 
 public class PlayerInfoConfig : ScriptableObject
 {
-    public float IdColumnWidth = 150;
-    public float NameColumnWidth = 150;
-    public float IconColumnWidth = 150;
-    public float BackinfoColumnWidth = 150;
-    public float PosColumnWidth = 150;
-    public float RotColumnWidth = 150;
-    public float ClothsColumnWidth = 150;
+    public List<float> ColumnsWidth = new List<float>();
+
+    //public float IdColumnWidth = 150;
+    //public float NameColumnWidth = 150;
+    //public float IconColumnWidth = 150;
+    //public float BackinfoColumnWidth = 150;
+    //public float PosColumnWidth = 150;
+    //public float RotColumnWidth = 150;
+    //public float ClothsColumnWidth = 150;
 }

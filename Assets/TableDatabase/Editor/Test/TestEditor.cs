@@ -32,20 +32,29 @@ public class TestEditor : EditorWindow
 
     private float _areaWidht = 0;
 
+    private Vector2 _tableScrollView;
+
+    private bool _isMouseInSearch;
+
+    private Event currentEvent = null;
+
+    private List<PlayerInfo> _dataList = null;
+
     void OnGUI()
     {
         if (_serializeData == null)
         {
             return;
         }
+        currentEvent = Event.current;
         //GUILayout.BeginHorizontal("sv_iconselector_back");
         GUI.SetNextControlName("GUIArea");
         GUILayout.BeginArea(new Rect(5, 5, position.width - 10, position.height - 10), "", "box");
         GUILayout.BeginVertical();
         GUITitleInfo();
         GUISearchInfo();
-        GUIShowTableHead();
         GUIShowTableBody();
+        GUIShowTableHead();
 
         //ShowDataList();
         GUILayout.EndVertical();
@@ -57,32 +66,21 @@ public class TestEditor : EditorWindow
 
         if (GUI.enabled)
         {
-            Debug.LogError(Event.current.type);
             switch (Event.current.type)
             {
                 case EventType.Used:
-                    isMouseInSearch = GUI.GetNameOfFocusedControl() == "SearchText";
-                    //if (GUI.GetNameOfFocusedControl() != "SearchText" && isMouseInSearch)
-                    //{
-                    //    GUI.FocusControl("GUIArea");
-                    //    isMouseInSearch = false;
-                    //}
-                    //else if (GUI.GetNameOfFocusedControl() == "SearchText")
-                    //{
-                    //    isMouseInSearch = true;
-                    //}
+                    _isMouseInSearch = GUI.GetNameOfFocusedControl() == "SearchText";
                     break;
                 case EventType.mouseUp:
-                    if (0 == GUIUtility.hotControl)
+                    if (0 == GUIUtility.hotControl)//0为面板
                     {
-                        if (GUI.GetNameOfFocusedControl() == "SearchText" && isMouseInSearch)
+                        if (GUI.GetNameOfFocusedControl() == "SearchText" && _isMouseInSearch)
                         {
                             GUI.FocusControl("GUIArea");
-                            isMouseInSearch = false;
+                            _isMouseInSearch = false;
                         }
                     }
                     break;
-
                 default:
                     break;
             }
@@ -94,53 +92,25 @@ public class TestEditor : EditorWindow
         }
     }
 
-    private void GUIShowTableBody()
+    /// <summary>
+    /// 显示Title
+    /// </summary>
+    private void GUITitleInfo()
     {
-        GUILayout.BeginArea(new Rect(5, 100, position.width - 20, position.height - 180), "", "box");
-        _tableScrollView = GUILayout.BeginScrollView(_tableScrollView, false, false, GUI.skin.horizontalScrollbar, GUIStyle.none);
-        GUILayout.BeginVertical();
-
-        for (int i = 0; i < 100; i++)
+        GUI.color = new Color(0.8f, 0.8f, 0.8f);
+        GUILayout.BeginHorizontal("OL Title");
+        GUI.color = Color.white;
+        GUILayout.Label("数据列表:");
+        GUILayout.Label(_serializeData.DataList.Count + "条");
+        GUILayout.FlexibleSpace();
+        if (GUILayout.Button("添加", "OL Plus"))
         {
-            GUILayout.BeginHorizontal();
-            GUILayout.TextField("dasda", GUILayout.Width(_areaWidht));
-            //GUILayout.Label("dasdasdasdasdasdas" + i, GUILayout.Width(_areaWidht));
-            GUILayout.EndHorizontal();
-        }
-
-        GUILayout.EndVertical();
-        GUILayout.EndScrollView();
-        GUILayout.EndArea();
-    }
-
-    private Vector2 _tableScrollView;
-    private void GUIShowTableHead()
-    {
-        _areaWidht = 0;
-        for (int i = 0; i < _divisionSlider.Count; i++)
-        {
-            _areaWidht += _divisionSlider.GetSize(i);
-        }
-
-        Rect areaRect = new Rect(5, 55, _areaWidht, 30);
-        GUI.BeginScrollView(new Rect(5, 55, position.width - 20, 30), new Vector2(_tableScrollView.x, 0), areaRect, false, false, GUIStyle.none, GUIStyle.none);
-        GUILayout.BeginHorizontal();
-        foreach (Rect rect in _divisionSlider.HorizontalLayoutRects(areaRect))
-        {
-            GUILayout.BeginArea(rect, "", "Box");
-            GUILayout.Button("rect", "OL Title");
-            GUILayout.EndArea();
+            _serializeData.DataList.Add(new PlayerInfo());
         }
         GUILayout.EndHorizontal();
-        _divisionSlider.DoHorizontalSliders(areaRect);
-        _divisionSlider.Resize(areaRect.width, DivisionSlider.ResizeMode.PrioritizeOuter);
-        GUI.EndScrollView();
+
     }
 
-    Rect rect;
-    Vector2 vec; bool isMouseInSearch;
-
-    int searchId = -1;
     /// <summary>
     /// 显示搜索
     /// </summary>
@@ -152,17 +122,11 @@ public class TestEditor : EditorWindow
         }
         GUILayout.BeginHorizontal("box");
         GUI.color = new Color(1, 1, 1, 0);
-        _searchFieldIndex = EditorGUI.Popup(new Rect(10, 25, 10, 14), _searchFieldIndex, _searchFieldArray);
+        _searchFieldIndex = EditorGUI.Popup(new Rect(15, 25, 10, 14), _searchFieldIndex, _searchFieldArray);
         GUI.color = Color.white;
         GUI.SetNextControlName("SearchText");
         string str = GUILayout.TextField(_searchValue, "ToolbarSeachTextFieldPopup");
-        if (searchId < 0)
-        {
-            searchId = GUIUtility.GetControlID(FocusType.Passive, GUILayoutUtility.GetLastRect());
-        }
-
-        //bool isMouseInSearch = Event.current.type == EventType.Used;
-        if ((string.IsNullOrEmpty(str) && GUI.GetNameOfFocusedControl() != "SearchText") && 0 == GUIUtility.hotControl)
+        if (string.IsNullOrEmpty(str) && !_isMouseInSearch)
         {
             GUI.color = new Color(0.8f, 0.8f, 0.8f);
             GUI.Label(new Rect(25, 30, 90, 12), _searchFieldArray[_searchFieldIndex], "RL Element");
@@ -209,24 +173,138 @@ public class TestEditor : EditorWindow
         GUILayout.EndHorizontal();
     }
 
-    /// <summary>
-    /// 显示Title
-    /// </summary>
-    private void GUITitleInfo()
+    List<Rect> rectList;
+    private void GUIShowTableHead()
     {
-        GUI.color = new Color(0.8f, 0.8f, 0.8f);
-        GUILayout.BeginHorizontal("OL Title");
-        GUI.color = Color.white;
-        GUILayout.Label("数据列表:");
-        GUILayout.Label(_serializeData.DataList.Count + "条");
-        GUILayout.FlexibleSpace();
-        if (GUILayout.Button("添加", "OL Plus"))
+        _areaWidht = 0;
+        for (int i = 0; i < _divisionSlider.Count; i++)
         {
+            _areaWidht += _playerInfoConfig.ColumnsWidth[i];
         }
-        GUILayout.EndHorizontal();
 
+        Rect areaRect = new Rect(5, 55, _areaWidht, 30);
+        rectList = new List<Rect>(_divisionSlider.HorizontalLayoutRects(areaRect));
+        GUILayout.BeginScrollView(new Vector2(_tableScrollView.x, 0), GUIStyle.none, GUIStyle.none);
+        GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_areaWidht), GUILayout.Height(30));
+        int index = 0;
+        for (index = 0; index < _tableConfig.FieldList.Count; index++)
+        {
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(rectList[index].width), GUILayout.MaxHeight(30));
+            GUILayout.Space(5);
+            string name = string.IsNullOrEmpty(_tableConfig.FieldList[index].ShowName) ? _tableConfig.FieldList[index].Name : _tableConfig.FieldList[index].ShowName;
+            GUILayout.Button(name);
+            _playerInfoConfig.ColumnsWidth[index] = rectList[index].width;
+            GUILayout.Space(5);
+
+            GUILayout.EndHorizontal();
+        }
+        GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(rectList[index].width), GUILayout.MaxHeight(30));
+        GUILayout.Label("");
+        GUILayout.EndHorizontal();
+        GUILayout.Space(5);
+        GUILayout.EndHorizontal();
+        GUILayout.EndScrollView();
+        float f = 0;
+        if (_areaWidht > position.width)
+        {
+            float diff = _areaWidht - position.width + 20;
+            f = diff * Mathf.Clamp(_tableScrollView.x / diff, 0f, 1f);
+        }
+
+        _divisionSlider.DoHorizontalSliders(areaRect, f);
+        _divisionSlider.Resize(areaRect.width, DivisionSlider.ResizeMode.PrioritizeOuter);
+
+        #region Old
+        //_areaWidht = 0;
+        //for (int i = 0; i < _divisionSlider.Count; i++)
+        //{
+        //    if (i == _divisionSlider.Count - 1)
+        //    {
+        //        _areaWidht += TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth;
+        //    }
+        //    else
+        //    {
+        //        _areaWidht += _divisionSlider.GetSize(i);
+        //    }
+        //}
+
+        //Rect areaRect = new Rect(5, 55, _areaWidht, 30);
+        //GUI.BeginScrollView(new Rect(5, 55, position.width - 20, 30), new Vector2(_tableScrollView.x, 0), areaRect, false, false, GUIStyle.none, GUIStyle.none);
+        //GUILayout.BeginHorizontal();
+        //rectList = new List<Rect>(_divisionSlider.HorizontalLayoutRects(areaRect));
+        //int index = 0;
+        //for (index = 0; index < _tableConfig.FieldList.Count; index++)
+        //{
+        //    GUILayout.BeginArea(rectList[index], "", "Box");
+        //    string name = string.IsNullOrEmpty(_tableConfig.FieldList[index].ShowName) ? _tableConfig.FieldList[index].Name : _tableConfig.FieldList[index].ShowName;
+        //    GUILayout.Button(name, "OL Title");
+        //    GUILayout.EndArea();
+        //    _playerInfoConfig.ColumnsWidth[index] = rectList[index].width;
+        //}
+
+        //GUILayout.BeginArea(rectList[index], "", "Box");
+        //GUILayout.EndArea();
+
+        //GUILayout.EndHorizontal();
+        //_divisionSlider.DoHorizontalSliders(areaRect);
+        //_divisionSlider.Resize(areaRect.width, DivisionSlider.ResizeMode.PrioritizeOuter);
+        //GUI.EndScrollView();
+        #endregion
     }
 
+    private void GUIShowTableBody()
+    {
+        GUILayout.BeginArea(new Rect(3, 85, position.width - 20, position.height - 150));
+        _tableScrollView = GUILayout.BeginScrollView(_tableScrollView, false, false, GUI.skin.horizontalScrollbar, GUIStyle.none);// );
+        GUILayout.BeginVertical();
+        for (int i = 0; i < _dataList.Count; i++)
+        {
+            for (int j = 0; j < _tableConfig.FieldList.Count; j++)
+            {
+                //RenderFieldInfoControl(i,_dataList[i])
+            }
+            GUILayout.BeginHorizontal(GUILayout.Width(_areaWidht), GUILayout.Height(30));
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_playerInfoConfig.ColumnsWidth[0]), GUILayout.MaxHeight(30));
+            GUILayout.TextField("dasda" + i);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_playerInfoConfig.ColumnsWidth[1]), GUILayout.MaxHeight(30));
+            GUILayout.TextField("dasda" + i);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_playerInfoConfig.ColumnsWidth[2]), GUILayout.MaxHeight(30));
+            GUILayout.TextField("dasda" + i);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_playerInfoConfig.ColumnsWidth[3]), GUILayout.MaxHeight(30));
+            GUILayout.TextField("dasda" + i);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_playerInfoConfig.ColumnsWidth[4]), GUILayout.MaxHeight(30));
+            GUILayout.TextField("dasda" + i);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_playerInfoConfig.ColumnsWidth[5]), GUILayout.MaxHeight(30));
+            GUILayout.TextField("dasda" + i);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_playerInfoConfig.ColumnsWidth[6]), GUILayout.MaxHeight(30));
+            GUILayout.TextField("dasda" + i);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_playerInfoConfig.ColumnsWidth[7]), GUILayout.MaxHeight(30));
+            GUILayout.Label("");
+            GUILayout.EndHorizontal();
+
+            GUILayout.EndHorizontal();
+
+
+            //GUILayout.Label("dasdasdasdasdasdas" + i, GUILayout.Width(_areaWidht));
+        }
+        GUILayout.EndVertical();
+        GUILayout.EndScrollView();
+        GUILayout.EndArea();
+    }
 
 
     private void OnEnable()
@@ -236,6 +314,15 @@ public class TestEditor : EditorWindow
         CheckSearch();
         InitDivisionSlider();
     }
+
+    private void OnDestroy()
+    {
+        _playerInfoConfig.ColumnsWidth[_playerInfoConfig.ColumnsWidth.Count - 1] = TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth;
+        EditorUtility.SetDirty(_playerInfoConfig);
+        EditorUtility.SetDirty(_serializeData);
+        AssetDatabase.SaveAssets();
+    }
+
 
     private void CheckSearch()
     {
@@ -258,18 +345,11 @@ public class TestEditor : EditorWindow
     {
         if (_divisionSlider == null)
         {
-            List<float> sizes = new List<float>() {
-                _playerInfoConfig.IdColumnWidth,
-                _playerInfoConfig.NameColumnWidth,
-                _playerInfoConfig.IconColumnWidth,
-                _playerInfoConfig.BackinfoColumnWidth,
-                _playerInfoConfig.PosColumnWidth,
-                _playerInfoConfig.RotColumnWidth,
-                _playerInfoConfig.ClothsColumnWidth
-            };
-            sizes.Add(TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth);
 
-            _divisionSlider = new DivisionSlider(5, false, sizes.ToArray());
+            //List<float> sizes = new List<float>() {};
+            //sizes.Add(TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth);
+
+            _divisionSlider = new DivisionSlider(5, false, _playerInfoConfig.ColumnsWidth.ToArray());
         }
     }
 
@@ -305,6 +385,7 @@ public class TestEditor : EditorWindow
         {
             _serializeData = AssetDatabase.LoadAssetAtPath<PlayerInfoSerializeData>(_tableConfig.DataPath);
         }
+        _dataList = _serializeData.DataList;
     }
 
     private void CheckPlayerConfig()

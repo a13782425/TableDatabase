@@ -1,0 +1,120 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f96f98dbc2e329449ec312867111da9, type: 3}
+  m_Name: TableConfig
+  m_EditorClassIdentifier: 
+  Setting:
+    ColumnWidth: 150
+    SplitVecChar: '|'
+    SplitListChar: ','
+  TableConfigList:
+  - TableName: Test
+    ShowName: 
+    CodePath: F:\Git\TableDatabase\Assets/TestSerializeData.cs
+    DataPath: Assets/Test.asset
+    HasPrimaryKey: 1
+    PrimaryKey: T
+    PrimaryIndex: 1
+    PrimaryType: int
+    FieldList:
+    - Name: T
+      ShowName: "\u8279"
+      FieldType: int
+      FieldIndex: 0
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 1
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 
+    - Name: a
+      ShowName: 
+      FieldType: List
+      FieldIndex: 11
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 0
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 
+    - Name: b
+      ShowName: 
+      FieldType: int
+      FieldIndex: 0
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 0
+      HasForeignKey: 1
+      ForeignKeyIndex: 1
+      ForeignKey: Test2
+    - Name: c
+      ShowName: 
+      FieldType: int
+      FieldIndex: 0
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 0
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 
+    - Name: d
+      ShowName: 
+      FieldType: int
+      FieldIndex: 0
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 0
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 
+    - Name: e
+      ShowName: 
+      FieldType: int
+      FieldIndex: 0
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 0
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 
+  - TableName: Test2
+    ShowName: 
+    CodePath: F:\Git\TableDatabase\Assets/Test2SerializeData.cs
+    DataPath: Assets/Test2.asset
+    HasPrimaryKey: 1
+    PrimaryKey: T2
+    PrimaryIndex: 1
+    PrimaryType: int
+    FieldList:
+    - Name: T2
+      ShowName: 
+      FieldType: int
+      FieldIndex: 0
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 1
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 

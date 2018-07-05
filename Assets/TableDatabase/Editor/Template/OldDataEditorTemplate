@@ -1,13 +1,13 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class PlayerInfoDataEditor : EditorWindow
+public class $(DataClassName)DataEditor : EditorWindow
 {
-    [MenuItem("Table/Tables/PlayerInfo", priority = 30)]
+    [MenuItem("Table/Tables/$(TableShowName)", priority = 30)]
     static void CreateTable()
     {
-        EditorWindow.GetWindowWithRect<PlayerInfoDataEditor>(new Rect(100, 100, 800, 500), false, "PlayerInfo数据");
+        EditorWindow.GetWindowWithRect<$(DataClassName)DataEditor>(new Rect(100, 100, 800, 500), false, "$(TableShowName)数据");
     }
 
     private string[] _searchFieldArray;
@@ -18,11 +18,11 @@ public class PlayerInfoDataEditor : EditorWindow
 
     private TableConfig _tableConfig;
 
-    private PlayerInfoSerializeData _serializeData;
+    private $(SerializeClassName) _serializeData;
 
-    private Dictionary<int, PlayerInfo> _searchDataDic;
+    private Dictionary<int, $(DataClassName)> _searchDataDic;
 
-    private PlayerInfo _tempData;
+    private $(DataClassName) _tempData;
 
     private bool _isSearch = false;
 
@@ -38,7 +38,7 @@ public class PlayerInfoDataEditor : EditorWindow
 
     private Dictionary<string, List<object>> _foreignKeyDic;
 
-    private Dictionary<int, int> _primaryKeyDataDic;
+    private Dictionary<$(PrimaryType), int> _primaryKeyDataDic;
 
     SerializedObject _serializedObject;
 
@@ -46,7 +46,7 @@ public class PlayerInfoDataEditor : EditorWindow
 
     SerializedProperty _tempSerializedProperty;
 
-    private int _primaryKey;
+    private $(PrimaryType) _primaryKey;
 
     void OnGUI()
     {
@@ -79,20 +79,20 @@ public class PlayerInfoDataEditor : EditorWindow
         GUILayout.FlexibleSpace();
         if (GUILayout.Button("添加", "OL Plus"))
         {
-            PlayerInfo data = new PlayerInfo();
+            $(DataClassName) data = new $(DataClassName)();
             _serializeData.DataList.Add(data);
             _pageMaxNum = (_serializeData.DataList.Count / _onceShowCount);
             if (_serializeData.DataList.Count % _onceShowCount > 0)
             {
                 _pageMaxNum++;
             }
-            if (!_primaryKeyDataDic.ContainsKey(data.Id))
+            if (!_primaryKeyDataDic.ContainsKey(data.$(Primary)))
             {
-                _primaryKeyDataDic.Add(data.Id, 1);
+                _primaryKeyDataDic.Add(data.$(Primary), 1);
             }
             else
             {
-                _primaryKeyDataDic[data.Id]++;
+                _primaryKeyDataDic[data.$(Primary)]++;
             }
             _serializedObject = new SerializedObject(_serializeData);
             _serializedProperty = _serializedObject.FindProperty("DataList");
@@ -112,9 +112,9 @@ public class PlayerInfoDataEditor : EditorWindow
         int removeIndex = -1;
         if (_isSearch)
         {
-            foreach (KeyValuePair<int, PlayerInfo> item in _searchDataDic)
+            foreach (KeyValuePair<int, $(DataClassName)> item in _searchDataDic)
             {
-			    PlayerInfo data = item.Value;
+			    $(DataClassName) data = item.Value;
                 if (_tempData == data)
                 {
                     GUI.color = Color.yellow;
@@ -122,7 +122,7 @@ public class PlayerInfoDataEditor : EditorWindow
                 GUILayout.BeginHorizontal("GroupBox");
                 GUI.color = Color.white;
                 GUILayout.Label((item.Key + 1).ToString(), GUILayout.Width(40));
-                if (GUILayout.Button("选择", "OL Title", GUILayout.Width(50)))
+                if (GUILayout.Button($(SelectName), "OL Title", GUILayout.Width(50)))
                 {
                     _pageNum = (item.Key + 1) / _onceShowCount;
                     if ((item.Key + 1) % _onceShowCount > 0)
@@ -147,7 +147,7 @@ public class PlayerInfoDataEditor : EditorWindow
             int end = Mathf.Min(_pageNum * _onceShowCount, _serializeData.DataList.Count);
             for (int i = begin; i < end; i++)
             {
-				PlayerInfo data = _serializeData.DataList[i];
+				$(DataClassName) data = _serializeData.DataList[i];
                 if (_tempData == data)
                 {
                     GUI.color = Color.yellow;
@@ -155,7 +155,7 @@ public class PlayerInfoDataEditor : EditorWindow
                 GUILayout.BeginHorizontal("GroupBox");
                 GUI.color = Color.white;
                 GUILayout.Label((i + 1).ToString(), GUILayout.Width(40));
-                if (GUILayout.Button("选择", "OL Title", GUILayout.Width(50)))
+                if (GUILayout.Button($(SelectName), "OL Title", GUILayout.Width(50)))
                 {
                     _tempData = _serializeData.DataList[i];
                     _tempSerializedProperty = _serializedProperty.GetArrayElementAtIndex(i);
@@ -244,7 +244,7 @@ public class PlayerInfoDataEditor : EditorWindow
             {
                 for (int i = 0; i < _serializeData.DataList.Count; i++)
                 {
-                    PlayerInfo data = _serializeData.DataList[i];
+                    $(DataClassName) data = _serializeData.DataList[i];
                     string temp = data.GetType().GetField(_searchFieldArray[_searchFieldIndex]).GetValue(data).ToString();
                     if (temp.Contains(str))
                     {
@@ -301,58 +301,21 @@ public class PlayerInfoDataEditor : EditorWindow
         GUILayout.Space(5);
         _infoScollViewVec = GUILayout.BeginScrollView(_infoScollViewVec, false, false);
        
-        if (_primaryKeyDataDic.ContainsKey(_tempData.Id))
-        {
-            if (_primaryKeyDataDic[_tempData.Id] > 1)
-            {
-                GUI.color = Color.red;
-            }
-        }
-        EditorGUILayout.PropertyField(_tempSerializedProperty.FindPropertyRelative("Id"), new GUIContent("Id"), true);
-        GUI.color = Color.white;
-
-        EditorGUILayout.PropertyField(_tempSerializedProperty.FindPropertyRelative("PlayerName"), new GUIContent("PlayerName"), true);
-        GUI.color = Color.white;
-
-        GUILayout.BeginHorizontal();
-        EditorGUILayout.PropertyField(_tempSerializedProperty.FindPropertyRelative("Icon"), new GUIContent("Icon"), true);
-        if (_tempData.Icon != null)
-        {
-            GUILayout.Label(new GUIContent(image: _tempData.Icon.texture), GUILayout.Width(65), GUILayout.Height(64));
-        }
-        GUILayout.EndHorizontal();
-        GUI.color = Color.white;
-
-        EditorGUILayout.PropertyField(_tempSerializedProperty.FindPropertyRelative("Pos"), new GUIContent("Pos"), true);
-        GUI.color = Color.white;
-
-        EditorGUILayout.PropertyField(_tempSerializedProperty.FindPropertyRelative("Rot"), new GUIContent("Rot"), true);
-        GUI.color = Color.white;
-
-        EditorGUILayout.PropertyField(_tempSerializedProperty.FindPropertyRelative("Cloths"), new GUIContent("Cloths"), true);
-        GUI.color = Color.white;
-
-        EditorGUILayout.PropertyField(_tempSerializedProperty.FindPropertyRelative("EnumTest"), new GUIContent("EnumTest"), true);
-        GUI.color = Color.white;
-
-        EditorGUILayout.PropertyField(_tempSerializedProperty.FindPropertyRelative("Backinfo"), new GUIContent("Backinfo"), true);
-        GUI.color = Color.white;
-
-
+$(ShowDataInfo)
         GUILayout.EndScrollView();
-		_primaryKey = _tempData.Id;
+		_primaryKey = _tempData.$(Primary);
         _serializedObject.ApplyModifiedProperties();
 
-        if (_primaryKey != _tempData.Id)
+        if (_primaryKey != _tempData.$(Primary))
         {
             _primaryKeyDataDic[_primaryKey]--;
-            if (_primaryKeyDataDic.ContainsKey(_tempData.Id))
+            if (_primaryKeyDataDic.ContainsKey(_tempData.$(Primary)))
             {
-                _primaryKeyDataDic[_tempData.Id]++;
+                _primaryKeyDataDic[_tempData.$(Primary)]++;
             }
             else
             {
-                _primaryKeyDataDic.Add(_tempData.Id, 1);
+                _primaryKeyDataDic.Add(_tempData.$(Primary), 1);
             }
         }
         GUILayout.EndArea();
@@ -363,11 +326,11 @@ public class PlayerInfoDataEditor : EditorWindow
     private void OnEnable()
     {
         _foreignKeyDic = new Dictionary<string, List<object>>();
-        _searchDataDic = new Dictionary<int, PlayerInfo>();
-        _primaryKeyDataDic = new Dictionary<int, int>();
+        _searchDataDic = new Dictionary<int, $(DataClassName)>();
+        _primaryKeyDataDic = new Dictionary<$(PrimaryType), int>();
         for (int i = 0; i < TableDatabaseUtils.TableConfigSerializeData.TableConfigList.Count; i++)
         {
-            if (TableDatabaseUtils.TableConfigSerializeData.TableConfigList[i].TableName == "PlayerInfo")
+            if (TableDatabaseUtils.TableConfigSerializeData.TableConfigList[i].TableName == "$(DataClassName)")
             {
                 _tableConfig = TableDatabaseUtils.TableConfigSerializeData.TableConfigList[i];
                 break;
@@ -384,21 +347,21 @@ public class PlayerInfoDataEditor : EditorWindow
                 }
             }
             _tableConfig.DataPath = path;
-            _serializeData = ScriptableObject.CreateInstance<PlayerInfoSerializeData>();
-            //EditorUtility.SetDirty(TableDatabaseUtils.TableConfigSerializeData);
+            _serializeData = ScriptableObject.CreateInstance<$(SerializeClassName)>();
+            EditorUtility.SetDirty(TableDatabaseUtils.TableConfigSerializeData);
             AssetDatabase.CreateAsset(_serializeData, path);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
         else
         {
-            _serializeData = AssetDatabase.LoadAssetAtPath<PlayerInfoSerializeData>(_tableConfig.DataPath);
+            _serializeData = AssetDatabase.LoadAssetAtPath<$(SerializeClassName)>(_tableConfig.DataPath);
         }
         _serializedObject = new SerializedObject(_serializeData);
         _serializedProperty = _serializedObject.FindProperty("DataList");
         for (int i = 0; i < _serializeData.DataList.Count; i++)
         {
-            int key = _serializeData.DataList[i].Id;
+            $(PrimaryType) key = _serializeData.DataList[i].$(Primary);
             if (!_primaryKeyDataDic.ContainsKey(key))
             {
                 _primaryKeyDataDic.Add(key, 1);

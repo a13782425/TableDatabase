@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class TableConfigSerializeData
+public class TableConfigSerializeData : ScriptableObject
 {
     public TableSetting Setting = new TableSetting();
 

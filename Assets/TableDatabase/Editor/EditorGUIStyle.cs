@@ -128,8 +128,9 @@ public class EditorGUIStyle
     {
         if (pageLabelGuiStyle == null)
         {
-            pageLabelGuiStyle = new GUIStyle(GUI.skin.label);
-            pageLabelGuiStyle.alignment = TextAnchor.MiddleRight;
+            pageLabelGuiStyle = new GUIStyle(GUI.skin.box);
+            pageLabelGuiStyle.margin = new RectOffset(0, 0, 0, 0);
+            pageLabelGuiStyle.padding = new RectOffset(5, 5, 5, 5);
         }
         return pageLabelGuiStyle;
     }
@@ -146,6 +147,7 @@ public class EditorGUIStyle
 
         return groupBoxStyle;
     }
+
 
     public static GUIStyle GetGroupBoxStyle()
     {

@@ -10,6 +10,8 @@ public class Test2Editor : EditorWindow
     [MenuItem("Window/TestWindow _%t")]
     static void Init()
     {
+        Test2Editor text2 = CreateInstance<Test2Editor>();
+        text2.ShowPopup();
         //Test2Editor tw = EditorWindow.GetWindow<Test2Editor>("Test Window");
 
         //tw.divisions = new DivisionSlider(4f, false, 50f, 50f, 50f, 50f);
@@ -23,9 +25,9 @@ public class Test2Editor : EditorWindow
         //for (int i = 0; i < 10; i++)
         //{
         //    Debug.LogError(TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic["Test"][i]);
-            
+
         //}
-        TableDatabaseUtils.SavaGlobalData();
+        //TableDatabaseUtils.SavaGlobalData();
     }
 
     DivisionSlider divisions;
@@ -34,9 +36,28 @@ public class Test2Editor : EditorWindow
     float sliderValue1 = 0f;
     float sliderValue2 = 0f;
 
-    void OnGUI()
+    private void Update()
     {
 
+
+        
+    }
+
+    void OnGUI()
+    {
+        if (GUILayout.Button("abc", EditorGUIStyle.GetMiddleButton))
+        {
+            this.Close();
+        }
+        GUILayout.Button("bcd", EditorGUIStyle.GetMiddleButton);
+        GUILayout.Button("cdb", EditorGUIStyle.GetMiddleButton);
+        GUILayout.Button("aaa", EditorGUIStyle.GetMiddleButton);
+        if (Event.current.type == EventType.MouseDrag)
+        {
+
+            this.position = new Rect(Event.current.mousePosition, position.size);
+        }
+        return;
         //		Rect areaRect = new Rect(0f, 0f, position.width, 60f);
         //		Rect divisionRect = areaRect;
         //		foreach(float size in divisions){

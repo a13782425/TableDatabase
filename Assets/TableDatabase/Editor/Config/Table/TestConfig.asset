@@ -8,8 +8,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b89ad7cb6b85e3e4abb54b7f8ac7f207, type: 3}
-  m_Name: PlayerInfoConfig
+  m_Script: {fileID: 11500000, guid: 6825d5940ebdc1846bab3068ffcca923, type: 3}
+  m_Name: TestConfig
   m_EditorClassIdentifier: 
   ColumnsWidth:
   - 150
@@ -19,6 +19,4 @@ MonoBehaviour:
   - 150
   - 150
   - 150
-  - 150
-  - 150
-  ShowCount: 30
+  ShowCount: 10

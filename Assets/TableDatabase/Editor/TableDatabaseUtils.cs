@@ -87,23 +87,6 @@ public class TableDatabaseUtils
         return keys.ToArray();
     }
 
-    public static string[] GetDescription(TableConfig config)
-    {
-        List<string> keys = new List<string>();
-        for (int i = 0; i < config.FieldList.Count; i++)
-        {
-            if (string.IsNullOrEmpty(config.FieldList[i].Name))
-            {
-                continue;
-            }
-            if (config.FieldList[i].FieldType != "List" && config.FieldList[i].FieldType != "Vector2" && config.FieldList[i].FieldType != "Vector3" && config.FieldList[i].FieldType != "Quaternion")
-            {
-                keys.Add(config.FieldList[i].Name);
-            }
-        }
-        return keys.ToArray();
-    }
-
     public static string[] GetForeignKey(TableConfig config, string typeName)
     {
         List<string> keys = new List<string>();
@@ -142,16 +125,8 @@ public class TableDatabaseUtils
     }
 
 
-    public static object RenderFieldInfoControl(float width, string fieldType, object value, bool isShow = true, string otherType = "")
+    public static object RenderFieldInfoControl(float width, string fieldType, object value, string otherType = "")
     {
-        //if (isShow)
-        //{
-        //    GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(width), GUILayout.MaxWidth(width), GUILayout.ExpandHeight(true));
-        //}
-        //else
-        //{
-        //    GUILayout.BeginHorizontal(GUILayout.Width(width), GUILayout.MaxWidth(width), GUILayout.ExpandHeight(true));
-        //}
         object result = null;
         switch (fieldType)
         {
@@ -203,12 +178,9 @@ public class TableDatabaseUtils
                 result = EditorGUILayout.EnumPopup((Enum)value, GUILayout.MaxWidth(width - 10));
                 break;
             case "List":
-                if (value == null)
-                {
-                    goto End;
-                }
                 GUILayout.BeginVertical(EditorGUIStyle.GetFieldBoxStyle(), GUILayout.Width(width), GUILayout.MaxWidth(width), GUILayout.ExpandHeight(true));
                 Type listType = value.GetType();
+                Type elementType = listType.GetGenericArguments()[0];
                 int count = (int)listType.GetProperty("Count").GetValue(value, null);
                 PropertyInfo itemPropertyInfo = value.GetType().GetProperty("Item");
                 int removeAt = -1;
@@ -216,7 +188,7 @@ public class TableDatabaseUtils
                 {
                     GUILayout.BeginHorizontal();
                     object item = itemPropertyInfo.GetValue(value, new object[] { i });
-                    item = RenderFieldInfoControl(width - 20, otherType, item, false);
+                    item = RenderFieldInfoControl(width - 20, elementType.Name, item);
                     itemPropertyInfo.SetValue(value, item, new object[] { i });
                     if (GUILayout.Button("", "OL Minus"))
                     {
@@ -228,9 +200,8 @@ public class TableDatabaseUtils
                 {
                     listType.GetMethod("RemoveAt").Invoke(value, new object[] { removeAt });
                 }
-                End: if (GUILayout.Button("Add"))
+                if (GUILayout.Button("Add"))
                 {
-                    Type elementType = value.GetType().GetGenericArguments()[0];
                     object o = elementType.IsValueType ? Activator.CreateInstance(elementType) : null;
                     value.GetType().GetMethod("Add").Invoke(value, new object[] { o });
                 }
@@ -252,10 +223,8 @@ public class TableDatabaseUtils
     {
         byte[] bytes = SerializeToBinary(PrimaryKeySerializeData);
         File.WriteAllBytes(_primaryKeyPath, bytes);
-        bytes = SerializeToBinary(TableConfigSerializeData);
-        File.WriteAllBytes(_tableConfigPath, bytes);
-        //EditorUtility.SetDirty(TableConfigSerializeData);
-        //AssetDatabase.SaveAssets();
+        EditorUtility.SetDirty(TableConfigSerializeData);
+        AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
     }
 
@@ -274,8 +243,7 @@ public class TableDatabaseUtils
         path = Path.GetDirectoryName(path);
         _editorPath = path;
         _editorPullPath = Path.GetFullPath(path);
-        string configPath = Path.Combine(path, "Config/Global") + "/TableConfig.asset";
-        _tableConfigPath = Path.Combine(_editorPullPath, "Config/Global") + "/TableConfig";
+        _tableConfigPath = Path.Combine(_editorPath, "Config/Global") + "/TableConfig.asset";
         _primaryKeyPath = Path.Combine(_editorPullPath, "Config/Global") + "/PrimaryKey";
         if (!Directory.Exists(_editorPullPath + "/Config/Global"))
         {
@@ -283,16 +251,14 @@ public class TableDatabaseUtils
         }
         if (!File.Exists(_tableConfigPath))
         {
-            File.Create(Path.GetFullPath(_tableConfigPath)).Dispose();
-            _tableConfigSerializeData = new TableConfigSerializeData();
-            //_tableConfigSerializeData = ScriptableObject.CreateInstance<TableConfigSerializeData>();
-            //AssetDatabase.CreateAsset(_tableConfigSerializeData, configPath);
-            //AssetDatabase.SaveAssets();
+            _tableConfigSerializeData = ScriptableObject.CreateInstance<TableConfigSerializeData>();
+            AssetDatabase.CreateAsset(_tableConfigSerializeData, _tableConfigPath);
+            AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
         else
         {
-            _tableConfigSerializeData = (TableConfigSerializeData)DeserializeWithBinary(File.ReadAllBytes(Path.GetFullPath(_tableConfigPath)));
+            _tableConfigSerializeData = AssetDatabase.LoadAssetAtPath<TableConfigSerializeData>(_tableConfigPath);
         }
         if (!File.Exists(_primaryKeyPath))
         {

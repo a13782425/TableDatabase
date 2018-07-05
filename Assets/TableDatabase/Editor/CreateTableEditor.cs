@@ -353,89 +353,13 @@ public class CreateTableEditor : EditorWindow
                 return;
             }
         }
-        string tableName = _tempTableConfig.TableName;
-        StringBuilder codeSb = new StringBuilder();
-        codeSb.AppendLine("//------------------------------------------------------------------------------------------------------------");
-        codeSb.AppendLine("//-----------------------------------generate file " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "----------------------------------------");
-        codeSb.AppendLine("//------------------------------------------------------------------------------------------------------------");
-        codeSb.AppendLine("");
-        codeSb.AppendLine("using System;");
-        codeSb.AppendLine("using System.Collections.Generic;");
-        codeSb.AppendLine("using UnityEngine;");
-        codeSb.AppendLine("");
-        //生成SerializeData
-        codeSb.AppendLine("public class " + tableName + "SerializeData : ScriptableObject");
-        codeSb.AppendLine("{");
-        codeSb.AppendLine("    public List<" + tableName + "> DataList = new List<" + tableName + ">();");
-        codeSb.AppendLine("}");
-
-        codeSb.AppendLine("");
-        //if (!string.IsNullOrEmpty(_tempTableConfig.ShowName))
-        //{
-        //    codeSb.AppendLine("[ShowName(\"" + _tempTableConfig.ShowName + "\")]");
-        //}
-        codeSb.AppendLine("[System.Serializable]");
-        codeSb.AppendLine("public class " + tableName);
-        codeSb.AppendLine("{");
-        List<string> fieldNameList = new List<string>();
-        for (int i = 0; i < _tempTableConfig.FieldList.Count; i++)
-        {
-            FieldConfig fieldConfig = _tempTableConfig.FieldList[i];
-            if (tableName == fieldConfig.Name)
-            {
-                if (EditorUtility.DisplayDialog("生成失败", "变量名和类名重复!!!", "OK"))
-                {
-                    _isGenerateCode = false;
-                    return;
-                }
-            }
-            if (string.IsNullOrEmpty(fieldConfig.Name))
-            {
-                if (EditorUtility.DisplayDialog("生成失败", "变量名为空!!!", "OK"))
-                {
-                    _isGenerateCode = false;
-                    return;
-                }
-            }
-            if (fieldNameList.Contains(fieldConfig.Name))
-            {
-                if (EditorUtility.DisplayDialog("生成失败", "变量名重复!!!", "OK"))
-                {
-                    _isGenerateCode = false;
-                    return;
-                }
-            }
-            fieldNameList.Add(fieldConfig.Name);
-            //if (!string.IsNullOrEmpty(fieldConfig.ShowName))
-            //{
-            //    codeSb.AppendLine("    [ShowName(\"" + fieldConfig.ShowName + "\")]");
-            //}
-            switch (fieldConfig.FieldType)
-            {
-                case "List":
-                    codeSb.AppendLine("    public List<" + fieldConfig.GenericType + "> " + fieldConfig.Name + " = new List<" + fieldConfig.GenericType + ">();");
-                    break;
-                case "enum":
-                    codeSb.AppendLine("    public " + fieldConfig.EnumName + " " + fieldConfig.Name + ";");
-                    break;
-                default:
-                    codeSb.AppendLine("    public " + fieldConfig.FieldType + " " + fieldConfig.Name + ";");
-                    break;
-            }
-
-        }
-        codeSb.AppendLine("}");
-
         EditorApplication.LockReloadAssemblies();
         try
         {
-            if (!File.Exists(_tempTableConfig.CodePath))
-            {
-                File.Create(_tempTableConfig.CodePath).Dispose();
-            }
-            File.WriteAllText(_tempTableConfig.CodePath, codeSb.ToString());
+
             GenerateEditorCode code = new GenerateEditorCode(_tempTableConfig);
             code.GenerateCode();
+
             EditorApplication.UnlockReloadAssemblies();
 
             _isGenerateCode = false;

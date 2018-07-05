@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -6,19 +6,19 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-public class $(DataClassName)DataEditor : EditorWindow
+public class TestDataEditor : EditorWindow
 {
-    [MenuItem("Table/Tables/$(TableShowName)", priority = 30)]
+    [MenuItem("Table/Tables/Test", priority = 30)]
     static void CreateTable()
     {
-        EditorWindow.GetWindow<$(DataClassName)DataEditor>(false, "$(TableShowName)数据").minSize = new Vector2(600, 500);
+        EditorWindow.GetWindow<TestDataEditor>(false, "Test数据").minSize = new Vector2(600, 500);
     }
 
-    private $(DataClassName)Config _excelConfig;
+    private TestConfig _excelConfig;
 
     private TableConfig _tableConfig;
 
-    private $(DataClassName)SerializeData _serializeData;
+    private TestSerializeData _serializeData;
 
     private DivisionSlider _divisionSlider;
 
@@ -30,7 +30,7 @@ public class $(DataClassName)DataEditor : EditorWindow
 
     private string _searchValue;
 
-	private bool _isAdvancedSearch = false;
+    private bool _isAdvancedSearch = false;
 
     private float _areaWidht = 0;
 
@@ -46,7 +46,7 @@ public class $(DataClassName)DataEditor : EditorWindow
 
     private bool _isSort = false;
 
-    private List<$(DataClassName)> _dataList = null;
+    private List<Test> _dataList = null;
 
     private string[] _showCountArray = new string[] { "10", "30", "50", "80", "100" };
 
@@ -61,6 +61,7 @@ public class $(DataClassName)DataEditor : EditorWindow
             return;
         }
         currentEvent = Event.current;
+
         GUI.SetNextControlName("GUIArea");
         GUILayout.BeginArea(new Rect(5, 5, position.width - 10, position.height - 10), "", "box");
         GUILayout.BeginVertical();
@@ -71,7 +72,6 @@ public class $(DataClassName)DataEditor : EditorWindow
         GUIFooterInfo();
         GUILayout.EndVertical();
         GUILayout.EndArea();
-
         if (GUI.enabled)
         {
             switch (currentEvent.type)
@@ -98,6 +98,10 @@ public class $(DataClassName)DataEditor : EditorWindow
             GUI.FocusControl("GUIArea");
         }
     }
+    private void Update()
+    {
+        //Debug.LogError(EditorWindow.focusedWindow);
+    }
 
 
     /// <summary>
@@ -115,7 +119,7 @@ public class $(DataClassName)DataEditor : EditorWindow
             _primaryKeyInfo.Values.Clear();
             for (int i = 0; i < _serializeData.DataList.Count; i++)
             {
-                string value = _serializeData.DataList[i].$(Primary).ToString();
+                string value = _serializeData.DataList[i].T.ToString();
                 if (!_primaryKeyInfo.Values.ContainsKey(value))
                 {
                     _primaryKeyInfo.Values.Add(value, 1);
@@ -133,15 +137,15 @@ public class $(DataClassName)DataEditor : EditorWindow
         GUILayout.FlexibleSpace();
         if (GUILayout.Button("添加", EditorGUIStyle.GetMiddleButton, GUILayout.ExpandHeight(true), GUILayout.Width(100)))
         {
-            $(DataClassName) data = new $(DataClassName)();
+            Test data = new Test();
             _serializeData.DataList.Add(data);
-            if (_primaryKeyInfo.Values.ContainsKey(data.$(Primary).ToString()))
+            if (_primaryKeyInfo.Values.ContainsKey(data.T.ToString()))
             {
-                _primaryKeyInfo.Values[data.$(Primary).ToString()]++;
+                _primaryKeyInfo.Values[data.T.ToString()]++;
             }
             else
             {
-                _primaryKeyInfo.Values.Add(data.$(Primary).ToString(), 1);
+                _primaryKeyInfo.Values.Add(data.T.ToString(), 1);
             }
             _pageMaxNum = (_serializeData.DataList.Count / _excelConfig.ShowCount);
             if (_serializeData.DataList.Count % _excelConfig.ShowCount > 0)
@@ -324,7 +328,7 @@ public class $(DataClassName)DataEditor : EditorWindow
         GUILayout.BeginArea(new Rect(3, 85, position.width - 20, position.height - 150));
         _tableScrollView = GUILayout.BeginScrollView(_tableScrollView, false, false, GUI.skin.horizontalScrollbar, GUIStyle.none);// );
         GUILayout.BeginVertical();
-        $(DataClassName) removeData = null;
+        Test removeData = null;
         int begin = (_pageNum - 1) * _excelConfig.ShowCount;
         int end = Mathf.Min(_pageNum * _excelConfig.ShowCount, _dataList.Count);
         for (int i = begin; i < end; i++)
@@ -340,10 +344,80 @@ public class $(DataClassName)DataEditor : EditorWindow
             }
             GUILayout.EndHorizontal();
 
-			float columnsWidth = 0;
+            float columnsWidth = 0;
 
 
-$(ShowDataInfo)
+            if (_primaryKeyInfo.Values.ContainsKey(_dataList[i].T.ToString()))
+            {
+                if (_primaryKeyInfo.Values[_dataList[i].T.ToString()] > 1)
+                {
+                    GUI.color = Color.red;
+                }
+            }
+            columnsWidth = _excelConfig.ColumnsWidth[0];
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));
+            int key = (int)TableDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[0].FieldType, _dataList[i].T);
+            if (key != _dataList[i].T)
+            {
+                _primaryKeyInfo.Values[_dataList[i].T.ToString()]--;
+                if (_primaryKeyInfo.Values.ContainsKey(key.ToString()))
+                {
+                    _primaryKeyInfo.Values[key.ToString()]++;
+                }
+                else
+                {
+                    _primaryKeyInfo.Values.Add(key.ToString(), 1);
+                }
+                _dataList[i].T = key;
+            }
+            GUILayout.EndHorizontal();
+            GUI.color = Color.white;
+
+            columnsWidth = _excelConfig.ColumnsWidth[1];
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));
+            _dataList[i].a = (List<int>)TableDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[1].FieldType, _dataList[i].a);
+            GUILayout.EndHorizontal();
+
+            if (TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic.ContainsKey("Test2"))
+            {
+                if (TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic["Test2"].Values.ContainsKey(_dataList[i].b.ToString()))
+                {
+                    if (TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic["Test2"].Values[_dataList[i].b.ToString()] < 1)
+                    {
+                        GUI.color = new Color(1, 0.5f, 0);
+                    }
+                }
+                else
+                {
+                    GUI.color = new Color(1, 0.5f, 0);
+                }
+            }
+            else
+            {
+                GUI.color = new Color(1, 0.5f, 0);
+            }
+            columnsWidth = _excelConfig.ColumnsWidth[2];
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));
+            _dataList[i].b = (int)TableDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[2].FieldType, _dataList[i].b);
+            GUILayout.EndHorizontal();
+            GUI.color = Color.white;
+
+            columnsWidth = _excelConfig.ColumnsWidth[3];
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));
+            _dataList[i].c = (int)TableDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[3].FieldType, _dataList[i].c);
+            GUILayout.EndHorizontal();
+
+            columnsWidth = _excelConfig.ColumnsWidth[4];
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));
+            _dataList[i].d = (int)TableDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[4].FieldType, _dataList[i].d);
+            GUILayout.EndHorizontal();
+
+            columnsWidth = _excelConfig.ColumnsWidth[5];
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));
+            _dataList[i].e = (int)TableDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[5].FieldType, _dataList[i].e);
+            GUILayout.EndHorizontal();
+
+
 
 
             //GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_excelConfig.ColumnsWidth[8]), GUILayout.ExpandHeight(true));
@@ -359,7 +433,7 @@ $(ShowDataInfo)
             {
                 _serializeData.DataList.Remove(removeData);
             }
-            _primaryKeyInfo.Values[removeData.$(Primary).ToString()]--;
+            _primaryKeyInfo.Values[removeData.T.ToString()]--;
         }
         GUILayout.EndVertical();
         GUILayout.EndScrollView();
@@ -463,7 +537,7 @@ $(ShowDataInfo)
     {
         for (int i = 0; i < TableDatabaseUtils.TableConfigSerializeData.TableConfigList.Count; i++)
         {
-            if (TableDatabaseUtils.TableConfigSerializeData.TableConfigList[i].TableName == "$(DataClassName)")
+            if (TableDatabaseUtils.TableConfigSerializeData.TableConfigList[i].TableName == "Test")
             {
                 _tableConfig = TableDatabaseUtils.TableConfigSerializeData.TableConfigList[i];
                 break;
@@ -480,7 +554,7 @@ $(ShowDataInfo)
                 }
             }
             _tableConfig.DataPath = path;
-            _serializeData = ScriptableObject.CreateInstance<$(DataClassName)SerializeData>();
+            _serializeData = ScriptableObject.CreateInstance<TestSerializeData>();
             TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic.Add(_tableConfig.TableName, new PrimaryKeyInfo());
             _primaryKeyInfo = TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic[_tableConfig.TableName];
             _primaryKeyInfo.TableName = _tableConfig.TableName;
@@ -494,7 +568,7 @@ $(ShowDataInfo)
         }
         else
         {
-            _serializeData = AssetDatabase.LoadAssetAtPath<$(DataClassName)SerializeData>(_tableConfig.DataPath);
+            _serializeData = AssetDatabase.LoadAssetAtPath<TestSerializeData>(_tableConfig.DataPath);
             _primaryKeyInfo = TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic[_tableConfig.TableName];
             if (_tableConfig.PrimaryKey != _primaryKeyInfo.PrimaryKey)
             {
@@ -505,7 +579,7 @@ $(ShowDataInfo)
                 _primaryKeyInfo.Values = new Dictionary<string, int>();
                 for (int i = 0; i < _serializeData.DataList.Count; i++)
                 {
-                    string value = _serializeData.DataList[i].$(Primary).ToString();
+                    string value = _serializeData.DataList[i].T.ToString();
                     if (!_primaryKeyInfo.Values.ContainsKey(value))
                     {
                         _primaryKeyInfo.Values.Add(value, 1);
@@ -518,7 +592,7 @@ $(ShowDataInfo)
                 TableDatabaseUtils.SavaGlobalData();
             }
         }
-        _dataList = new List<$(DataClassName)>();
+        _dataList = new List<Test>();
         _dataList.AddRange(_serializeData.DataList);
     }
 
@@ -531,11 +605,11 @@ $(ShowDataInfo)
             {
                 Directory.CreateDirectory(Path.GetFullPath(path));
             }
-            path += "/$(DataClassName)Config.asset";
+            path += "/TestConfig.asset";
             if (!File.Exists(Path.GetFullPath(path)))
             {
-                _excelConfig = ScriptableObject.CreateInstance<$(DataClassName)Config>();
-				for (int i = 0; i < _tableConfig.FieldList.Count; i++)
+                _excelConfig = ScriptableObject.CreateInstance<TestConfig>();
+                for (int i = 0; i < _tableConfig.FieldList.Count; i++)
                 {
                     _excelConfig.ColumnsWidth.Add(TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth);
                 }
@@ -546,8 +620,8 @@ $(ShowDataInfo)
             }
             else
             {
-                _excelConfig = AssetDatabase.LoadAssetAtPath<$(DataClassName)Config>(path);
-				int diff = _excelConfig.ColumnsWidth.Count -_tableConfig.FieldList.Count;
+                _excelConfig = AssetDatabase.LoadAssetAtPath<TestConfig>(path);
+                int diff = _excelConfig.ColumnsWidth.Count - _tableConfig.FieldList.Count;
                 if (diff > 1)
                 {
                     while (_excelConfig.ColumnsWidth.Count > _tableConfig.FieldList.Count + 1)

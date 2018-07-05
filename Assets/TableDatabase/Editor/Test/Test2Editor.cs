@@ -10,14 +10,22 @@ public class Test2Editor : EditorWindow
     [MenuItem("Window/TestWindow _%t")]
     static void Init()
     {
-        Test2Editor tw = EditorWindow.GetWindow<Test2Editor>("Test Window");
+        //Test2Editor tw = EditorWindow.GetWindow<Test2Editor>("Test Window");
 
-        tw.divisions = new DivisionSlider(4f, false, 50f, 50f, 50f, 50f);
-        tw.divisions.SetMinSize(20f);
-        tw.resizeMode = DivisionSlider.ResizeMode.DistributeSpace;
-        //tw.divisions.MaxSizes[tw.divisions.Count - 1] = 150f;
-        
-        tw.Show();
+        //tw.divisions = new DivisionSlider(4f, false, 50f, 50f, 50f, 50f);
+        //tw.divisions.SetMinSize(20f);
+        //tw.resizeMode = DivisionSlider.ResizeMode.DistributeSpace;
+        ////tw.divisions.MaxSizes[tw.divisions.Count - 1] = 150f;
+
+        //tw.Show();
+
+        //TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic.Add("Test", new List<int>());
+        //for (int i = 0; i < 10; i++)
+        //{
+        //    Debug.LogError(TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic["Test"][i]);
+            
+        //}
+        TableDatabaseUtils.SavaGlobalData();
     }
 
     DivisionSlider divisions;

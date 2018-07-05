@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------------------------------------
-//-----------------------------------generate file 2018-07-03 15:27:31----------------------------------------
+//-----------------------------------generate file 2018-07-05 13:59:42----------------------------------------
 //------------------------------------------------------------------------------------------------------------
 
 using System;
@@ -17,8 +17,9 @@ public class PlayerInfo
     public int Id;
     public string PlayerName;
     public Sprite Icon;
-    public List<int> Backinfo = new List<int>();
     public Vector3 Pos;
     public Quaternion Rot;
     public List<Texture> Cloths = new List<Texture>();
+    public TestEnum EnumTest;
+    public List<int> Backinfo = new List<int>();
 }

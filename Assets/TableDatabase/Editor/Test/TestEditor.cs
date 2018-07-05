@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,10 +11,10 @@ public class TestEditor : EditorWindow
     [MenuItem("Table/NewTables/玩家信息", priority = 30)]
     static void CreateTable()
     {
-        EditorWindow.GetWindow<TestEditor>(false, "玩家信息数据").minSize = new Vector2(400, 200);
+        EditorWindow.GetWindow<TestEditor>(false, "玩家信息数据").minSize = new Vector2(600, 500);
     }
 
-    private PlayerInfoConfig _playerInfoConfig;
+    private PlayerInfoConfig _excelConfig;
 
     private TableConfig _tableConfig;
 
@@ -21,6 +22,7 @@ public class TestEditor : EditorWindow
 
     private DivisionSlider _divisionSlider;
 
+    private PrimaryKeyInfo _primaryKeyInfo = null;
 
     private string[] _searchFieldArray;
 
@@ -38,7 +40,19 @@ public class TestEditor : EditorWindow
 
     private Event currentEvent = null;
 
+    private int _pageNum = 1;
+
+    private int _pageMaxNum = 1;
+
+    private bool _isSort = false;
+
     private List<PlayerInfo> _dataList = null;
+
+    private string[] _showCountArray = new string[] { "10", "30", "50", "80", "100" };
+
+    private int _showCountIndex = 0;
+
+    private List<Rect> rectList;
 
     void OnGUI()
     {
@@ -47,26 +61,20 @@ public class TestEditor : EditorWindow
             return;
         }
         currentEvent = Event.current;
-        //GUILayout.BeginHorizontal("sv_iconselector_back");
         GUI.SetNextControlName("GUIArea");
         GUILayout.BeginArea(new Rect(5, 5, position.width - 10, position.height - 10), "", "box");
         GUILayout.BeginVertical();
         GUITitleInfo();
         GUISearchInfo();
-        GUIShowTableBody();
         GUIShowTableHead();
-
-        //ShowDataList();
-        GUILayout.EndVertical();
-        GUILayout.BeginVertical();
-        //ShowDataInfo();
+        GUIShowTableBody();
+        GUIFooterInfo();
         GUILayout.EndVertical();
         GUILayout.EndArea();
-        //GUILayout.EndHorizontal();
 
         if (GUI.enabled)
         {
-            switch (Event.current.type)
+            switch (currentEvent.type)
             {
                 case EventType.Used:
                     _isMouseInSearch = GUI.GetNameOfFocusedControl() == "SearchText";
@@ -85,12 +93,12 @@ public class TestEditor : EditorWindow
                     break;
             }
         }
-
-        if (Event.current.keyCode == KeyCode.Escape)
+        if (currentEvent.keyCode == KeyCode.Escape || currentEvent.keyCode == KeyCode.Return)
         {
             GUI.FocusControl("GUIArea");
         }
     }
+
 
     /// <summary>
     /// 显示Title
@@ -100,13 +108,50 @@ public class TestEditor : EditorWindow
         GUI.color = new Color(0.8f, 0.8f, 0.8f);
         GUILayout.BeginHorizontal("OL Title");
         GUI.color = Color.white;
-        GUILayout.Label("数据列表:");
-        GUILayout.Label(_serializeData.DataList.Count + "条");
-        GUILayout.FlexibleSpace();
-        if (GUILayout.Button("添加", "OL Plus"))
+        GUILayout.Space(-5);
+        if (GUILayout.Button("保存", EditorGUIStyle.GetMiddleButton, GUILayout.ExpandHeight(true), GUILayout.Width(100)))
         {
-            _serializeData.DataList.Add(new PlayerInfo());
+            this.ShowNotification(new GUIContent("正在保存。。。"));
+            _primaryKeyInfo.Values.Clear();
+            for (int i = 0; i < _serializeData.DataList.Count; i++)
+            {
+                string value = _serializeData.DataList[i].Id.ToString();
+                if (!_primaryKeyInfo.Values.ContainsKey(value))
+                {
+                    _primaryKeyInfo.Values.Add(value, 1);
+                }
+                else
+                {
+                    _primaryKeyInfo.Values[value]++;
+                }
+            }
+            TableDatabaseUtils.SavaGlobalData();
+            EditorUtility.SetDirty(_serializeData);
+            AssetDatabase.SaveAssets();
         }
+
+        GUILayout.FlexibleSpace();
+        if (GUILayout.Button("添加", EditorGUIStyle.GetMiddleButton, GUILayout.ExpandHeight(true), GUILayout.Width(100)))
+        {
+            PlayerInfo playerInfo = new PlayerInfo();
+            _serializeData.DataList.Add(playerInfo);
+            if (_primaryKeyInfo.Values.ContainsKey(playerInfo.Id.ToString()))
+            {
+                _primaryKeyInfo.Values[playerInfo.Id.ToString()]++;
+            }
+            else
+            {
+                _primaryKeyInfo.Values.Add(playerInfo.Id.ToString(), 1);
+            }
+            _pageMaxNum = (_serializeData.DataList.Count / _excelConfig.ShowCount);
+            if (_serializeData.DataList.Count % _excelConfig.ShowCount > 0)
+            {
+                _pageMaxNum++;
+            }
+            _pageNum = 1;
+        }
+        GUILayout.Space(-5);
+
         GUILayout.EndHorizontal();
 
     }
@@ -132,28 +177,30 @@ public class TestEditor : EditorWindow
             GUI.Label(new Rect(25, 30, 90, 12), _searchFieldArray[_searchFieldIndex], "RL Element");
             GUI.color = Color.white;
         }
-        if (str != _searchValue)
+        if (string.IsNullOrEmpty(str) && !_isSort)
         {
             _searchValue = str;
-            //_searchDataDic.Clear();
-            //if (!string.IsNullOrEmpty(str))
-            //{
-            //    for (int i = 0; i < _serializeData.DataList.Count; i++)
-            //    {
-            //        PlayerInfo data = _serializeData.DataList[i];
-            //        string temp = data.GetType().GetField(_searchFieldArray[_searchFieldIndex]).GetValue(data).ToString();
-            //        if (temp.Contains(str))
-            //        {
-            //            _searchDataDic.Add(i, data);
-            //        }
-            //    }
-            //    _isSearch = true;
-            //}
-            //else
-            //{
-            //    _isSearch = false;
-            //}
-            //_searchValue = str;
+            _dataList.Clear();
+            _dataList.AddRange(_serializeData.DataList);
+        }
+        else if (str != _searchValue)
+        {
+            _isSort = false;
+            _dataList.Clear();
+            _searchValue = str;
+            if (!string.IsNullOrEmpty(str))
+            {
+                for (int i = 0; i < _serializeData.DataList.Count; i++)
+                {
+                    PlayerInfo data = _serializeData.DataList[i];
+                    string temp = data.GetType().GetField(_searchFieldArray[_searchFieldIndex]).GetValue(data).ToString();
+                    if (temp.Contains(str))
+                    {
+                        _dataList.Add(data);
+                    }
+                }
+            }
+            _searchValue = str;
         }
         if (string.IsNullOrEmpty(_searchValue))
         {
@@ -165,45 +212,67 @@ public class TestEditor : EditorWindow
             {
                 _searchValue = "";
                 GUI.FocusControl("GUIArea");
-                //_isSearch = false;
-                //_searchDataDic.Clear();
             }
         }
 
         GUILayout.EndHorizontal();
     }
 
-    List<Rect> rectList;
     private void GUIShowTableHead()
     {
         _areaWidht = 0;
         for (int i = 0; i < _divisionSlider.Count; i++)
         {
-            _areaWidht += _playerInfoConfig.ColumnsWidth[i];
+            _areaWidht += _excelConfig.ColumnsWidth[i];
         }
-
-        Rect areaRect = new Rect(5, 55, _areaWidht, 30);
+        Rect areaRect = new Rect(35, 55, _areaWidht, 30);
         rectList = new List<Rect>(_divisionSlider.HorizontalLayoutRects(areaRect));
+        GUILayout.BeginArea(new Rect(3, 50, position.width - 20, 50));
         GUILayout.BeginScrollView(new Vector2(_tableScrollView.x, 0), GUIStyle.none, GUIStyle.none);
         GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_areaWidht), GUILayout.Height(30));
         int index = 0;
+
+        GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(30), GUILayout.MaxHeight(30));
+        GUILayout.Space(2);
+        GUILayout.BeginVertical();
+        GUILayout.Space(5);
+        if (GUILayout.Button("R", EditorGUIStyle.GetTitleButton, GUILayout.Height(20), GUILayout.ExpandWidth(true)))
+        {
+            for (int i = 0; i < _excelConfig.ColumnsWidth.Count; i++)
+            {
+                _divisionSlider.SetSize(i, TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth);
+                _excelConfig.ColumnsWidth[i] = TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth;
+            }
+        }
+        GUILayout.EndVertical();
+        GUILayout.Space(2);
+        GUILayout.EndHorizontal();
+
         for (index = 0; index < _tableConfig.FieldList.Count; index++)
         {
             GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(rectList[index].width), GUILayout.MaxHeight(30));
-            GUILayout.Space(5);
             string name = string.IsNullOrEmpty(_tableConfig.FieldList[index].ShowName) ? _tableConfig.FieldList[index].Name : _tableConfig.FieldList[index].ShowName;
-            GUILayout.Button(name);
-            _playerInfoConfig.ColumnsWidth[index] = rectList[index].width;
             GUILayout.Space(5);
-
+            GUILayout.BeginVertical();
+            GUILayout.Space(5);
+            if (GUILayout.Button(name, EditorGUIStyle.GetTitleButton, GUILayout.Height(20)))
+            {
+                _dataList.Clear();
+                _dataList.AddRange(_serializeData.DataList.OrderBy(a => a.Id));
+                _isSort = true;
+            }
+            _excelConfig.ColumnsWidth[index] = rectList[index].width;
+            GUILayout.EndVertical();
+            GUILayout.Space(5);
             GUILayout.EndHorizontal();
         }
         GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(rectList[index].width), GUILayout.MaxHeight(30));
-        GUILayout.Label("");
+        GUILayout.Button("", EditorGUIStyle.GetTitleButton, GUILayout.Height(25), GUILayout.ExpandWidth(true));
         GUILayout.EndHorizontal();
         GUILayout.Space(5);
         GUILayout.EndHorizontal();
         GUILayout.EndScrollView();
+        GUILayout.EndArea();
         float f = 0;
         if (_areaWidht > position.width)
         {
@@ -213,43 +282,6 @@ public class TestEditor : EditorWindow
 
         _divisionSlider.DoHorizontalSliders(areaRect, f);
         _divisionSlider.Resize(areaRect.width, DivisionSlider.ResizeMode.PrioritizeOuter);
-
-        #region Old
-        //_areaWidht = 0;
-        //for (int i = 0; i < _divisionSlider.Count; i++)
-        //{
-        //    if (i == _divisionSlider.Count - 1)
-        //    {
-        //        _areaWidht += TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth;
-        //    }
-        //    else
-        //    {
-        //        _areaWidht += _divisionSlider.GetSize(i);
-        //    }
-        //}
-
-        //Rect areaRect = new Rect(5, 55, _areaWidht, 30);
-        //GUI.BeginScrollView(new Rect(5, 55, position.width - 20, 30), new Vector2(_tableScrollView.x, 0), areaRect, false, false, GUIStyle.none, GUIStyle.none);
-        //GUILayout.BeginHorizontal();
-        //rectList = new List<Rect>(_divisionSlider.HorizontalLayoutRects(areaRect));
-        //int index = 0;
-        //for (index = 0; index < _tableConfig.FieldList.Count; index++)
-        //{
-        //    GUILayout.BeginArea(rectList[index], "", "Box");
-        //    string name = string.IsNullOrEmpty(_tableConfig.FieldList[index].ShowName) ? _tableConfig.FieldList[index].Name : _tableConfig.FieldList[index].ShowName;
-        //    GUILayout.Button(name, "OL Title");
-        //    GUILayout.EndArea();
-        //    _playerInfoConfig.ColumnsWidth[index] = rectList[index].width;
-        //}
-
-        //GUILayout.BeginArea(rectList[index], "", "Box");
-        //GUILayout.EndArea();
-
-        //GUILayout.EndHorizontal();
-        //_divisionSlider.DoHorizontalSliders(areaRect);
-        //_divisionSlider.Resize(areaRect.width, DivisionSlider.ResizeMode.PrioritizeOuter);
-        //GUI.EndScrollView();
-        #endregion
     }
 
     private void GUIShowTableBody()
@@ -257,55 +289,161 @@ public class TestEditor : EditorWindow
         GUILayout.BeginArea(new Rect(3, 85, position.width - 20, position.height - 150));
         _tableScrollView = GUILayout.BeginScrollView(_tableScrollView, false, false, GUI.skin.horizontalScrollbar, GUIStyle.none);// );
         GUILayout.BeginVertical();
-        for (int i = 0; i < _dataList.Count; i++)
+        PlayerInfo removeData = null;
+        int begin = (_pageNum - 1) * _excelConfig.ShowCount;
+        int end = Mathf.Min(_pageNum * _excelConfig.ShowCount, _dataList.Count);
+        for (int i = begin; i < end; i++)
         {
-            for (int j = 0; j < _tableConfig.FieldList.Count; j++)
+
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_areaWidht + 30), GUILayout.MinHeight(30));
+
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(30), GUILayout.ExpandHeight(true));
+            GUILayout.Space(5);
+            if (GUILayout.Button("", "OL Minus"))
             {
-                //RenderFieldInfoControl(i,_dataList[i])
+                removeData = _dataList[i];
             }
-            GUILayout.BeginHorizontal(GUILayout.Width(_areaWidht), GUILayout.Height(30));
-            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_playerInfoConfig.ColumnsWidth[0]), GUILayout.MaxHeight(30));
-            GUILayout.TextField("dasda" + i);
             GUILayout.EndHorizontal();
 
-            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_playerInfoConfig.ColumnsWidth[1]), GUILayout.MaxHeight(30));
-            GUILayout.TextField("dasda" + i);
+            if (_primaryKeyInfo.Values.ContainsKey(_dataList[i].Id.ToString()))
+            {
+                if (_primaryKeyInfo.Values[_dataList[i].Id.ToString()] > 1)
+                {
+                    GUI.color = Color.red;
+                }
+            }
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(rectList[0].width), GUILayout.MaxWidth(rectList[0].width), GUILayout.ExpandHeight(true));
+            int id = (int)TableDatabaseUtils.RenderFieldInfoControl(rectList[0].width, _tableConfig.FieldList[0].FieldType, _dataList[i].Id);
+            if (id != _dataList[i].Id)
+            {
+                _primaryKeyInfo.Values[_dataList[i].Id.ToString()]--;
+                if (_primaryKeyInfo.Values.ContainsKey(id.ToString()))
+                {
+                    _primaryKeyInfo.Values[id.ToString()]++;
+                }
+                else
+                {
+                    _primaryKeyInfo.Values.Add(id.ToString(), 1);
+                }
+                _dataList[i].Id = id;
+            }
+            GUILayout.EndHorizontal();
+            GUI.color = Color.white;
+
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_excelConfig.ColumnsWidth[1]), GUILayout.MaxWidth(_excelConfig.ColumnsWidth[1]), GUILayout.ExpandHeight(true));
+            _dataList[i].PlayerName = (string)TableDatabaseUtils.RenderFieldInfoControl(_excelConfig.ColumnsWidth[1], _tableConfig.FieldList[1].FieldType, _dataList[i].PlayerName);
             GUILayout.EndHorizontal();
 
-            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_playerInfoConfig.ColumnsWidth[2]), GUILayout.MaxHeight(30));
-            GUILayout.TextField("dasda" + i);
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_excelConfig.ColumnsWidth[2]), GUILayout.MaxWidth(_excelConfig.ColumnsWidth[2]), GUILayout.ExpandHeight(true));
+            _dataList[i].Icon = (Sprite)TableDatabaseUtils.RenderFieldInfoControl(_excelConfig.ColumnsWidth[2], _tableConfig.FieldList[2].FieldType, _dataList[i].Icon);
             GUILayout.EndHorizontal();
 
-            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_playerInfoConfig.ColumnsWidth[3]), GUILayout.MaxHeight(30));
-            GUILayout.TextField("dasda" + i);
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_excelConfig.ColumnsWidth[3]), GUILayout.MaxWidth(_excelConfig.ColumnsWidth[3]), GUILayout.ExpandHeight(true));
+            _dataList[i].Pos = (Vector3)TableDatabaseUtils.RenderFieldInfoControl(_excelConfig.ColumnsWidth[3], _tableConfig.FieldList[3].FieldType, _dataList[i].Pos);
             GUILayout.EndHorizontal();
 
-            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_playerInfoConfig.ColumnsWidth[4]), GUILayout.MaxHeight(30));
-            GUILayout.TextField("dasda" + i);
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_excelConfig.ColumnsWidth[4]), GUILayout.MaxWidth(_excelConfig.ColumnsWidth[4]), GUILayout.ExpandHeight(true));
+            _dataList[i].Rot = (Quaternion)TableDatabaseUtils.RenderFieldInfoControl(_excelConfig.ColumnsWidth[4], _tableConfig.FieldList[4].FieldType, _dataList[i].Rot);
             GUILayout.EndHorizontal();
 
-            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_playerInfoConfig.ColumnsWidth[5]), GUILayout.MaxHeight(30));
-            GUILayout.TextField("dasda" + i);
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_excelConfig.ColumnsWidth[5]), GUILayout.MaxWidth(_excelConfig.ColumnsWidth[5]), GUILayout.ExpandHeight(true));
+            _dataList[i].Cloths = (List<Texture>)TableDatabaseUtils.RenderFieldInfoControl(_excelConfig.ColumnsWidth[5], _tableConfig.FieldList[5].FieldType, _dataList[i].Cloths, otherType: _tableConfig.FieldList[5].GenericType);
             GUILayout.EndHorizontal();
 
-            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_playerInfoConfig.ColumnsWidth[6]), GUILayout.MaxHeight(30));
-            GUILayout.TextField("dasda" + i);
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_excelConfig.ColumnsWidth[6]), GUILayout.MaxWidth(_excelConfig.ColumnsWidth[6]), GUILayout.ExpandHeight(true));
+            _dataList[i].EnumTest = (TestEnum)TableDatabaseUtils.RenderFieldInfoControl(_excelConfig.ColumnsWidth[6], _tableConfig.FieldList[6].FieldType, _dataList[i].EnumTest, otherType: _tableConfig.FieldList[6].GenericType);
             GUILayout.EndHorizontal();
 
-            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_playerInfoConfig.ColumnsWidth[7]), GUILayout.MaxHeight(30));
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_excelConfig.ColumnsWidth[7]), GUILayout.MaxWidth(_excelConfig.ColumnsWidth[6]), GUILayout.ExpandHeight(true));
+            _dataList[i].Backinfo = (List<int>)TableDatabaseUtils.RenderFieldInfoControl(_excelConfig.ColumnsWidth[7], _tableConfig.FieldList[7].FieldType, _dataList[i].Backinfo, otherType: _tableConfig.FieldList[7].GenericType);
+            GUILayout.EndHorizontal();
+
+
+            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_excelConfig.ColumnsWidth[8]), GUILayout.ExpandHeight(true));
             GUILayout.Label("");
             GUILayout.EndHorizontal();
 
             GUILayout.EndHorizontal();
-
-
-            //GUILayout.Label("dasdasdasdasdasdas" + i, GUILayout.Width(_areaWidht));
+        }
+        if (removeData != null)
+        {
+            _dataList.Remove(removeData);
+            if (_serializeData.DataList.Contains(removeData))
+            {
+                _serializeData.DataList.Remove(removeData);
+            }
+            _primaryKeyInfo.Values[removeData.Id.ToString()]--;
         }
         GUILayout.EndVertical();
         GUILayout.EndScrollView();
         GUILayout.EndArea();
     }
 
+
+    private void GUIFooterInfo()
+    {
+        GUILayout.BeginArea(new Rect(3, position.height - 55, position.width - 20, 50));
+        GUILayout.BeginVertical();
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("显示个数:");
+        int showCountIndex = GUILayout.Toolbar(_showCountIndex, _showCountArray);
+        if (_showCountIndex != showCountIndex)
+        {
+            _showCountIndex = showCountIndex;
+            _excelConfig.ShowCount = Convert.ToInt32(_showCountArray[_showCountIndex]);
+            _pageMaxNum = (_serializeData.DataList.Count / _excelConfig.ShowCount);
+            if (_serializeData.DataList.Count % _excelConfig.ShowCount > 0)
+            {
+                _pageMaxNum++;
+            }
+            _pageNum = 1;
+        }
+        GUILayout.FlexibleSpace();
+        if (GUILayout.Button("◀"))
+        {
+            if (_pageNum != 1)
+            {
+                _pageNum--;
+            }
+        }
+        GUI.color = Color.black;
+        GUILayout.Label(_pageNum + "/" + _pageMaxNum);
+        GUI.color = Color.white;
+        if (GUILayout.Button("▶"))
+        {
+            if (_pageNum < _pageMaxNum)
+            {
+                _pageNum++;
+            }
+        }
+        //GUILayout.FlexibleSpace();
+        GUILayout.Space((position.width) / 2 - 150);
+        GUILayout.Label("数据列表:");
+        GUILayout.Label(_serializeData.DataList.Count + "条");
+
+        GUILayout.EndHorizontal();
+        GUILayout.Space(1);
+        GUI.color = new Color(0.8f, 0.8f, 0.8f);
+        GUILayout.BeginHorizontal("OL Title");
+        GUI.color = Color.white;
+        GUILayout.Label("Version 2.0.0 Beta");
+        GUILayout.EndHorizontal();
+
+        GUILayout.EndVertical();
+        GUILayout.EndArea();
+    }
+
+    #region 初始化和功能方法
+    private void OnFocus()
+    {
+        if (_foreignKeyDic != null)
+        {
+            foreach (KeyValuePair<string, List<object>> item in _foreignKeyDic)
+            {
+
+            }
+        }
+    }
 
     private void OnEnable()
     {
@@ -317,8 +455,8 @@ public class TestEditor : EditorWindow
 
     private void OnDestroy()
     {
-        _playerInfoConfig.ColumnsWidth[_playerInfoConfig.ColumnsWidth.Count - 1] = TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth;
-        EditorUtility.SetDirty(_playerInfoConfig);
+        _excelConfig.ColumnsWidth[_excelConfig.ColumnsWidth.Count - 1] = TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth;
+        EditorUtility.SetDirty(_excelConfig);
         EditorUtility.SetDirty(_serializeData);
         AssetDatabase.SaveAssets();
     }
@@ -345,11 +483,7 @@ public class TestEditor : EditorWindow
     {
         if (_divisionSlider == null)
         {
-
-            //List<float> sizes = new List<float>() {};
-            //sizes.Add(TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth);
-
-            _divisionSlider = new DivisionSlider(5, false, _playerInfoConfig.ColumnsWidth.ToArray());
+            _divisionSlider = new DivisionSlider(5, false, _excelConfig.ColumnsWidth.ToArray());
         }
     }
 
@@ -375,8 +509,13 @@ public class TestEditor : EditorWindow
             }
             _tableConfig.DataPath = path;
             _serializeData = ScriptableObject.CreateInstance<PlayerInfoSerializeData>();
-            TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyInfoList.Add(new PrimaryKeyInfo() { TableName = "PlayerInfo", PrimaryKey = "Id", PrimaryType = "int" });
-            EditorUtility.SetDirty(TableDatabaseUtils.TableConfigSerializeData);
+            TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic.Add(_tableConfig.TableName, new PrimaryKeyInfo());
+            _primaryKeyInfo = TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic[_tableConfig.TableName];
+            _primaryKeyInfo.TableName = _tableConfig.TableName;
+            _primaryKeyInfo.PrimaryKey = _tableConfig.PrimaryKey;
+            _primaryKeyInfo.PrimaryType = _tableConfig.PrimaryType;
+            _primaryKeyInfo.Values = new Dictionary<string, int>();
+            TableDatabaseUtils.SavaGlobalData();
             AssetDatabase.CreateAsset(_serializeData, path);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -384,13 +523,36 @@ public class TestEditor : EditorWindow
         else
         {
             _serializeData = AssetDatabase.LoadAssetAtPath<PlayerInfoSerializeData>(_tableConfig.DataPath);
+            _primaryKeyInfo = TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic[_tableConfig.TableName];
+            if (_tableConfig.PrimaryKey != _primaryKeyInfo.PrimaryKey)
+            {
+                //更换主键
+                _primaryKeyInfo.TableName = _tableConfig.TableName;
+                _primaryKeyInfo.PrimaryKey = _tableConfig.PrimaryKey;
+                _primaryKeyInfo.PrimaryType = _tableConfig.PrimaryType;
+                _primaryKeyInfo.Values = new Dictionary<string, int>();
+                for (int i = 0; i < _serializeData.DataList.Count; i++)
+                {
+                    string value = _serializeData.DataList[i].Id.ToString();
+                    if (!_primaryKeyInfo.Values.ContainsKey(value))
+                    {
+                        _primaryKeyInfo.Values.Add(value, 1);
+                    }
+                    else
+                    {
+                        _primaryKeyInfo.Values[value]++;
+                    }
+                }
+                TableDatabaseUtils.SavaGlobalData();
+            }
         }
-        _dataList = _serializeData.DataList;
+        _dataList = new List<PlayerInfo>();
+        _dataList.AddRange(_serializeData.DataList);
     }
 
     private void CheckPlayerConfig()
     {
-        if (_playerInfoConfig == null)
+        if (_excelConfig == null)
         {
             string path = TableDatabaseUtils.EditorPath + "/Config/Table";
             if (!Directory.Exists(Path.GetFullPath(path)))
@@ -400,16 +562,17 @@ public class TestEditor : EditorWindow
             path += "/PlayerInfoConfig.asset";
             if (!File.Exists(Path.GetFullPath(path)))
             {
-                _playerInfoConfig = ScriptableObject.CreateInstance<PlayerInfoConfig>();
-                AssetDatabase.CreateAsset(_playerInfoConfig, path);
+                _excelConfig = ScriptableObject.CreateInstance<PlayerInfoConfig>();
+                AssetDatabase.CreateAsset(_excelConfig, path);
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
             }
             else
             {
-                _playerInfoConfig = AssetDatabase.LoadAssetAtPath<PlayerInfoConfig>(path);
+                _excelConfig = AssetDatabase.LoadAssetAtPath<PlayerInfoConfig>(path);
             }
         }
     }
+    #endregion
 
 }

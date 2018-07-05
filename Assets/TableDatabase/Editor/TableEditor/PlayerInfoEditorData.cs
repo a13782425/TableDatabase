@@ -323,9 +323,6 @@ public class PlayerInfoDataEditor : EditorWindow
         GUILayout.EndHorizontal();
         GUI.color = Color.white;
 
-        EditorGUILayout.PropertyField(_tempSerializedProperty.FindPropertyRelative("Backinfo"), new GUIContent("Backinfo"), true);
-        GUI.color = Color.white;
-
         EditorGUILayout.PropertyField(_tempSerializedProperty.FindPropertyRelative("Pos"), new GUIContent("Pos"), true);
         GUI.color = Color.white;
 
@@ -333,6 +330,12 @@ public class PlayerInfoDataEditor : EditorWindow
         GUI.color = Color.white;
 
         EditorGUILayout.PropertyField(_tempSerializedProperty.FindPropertyRelative("Cloths"), new GUIContent("Cloths"), true);
+        GUI.color = Color.white;
+
+        EditorGUILayout.PropertyField(_tempSerializedProperty.FindPropertyRelative("EnumTest"), new GUIContent("EnumTest"), true);
+        GUI.color = Color.white;
+
+        EditorGUILayout.PropertyField(_tempSerializedProperty.FindPropertyRelative("Backinfo"), new GUIContent("Backinfo"), true);
         GUI.color = Color.white;
 
 
@@ -382,7 +385,7 @@ public class PlayerInfoDataEditor : EditorWindow
             }
             _tableConfig.DataPath = path;
             _serializeData = ScriptableObject.CreateInstance<PlayerInfoSerializeData>();
-            EditorUtility.SetDirty(TableDatabaseUtils.TableConfigSerializeData);
+            //EditorUtility.SetDirty(TableDatabaseUtils.TableConfigSerializeData);
             AssetDatabase.CreateAsset(_serializeData, path);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();

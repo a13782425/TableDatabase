@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TableConfigSerializeData : ScriptableObject
+[System.Serializable]
+public class TableConfigSerializeData
 {
     public TableSetting Setting = new TableSetting();
 
@@ -12,7 +13,6 @@ public class TableConfigSerializeData : ScriptableObject
 [System.Serializable]
 public class TableSetting
 {
-    public bool IsUseSpace = false;
     public float ColumnWidth = 150;
     public string SplitVecChar = "|";
     public string SplitListChar = ",";
@@ -38,10 +38,6 @@ public class TableConfig
     /// 数据路径
     /// </summary>
     public string DataPath;
-
-    public bool HasDescription = false;
-    public int DescriptionIndex;
-    public string Description;
 
     public bool HasPrimaryKey = false;
     /// <summary>

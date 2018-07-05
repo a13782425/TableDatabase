@@ -14,6 +14,7 @@
 //     		See the License for the specific language governing permissions and
 //     		limitations under the License.
 //
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -33,6 +34,68 @@ public class EditorGUIStyle
     private static GUIStyle textGuiStyle;
     private static GUIStyle jumpButtonGuiStyle;
     private static GUIStyle ToggleStyle;
+    private static Dictionary<string, GUIStyle> _titleButtonStyleDic = new Dictionary<string, GUIStyle>();
+    private static GUIStyle MiddleButton;
+    private static GUIStyle _titleButton;
+    private static GUIStyle _minusButton;
+    public static T LoadEditorResource<T>(string file_name_with_extension) where T : UnityEngine.Object
+    {
+        //            string path = string.Format("{0}/EditorResources/", PathMapping.GetSmartDataViewEditorPath());
+        string path = TableDatabaseUtils.EditorPath + "/EditorResources/" + file_name_with_extension;
+        return AssetDatabase.LoadAssetAtPath<T>(path);
+    }
+    public static GUIStyle GetMinusButton
+    {
+        get
+        {
+            if (_minusButton == null)
+            {
+                _minusButton = new GUIStyle("OL Minus");
+                _minusButton.alignment = TextAnchor.MiddleCenter;
+            }
+            return _minusButton;
+        }
+    }
+    public static GUIStyle GetMiddleButton
+    {
+        get
+        {
+            if (MiddleButton == null)
+            {
+                MiddleButton = new GUIStyle("OL Title");
+                MiddleButton.alignment = TextAnchor.MiddleCenter;
+                MiddleButton.fixedHeight = 0;
+                MiddleButton.margin = new RectOffset(0, 0, 0, 0);
+                MiddleButton.padding = new RectOffset(0, 0, 0, 0);
+            }
+            return MiddleButton;
+        }
+    }
+    public static GUIStyle GetTitleButton
+    {
+        get
+        {
+            if (_titleButton == null)
+            {
+                _titleButton = new GUIStyle("OL Title");
+                _titleButton.alignment = TextAnchor.MiddleCenter;
+                _titleButton.fixedHeight = 0;
+                _titleButton.margin = new RectOffset(0, 0, 0, 0);
+                _titleButton.padding = new RectOffset(0, 0, 0, 0);
+                _titleButton.normal.background = null;
+                Texture2D texture2D = new Texture2D(64, 64);
+                for (int i = 0; i < texture2D.width; i++)
+                {
+                    for (int j = 0; j < texture2D.height; j++)
+                    {
+                        texture2D.SetPixel(i, j, new Color(0.77f, 0.77f, 0.77f));
+                    }
+                }
+                _titleButton.active.background = texture2D;
+            }
+            return _titleButton;
+        }
+    }
 
 
     public static GUIStyle GetTogleStyle()
@@ -71,7 +134,18 @@ public class EditorGUIStyle
         return pageLabelGuiStyle;
     }
 
+    public static GUIStyle GetFieldBoxStyle()
+    {
+        if (groupBoxStyle == null)
+        {
+            groupBoxStyle = new GUIStyle(GUI.skin.label);
+            groupBoxStyle.margin = new RectOffset(0, 0, 0, 0);
 
+            groupBoxStyle.padding = new RectOffset(0, 0, 0, 0);
+        }
+
+        return groupBoxStyle;
+    }
 
     public static GUIStyle GetGroupBoxStyle()
     {

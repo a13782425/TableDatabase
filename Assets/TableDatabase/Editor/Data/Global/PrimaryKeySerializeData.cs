@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PrimaryKeySerializeData : ScriptableObject
+[System.Serializable]
+public class PrimaryKeySerializeData
 {
-    public List<PrimaryKeyInfo> PrimaryKeyInfoList = new List<PrimaryKeyInfo>();
+    public Dictionary<string, PrimaryKeyInfo> PrimaryKeyDic = new Dictionary<string, PrimaryKeyInfo>();
+
 }
 
 [System.Serializable]
@@ -13,18 +15,5 @@ public class PrimaryKeyInfo
     public string TableName;
     public string PrimaryKey;
     public string PrimaryType;
-    public List<IntPrimaryKeyCount> IntValues = new List<IntPrimaryKeyCount>();
-    public List<StringPrimaryKeyCount> StringValues = new List<StringPrimaryKeyCount>();
-}
-[System.Serializable]
-public class IntPrimaryKeyCount
-{
-    public int Value;
-    public int Count;
-}
-[System.Serializable]
-public class StringPrimaryKeyCount
-{
-    public string Value;
-    public int Count;
+    public Dictionary<string, int> Values = new Dictionary<string, int>();
 }

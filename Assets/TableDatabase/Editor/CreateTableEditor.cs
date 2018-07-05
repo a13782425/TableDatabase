@@ -151,26 +151,6 @@ public class CreateTableEditor : EditorWindow
             _tempTableConfig.TableName = GUILayout.TextField(_tempTableConfig.TableName, GUILayout.Width(INFO_TEXT_WIDTH));
             GUILayout.Label("别名：", GUILayout.Width(INFO_LABEL_WIDTH));
             _tempTableConfig.ShowName = GUILayout.TextField(_tempTableConfig.ShowName, GUILayout.Width(INFO_TEXT_WIDTH));
-            GUILayout.EndHorizontal();
-            GUILayout.Space(5);
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("修饰：", GUILayout.Width(INFO_LABEL_WIDTH));
-            _tempTableConfig.HasDescription = GUILayout.Toggle(_tempTableConfig.HasDescription, "", GUILayout.Width(20));
-            if (_tempTableConfig.HasDescription)
-            {
-                string[] desArray = TableDatabaseUtils.GetDescription(_tempTableConfig);
-                if (desArray.Length == 0)
-                {
-                    GUILayout.Label("没有合适的字段", GUILayout.Width(INFO_POPUP_WIDTH));
-                    _tempTableConfig.Description = "";
-                }
-                else
-                {
-                    _tempTableConfig.DescriptionIndex = EditorGUILayout.Popup(_tempTableConfig.DescriptionIndex, desArray, GUILayout.Width(INFO_POPUP_WIDTH));
-                    _tempTableConfig.Description = desArray[_tempTableConfig.DescriptionIndex];
-                }
-            }
-            GUILayout.Space(5);
             GUILayout.Label("主键：", GUILayout.Width(INFO_LABEL_WIDTH));
             string[] keys = TableDatabaseUtils.GetPrimaryKey(_tempTableConfig);
             if (keys.Length == 1)
@@ -474,7 +454,8 @@ public class CreateTableEditor : EditorWindow
 
     private void WriteConfig()
     {
-        EditorUtility.SetDirty(TableDatabaseUtils.TableConfigSerializeData);
+        TableDatabaseUtils.SavaGlobalData();
+        //EditorUtility.SetDirty(TableDatabaseUtils.TableConfigSerializeData);
         AssetDatabase.SaveAssets();
     }
 

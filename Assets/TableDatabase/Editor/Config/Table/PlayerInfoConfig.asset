@@ -12,11 +12,13 @@ MonoBehaviour:
   m_Name: PlayerInfoConfig
   m_EditorClassIdentifier: 
   ColumnsWidth:
-  - 75
-  - 111
-  - 101
-  - 99
-  - 105
-  - 113.82532
-  - 129.17468
   - 150
+  - 150
+  - 150
+  - 150
+  - 150
+  - 150
+  - 150
+  - 150
+  - 150
+  ShowCount: 30

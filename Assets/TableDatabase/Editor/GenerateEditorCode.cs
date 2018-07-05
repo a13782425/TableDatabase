@@ -54,22 +54,22 @@ public class GenerateEditorCode
         templateText = templateText.Replace("$(DataClassName)", _currentConfig.TableName);
         templateText = templateText.Replace("$(Primary)", _currentConfig.PrimaryKey);
         templateText = templateText.Replace("$(PrimaryType)", _currentConfig.PrimaryType);
-        if (_currentConfig.HasDescription)
-        {
-            if (!string.IsNullOrEmpty(_currentConfig.Description))
-            {
-                //object.Equals(data.PlayerId, null) ? "null" : data.PlayerId.ToString()
-                templateText = templateText.Replace("$(SelectName)", "object.Equals(data." + _currentConfig.Description + ", null) ? \"null\" : data." + _currentConfig.Description + ".ToString()");
-            }
-            else
-            {
-                templateText = templateText.Replace("$(SelectName)", "\"选择\"");
-            }
-        }
-        else
-        {
-            templateText = templateText.Replace("$(SelectName)", "\"选择\"");
-        }
+        //if (_currentConfig.HasDescription)
+        //{
+        //    if (!string.IsNullOrEmpty(_currentConfig.Description))
+        //    {
+        //        //object.Equals(data.PlayerId, null) ? "null" : data.PlayerId.ToString()
+        //        templateText = templateText.Replace("$(SelectName)", "object.Equals(data." + _currentConfig.Description + ", null) ? \"null\" : data." + _currentConfig.Description + ".ToString()");
+        //    }
+        //    else
+        //    {
+        //        templateText = templateText.Replace("$(SelectName)", "\"选择\"");
+        //    }
+        //}
+        //else
+        //{
+        //    templateText = templateText.Replace("$(SelectName)", "\"选择\"");
+        //}
         StringBuilder sb = new StringBuilder();
         GenerateDataInfo(sb);
         templateText = templateText.Replace("$(ShowDataInfo)", sb.ToString());

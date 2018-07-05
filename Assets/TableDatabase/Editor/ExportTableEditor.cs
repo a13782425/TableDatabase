@@ -77,14 +77,7 @@ public class ExportTableEditor : EditorWindow
             {
                 sb.Append(dto.CurrentConfig.FieldList[i].Name);
             }
-            if (TableDatabaseUtils.TableConfigSerializeData.Setting.IsUseSpace)
-            {
-                sb.Append(" ");
-            }
-            else
-            {
-                sb.Append("\t");
-            }
+            sb.Append("\t");
         }
         sb.Append("\r\n");
         ScriptableObject assetObj = AssetDatabase.LoadAssetAtPath<ScriptableObject>(dto.CurrentConfig.DataPath);
@@ -108,14 +101,7 @@ public class ExportTableEditor : EditorWindow
 
                         sb.Append(str);
                     }
-                    if (TableDatabaseUtils.TableConfigSerializeData.Setting.IsUseSpace)
-                    {
-                        sb.Append(" ");
-                    }
-                    else
-                    {
-                        sb.Append("\t");
-                    }
+                    sb.Append("\t");
                 }
                 sb.Append("\r\n");
             }
@@ -217,8 +203,6 @@ public class ExportTableEditor : EditorWindow
         GUILayout.BeginHorizontal("OL Title");
         GUI.color = Color.white;
         GUILayout.Space(5);
-        TableDatabaseUtils.TableConfigSerializeData.Setting.IsUseSpace = GUILayout.Toggle(TableDatabaseUtils.TableConfigSerializeData.Setting.IsUseSpace, TableDatabaseUtils.TableConfigSerializeData.Setting.IsUseSpace ? "使用空格" : "使用制表符");
-        GUILayout.Space(5);
         GUILayout.Label("Vector分割符:");
         TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar = GUILayout.TextField(TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar, GUILayout.Width(40));
         GUILayout.Space(5);
@@ -227,8 +211,7 @@ public class ExportTableEditor : EditorWindow
         GUILayout.Space(5);
         if (GUILayout.Button("保存配置"))
         {
-            EditorUtility.SetDirty(TableDatabaseUtils.TableConfigSerializeData);
-            AssetDatabase.SaveAssets();
+            TableDatabaseUtils.SavaGlobalData();
         }
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();

@@ -25,11 +25,11 @@ public class TableConfig
     /// <summary>
     /// 表名
     /// </summary>
-    public string TableName;
+    public string TableName = "";
     /// <summary>
     /// 显示名称
     /// </summary>
-    public string ShowName;
+    public string ShowName = "";
     /// <summary>
     /// 代码路径
     /// </summary>
@@ -58,11 +58,11 @@ public class FieldConfig
     /// <summary>
     /// 字段名
     /// </summary>
-    public string Name;
+    public string Name = "";
     /// <summary>
     /// 显示名称
     /// </summary>
-    public string ShowName;
+    public string ShowName = "";
     /// <summary>
     /// 字段类型
     /// </summary>

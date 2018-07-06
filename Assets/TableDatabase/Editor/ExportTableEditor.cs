@@ -111,6 +111,7 @@ public class ExportTableEditor : EditorWindow
             File.Create(path).Dispose();
         }
         File.WriteAllText(path, sb.ToString());
+        EditorUtility.DisplayDialog("导出", "导出成功", "Ok");
     }
 
     private void GetString(string fieldType, object obj, ref string str)
@@ -125,9 +126,25 @@ public class ExportTableEditor : EditorWindow
                 Vector3 vector3 = (Vector3)obj;
                 str += vector3.x + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector3.y + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector3.z;
                 break;
+            case "Vector4":
+                Vector4 vector4 = (Vector4)obj;
+                str += vector4.x + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector4.y + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector4.z + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector4.w;
+                break;
             case "Quaternion":
                 Quaternion quaternion = (Quaternion)obj;
                 str += quaternion.x + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + quaternion.y + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + quaternion.z + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + quaternion.w;
+                break;
+            case "Rect":
+                Rect rect = (Rect)obj;
+                str += rect.x + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + rect.y + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + rect.width + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + rect.height;
+                break;
+            case "Color":
+                Color color = (Color)obj;
+                str += color.r + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color.g + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color.b + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color.a;
+                break;
+            case "Color32":
+                Color32 color32 = (Color32)obj;
+                str += color32.r + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color32.g + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color32.b + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color32.a;
                 break;
             case "Sprite":
             case "Texture":
@@ -150,12 +167,6 @@ public class ExportTableEditor : EditorWindow
                     GetString(item.GetType().Name, item, ref str);
                     str += TableDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar;
                 }
-                //while (enumerator.GetEnumerator().MoveNext())
-                //{
-                //    object o = enumerator.GetEnumerator().Current;
-                //    GetString(o.GetType().Name, o, ref str);
-                //    str += TableDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar;
-                //}
                 int length = str.LastIndexOf(TableDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar);
                 if (length > 0)
                 {
@@ -169,32 +180,6 @@ public class ExportTableEditor : EditorWindow
                 str += obj.ToString();
                 break;
         }
-        //switch (fieldType)
-        //{
-        //    case "Vector2":
-        //        Vector2 vector2 = (Vector2)obj.GetType().GetField(dto.CurrentConfig.FieldList[i].Name).GetValue(o);
-        //        str = vector2.x + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector2.y;
-        //        break;
-        //    case "Vector3":
-        //        Vector3 vector3 = (Vector3)o.GetType().GetField(dto.CurrentConfig.FieldList[i].Name).GetValue(o);
-        //        str = vector3.x + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector3.y + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector3.z;
-        //        break;
-        //    case "Quaternion":
-        //        Quaternion quaternion = (Quaternion)o.GetType().GetField(dto.CurrentConfig.FieldList[i].Name).GetValue(o);
-        //        str = quaternion.x + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + quaternion.y + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + quaternion.z + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + quaternion.w;
-        //        break;
-        //    case "Sprite":
-        //    case "Texture":
-        //    case "GameObject":
-        //        UnityEngine.Object unityObject = (UnityEngine.Object)o.GetType().GetField(dto.CurrentConfig.FieldList[i].Name).GetValue(o);
-        //        str = unityObject.name;
-        //        break;
-        //    case "List":
-        //        break;
-        //    default:
-        //        str = o.GetType().GetField(dto.CurrentConfig.FieldList[i].Name).GetValue(o).ToString();
-        //        break;
-        //}
     }
 
     private void SettingGUI()

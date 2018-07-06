@@ -8,9 +8,9 @@ using UnityEngine;
 
 public class TableDatabaseUtils
 {
-    public static string[] BaseType = new string[] { "int", "float", "string", "bool", "enum", "Vector2", "Vector3", "Quaternion", "Sprite", "Texture", "GameObject", "List" };
+    public static string[] BaseType = new string[] { "int", "float", "string", "bool", "enum", "Vector2", "Vector3", "Rect", "Vector4", "Quaternion", "Color", "Color32", "Sprite", "Texture", "GameObject", "List" };
 
-    public static string[] GenericType = new string[] { "int", "float", "string", "bool", "Vector2", "Vector3", "Quaternion", "Sprite", "Texture", "GameObject" };
+    public static string[] GenericType = new string[] { "int", "float", "string", "bool", "Vector2", "Vector3", "Vector4", "Quaternion", "Color", "Color32", "Sprite", "Texture", "GameObject" };
 
     private static string _editorPullPath;
 
@@ -134,8 +134,20 @@ public class TableDatabaseUtils
             case "Int32":
                 result = EditorGUILayout.IntField((int)value, GUILayout.MaxWidth(width - 10));
                 break;
+            case "String":
             case "string":
                 result = EditorGUILayout.TextArea(value == null ? "" : value.ToString(), GUILayout.MaxWidth(width - 10));
+                break;
+            case "Boolean":
+            case "bool":
+                result = EditorGUILayout.Toggle((bool)value, GUILayout.MaxWidth(width - 10));
+                break;
+            case "Single":
+            case "float":
+                result = EditorGUILayout.FloatField((float)value, GUILayout.MaxWidth(width - 10));
+                break;
+            case "Rect":
+                result = EditorGUILayout.RectField((Rect)value, GUILayout.MaxWidth(width - 10));
                 break;
             case "Vector2":
                 result = EditorGUILayout.Vector3Field("", (Vector2)value, GUILayout.MaxWidth(width - 10));
@@ -148,6 +160,12 @@ public class TableDatabaseUtils
                 Vector4 vector4 = new Vector4(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
                 vector4 = EditorGUILayout.Vector4Field("", vector4, GUILayout.MaxWidth(width - 10));
                 result = new Quaternion(vector4.x, vector4.y, vector4.z, vector4.w);
+                break;
+            case "Color":
+                result = EditorGUILayout.ColorField((Color)value, GUILayout.MaxWidth(width - 10));
+                break;
+            case "Color32":
+                result = (Color32)EditorGUILayout.ColorField((Color32)value, GUILayout.MaxWidth(width - 10));
                 break;
             case "Sprite":
                 result = EditorGUILayout.ObjectField((Sprite)value, typeof(Sprite), false, GUILayout.MaxWidth(width - 10));
@@ -178,7 +196,7 @@ public class TableDatabaseUtils
                 result = EditorGUILayout.EnumPopup((Enum)value, GUILayout.MaxWidth(width - 10));
                 break;
             case "List":
-                GUILayout.BeginVertical(EditorGUIStyle.GetFieldBoxStyle(), GUILayout.Width(width), GUILayout.MaxWidth(width), GUILayout.ExpandHeight(true));
+                GUILayout.BeginVertical(EditorGUIStyle.ListBoxStyle, GUILayout.Width(width), GUILayout.MaxWidth(width), GUILayout.ExpandHeight(true));
                 Type listType = value.GetType();
                 Type elementType = listType.GetGenericArguments()[0];
                 int count = (int)listType.GetProperty("Count").GetValue(value, null);

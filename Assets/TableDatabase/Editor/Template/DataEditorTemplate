@@ -93,7 +93,7 @@ public class $(DataClassName)DataEditor : EditorWindow
                     break;
             }
         }
-        if (currentEvent.keyCode == KeyCode.Escape || currentEvent.keyCode == KeyCode.Return)
+        if (currentEvent.keyCode == KeyCode.Escape)
         {
             GUI.FocusControl("GUIArea");
         }
@@ -109,7 +109,7 @@ public class $(DataClassName)DataEditor : EditorWindow
         GUILayout.BeginHorizontal("OL Title");
         GUI.color = Color.white;
         GUILayout.Space(-5);
-        if (GUILayout.Button("保存", EditorGUIStyle.GetMiddleButton, GUILayout.ExpandHeight(true), GUILayout.Width(100)))
+        if (GUILayout.Button("保存", EditorGUIStyle.MiddleButtonStyle, GUILayout.ExpandHeight(true), GUILayout.Width(100)))
         {
             this.ShowNotification(new GUIContent("正在保存。。。"));
             _primaryKeyInfo.Values.Clear();
@@ -131,7 +131,7 @@ public class $(DataClassName)DataEditor : EditorWindow
         }
 
         GUILayout.FlexibleSpace();
-        if (GUILayout.Button("添加", EditorGUIStyle.GetMiddleButton, GUILayout.ExpandHeight(true), GUILayout.Width(100)))
+        if (GUILayout.Button("添加", EditorGUIStyle.MiddleButtonStyle, GUILayout.ExpandHeight(true), GUILayout.Width(100)))
         {
             $(DataClassName) data = new $(DataClassName)();
             _serializeData.DataList.Add(data);
@@ -165,7 +165,7 @@ public class $(DataClassName)DataEditor : EditorWindow
         {
             return;
         }
-        GUILayout.BeginHorizontal(EditorGUIStyle.GetPageLabelGuiStyle(), GUILayout.Height(25));
+        GUILayout.BeginHorizontal(EditorGUIStyle.SearchPanelStyle, GUILayout.Height(25));
         GUI.color = new Color(1, 1, 1, 0);
         _searchFieldIndex = EditorGUI.Popup(new Rect(15, 25, 10, 14), _searchFieldIndex, _searchFieldArray);
         GUI.color = Color.white;
@@ -186,7 +186,7 @@ public class $(DataClassName)DataEditor : EditorWindow
                 _isSort = false;
                 if (!string.IsNullOrEmpty(str))
                 {
-                    _dataList = SearchTableData.Search<Test>(_searchFieldArray[_searchFieldIndex], _searchValue, _serializeData.DataList);
+                    _dataList = SearchTableData.Search<$(DataClassName)>(_searchFieldArray[_searchFieldIndex], _searchValue, _serializeData.DataList);
                 }
                 else
                 {
@@ -234,11 +234,11 @@ public class $(DataClassName)DataEditor : EditorWindow
             }
         }
         _isAdvancedSearch = GUILayout.Toggle(_isAdvancedSearch, "", GUILayout.Height(10), GUILayout.Width(10));
-        if (GUILayout.Button("高级搜索", EditorGUIStyle.GetMiddleButton, GUILayout.Width(60)))
+        if (GUILayout.Button("高级搜索", EditorGUIStyle.MiddleButtonStyle, GUILayout.Width(60)))
         {
             if (_isAdvancedSearch)
             {
-                _dataList = SearchTableData.AdvancedSearch<Test>(this, _searchFieldArray[_searchFieldIndex], _searchValue, _serializeData.DataList);
+                _dataList = SearchTableData.AdvancedSearch<$(DataClassName)>(this, _searchFieldArray[_searchFieldIndex], _searchValue, _serializeData.DataList);
             }
         }
         GUILayout.EndHorizontal();
@@ -251,18 +251,18 @@ public class $(DataClassName)DataEditor : EditorWindow
         {
             _areaWidht += _excelConfig.ColumnsWidth[i];
         }
-        Rect areaRect = new Rect(35, 55, _areaWidht, 30);
+        Rect areaRect = new Rect(55, 55, _areaWidht, 30);
         rectList = new List<Rect>(_divisionSlider.HorizontalLayoutRects(areaRect));
         GUILayout.BeginArea(new Rect(3, 50, position.width - 20, 50));
         GUILayout.BeginScrollView(new Vector2(_tableScrollView.x, 0), GUIStyle.none, GUIStyle.none);
-        GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_areaWidht), GUILayout.Height(30));
+        GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(_areaWidht), GUILayout.Height(30));
         int index = 0;
 
-        GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(30), GUILayout.MaxHeight(30));
+        GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(50), GUILayout.MaxHeight(30));
         GUILayout.Space(2);
         GUILayout.BeginVertical();
         GUILayout.Space(5);
-        if (GUILayout.Button("R", EditorGUIStyle.GetTitleButton, GUILayout.Height(20), GUILayout.ExpandWidth(true)))
+        if (GUILayout.Button("R", EditorGUIStyle.TitleButtonStyle, GUILayout.Height(20), GUILayout.ExpandWidth(true)))
         {
             _searchValue = "";
             SearchTableData.Hide();
@@ -275,7 +275,7 @@ public class $(DataClassName)DataEditor : EditorWindow
 
         for (index = 0; index < _tableConfig.FieldList.Count; index++)
         {
-            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(rectList[index].width), GUILayout.MaxHeight(30));
+            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(rectList[index].width), GUILayout.MaxHeight(30));
             string fieldName = _tableConfig.FieldList[index].Name;
             if (!string.IsNullOrEmpty(_tableConfig.FieldList[index].ShowName))
             {
@@ -284,7 +284,7 @@ public class $(DataClassName)DataEditor : EditorWindow
             GUILayout.Space(5);
             GUILayout.BeginVertical();
             GUILayout.Space(2);
-            if (GUILayout.Button(fieldName, EditorGUIStyle.GetTitleButton, GUILayout.Height(25)))
+            if (GUILayout.Button(fieldName, EditorGUIStyle.TitleButtonStyle, GUILayout.Height(25)))
             {
                 //_dataList.Clear();
                 //_dataList.AddRange(_serializeData.DataList.OrderBy(a => a.T));
@@ -295,16 +295,19 @@ public class $(DataClassName)DataEditor : EditorWindow
             GUILayout.Space(5);
             GUILayout.EndHorizontal();
         }
-        GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(rectList[index].width), GUILayout.MaxHeight(30));
-        GUILayout.Space(5);
-        GUILayout.BeginVertical();
-        GUILayout.Space(5);
-        GUILayout.Button("", EditorGUIStyle.GetTitleButton, GUILayout.Height(20));
-        GUILayout.Space(5);
-        GUILayout.EndVertical();
-        GUILayout.Space(5);
-        GUILayout.EndHorizontal();
-        GUILayout.Space(5);
+        for (; index < _excelConfig.ColumnsWidth.Count; index++)
+        {
+            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(rectList[index].width), GUILayout.MaxHeight(30));
+            GUILayout.Space(5);
+            GUILayout.BeginVertical();
+            GUILayout.Space(2);
+            GUILayout.Label("", GUILayout.Height(25));
+			_excelConfig.ColumnsWidth[index] = rectList[index].width;
+            GUILayout.EndVertical();
+            GUILayout.Space(5);
+            GUILayout.EndHorizontal();
+        }
+        GUILayout.Space(30);
         GUILayout.EndHorizontal();
         GUILayout.EndScrollView();
         GUILayout.EndArea();
@@ -314,8 +317,7 @@ public class $(DataClassName)DataEditor : EditorWindow
             float diff = _areaWidht - position.width + 20;
             f = diff * Mathf.Clamp(_tableScrollView.x / diff, 0f, 1f);
         }
-
-        _divisionSlider.DoHorizontalSliders(areaRect, f);
+        _divisionSlider.DoHorizontalSliders(areaRect, _tableConfig.FieldList.Count, f);
         _divisionSlider.Resize(areaRect.width, DivisionSlider.ResizeMode.PrioritizeOuter);
     }
 
@@ -330,14 +332,16 @@ public class $(DataClassName)DataEditor : EditorWindow
         for (int i = begin; i < end; i++)
         {
 
-            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_areaWidht + 30), GUILayout.MinHeight(30));
+            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(_areaWidht + 50), GUILayout.MinHeight(30));
 
-            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(30), GUILayout.ExpandHeight(true));
-            GUILayout.Space(5);
-            if (GUILayout.Button("", "OL Minus"))
+            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(50), GUILayout.ExpandHeight(true));
+            GUILayout.BeginVertical();
+            if (GUILayout.Button("", EditorGUIStyle.TableMinusButtonStyle))
             {
                 removeData = _dataList[i];
             }
+            GUILayout.Label((i + 1).ToString(), EditorGUIStyle.TableNumberStyle, GUILayout.MaxWidth(50));
+            GUILayout.EndVertical();
             GUILayout.EndHorizontal();
 
 			float columnsWidth = 0;
@@ -346,9 +350,12 @@ public class $(DataClassName)DataEditor : EditorWindow
 $(ShowDataInfo)
 
 
-            //GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(_excelConfig.ColumnsWidth[8]), GUILayout.ExpandHeight(true));
-            //GUILayout.Label("");
-            //GUILayout.EndHorizontal();
+            for (int index = _tableConfig.FieldList.Count; index < _excelConfig.ColumnsWidth.Count; index++)
+            {
+                GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(_excelConfig.ColumnsWidth[index]), GUILayout.ExpandHeight(true));
+                GUILayout.Label("");
+                GUILayout.EndHorizontal();
+            }
 
             GUILayout.EndHorizontal();
         }
@@ -361,6 +368,7 @@ $(ShowDataInfo)
             }
             _primaryKeyInfo.Values[removeData.$(Primary).ToString()]--;
         }
+		GUILayout.Space(100);
         GUILayout.EndVertical();
         GUILayout.EndScrollView();
         GUILayout.EndArea();
@@ -432,7 +440,6 @@ $(ShowDataInfo)
 
     private void OnDestroy()
     {
-        _excelConfig.ColumnsWidth[_excelConfig.ColumnsWidth.Count - 1] = TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth;
         EditorUtility.SetDirty(_excelConfig);
         TableDatabaseUtils.SavaGlobalData();
     }
@@ -456,6 +463,10 @@ $(ShowDataInfo)
         if (_divisionSlider == null)
         {
             _divisionSlider = new DivisionSlider(5, false, _excelConfig.ColumnsWidth.ToArray());
+            for (int i = _tableConfig.FieldList.Count; i < _excelConfig.ColumnsWidth.Count; i++)
+            {
+                _divisionSlider.MinSizes[i] = TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth;
+            }
         }
     }
 
@@ -539,7 +550,10 @@ $(ShowDataInfo)
                 {
                     _excelConfig.ColumnsWidth.Add(TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth);
                 }
-                _excelConfig.ColumnsWidth.Add(TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth);
+				for	(int i = 0; i < 10; i++)
+				{
+				    _excelConfig.ColumnsWidth.Add(TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth);
+				}
                 AssetDatabase.CreateAsset(_excelConfig, path);
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
@@ -548,16 +562,16 @@ $(ShowDataInfo)
             {
                 _excelConfig = AssetDatabase.LoadAssetAtPath<$(DataClassName)Config>(path);
 				int diff = _excelConfig.ColumnsWidth.Count -_tableConfig.FieldList.Count;
-                if (diff > 1)
+                if (diff > 10)
                 {
-                    while (_excelConfig.ColumnsWidth.Count > _tableConfig.FieldList.Count + 1)
+                    while (_excelConfig.ColumnsWidth.Count > _tableConfig.FieldList.Count + 10)
                     {
                         _excelConfig.ColumnsWidth.RemoveAt(0);
                     }
                 }
-                else
+                else if (diff < 10)
                 {
-                    while (_excelConfig.ColumnsWidth.Count <= _tableConfig.FieldList.Count)
+                    while (_excelConfig.ColumnsWidth.Count < _tableConfig.FieldList.Count + 10)
                     {
                         _excelConfig.ColumnsWidth.Add(TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth);
                     }

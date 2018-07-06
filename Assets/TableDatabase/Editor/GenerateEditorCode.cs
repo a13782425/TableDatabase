@@ -202,7 +202,7 @@ public class GenerateEditorCode
                 sb.AppendLine("                }");
                 sb.AppendLine("            }");
                 sb.AppendLine("            columnsWidth = _excelConfig.ColumnsWidth[" + i + "];");
-                sb.AppendLine("            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));");
+                sb.AppendLine("            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));");
                 sb.AppendLine("            " + _currentConfig.PrimaryType + " key = (" + fieldConfig.FieldType + ")TableDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.Name + ");");
                 sb.AppendLine("            if (key != _dataList[i]." + fieldConfig.Name + ")");
                 sb.AppendLine("            {");
@@ -242,7 +242,7 @@ public class GenerateEditorCode
                 sb.AppendLine("                GUI.color = new Color(1, 0.5f, 0);");
                 sb.AppendLine("            }");
                 sb.AppendLine("            columnsWidth = _excelConfig.ColumnsWidth[" + i + "];");
-                sb.AppendLine("            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));");
+                sb.AppendLine("            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));");
                 if (fieldConfig.FieldType == "List")
                 {
                     sb.AppendLine("            _dataList[i]." + fieldConfig.Name + " = (" + fieldConfig.FieldType + "<" + fieldConfig.GenericType + ">)TableDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.Name + ");");
@@ -258,7 +258,7 @@ public class GenerateEditorCode
             else
             {
                 sb.AppendLine("            columnsWidth = _excelConfig.ColumnsWidth[" + i + "];");
-                sb.AppendLine("            GUILayout.BeginHorizontal(EditorGUIStyle.GetGroupBoxStyle(), GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));");
+                sb.AppendLine("            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));");
                 if (fieldConfig.FieldType == "List")
                 {
                     sb.AppendLine("            _dataList[i]." + fieldConfig.Name + " = (" + fieldConfig.FieldType + "<" + fieldConfig.GenericType + ">)TableDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.Name + ");");

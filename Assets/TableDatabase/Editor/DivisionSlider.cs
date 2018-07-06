@@ -360,11 +360,20 @@ public class DivisionSlider : IEnumerable<float>
     //		}
     //	}
 
-    public void DoHorizontalSliders(Rect area, float windowsOffset = 0f)
+    public void DoHorizontalSliders(Rect area, int validCount = -1, float windowsOffset = 0f)
     {
-        for (int i = 0; i < offsets.Length - 1; i++)
+        if (validCount == -1)
         {
-            float newOffset = HorizontalSlider(area, offsets[i] + area.x, sliderSize, windowsOffset) - area.x;
+            validCount = offsets.Length - 1;
+        }
+        for (int i = 0; i < validCount; i++)
+        {
+            float offset = windowsOffset;
+            if (i == 2)
+            {
+                offset = offset + (i - 1) * (sliderSize / 2);
+            }
+            float newOffset = HorizontalSlider(area, offsets[i] + area.x, sliderSize, offset) - area.x;
             if (newOffset != offsets[i])
             {
                 Slide(i, newOffset - offsets[i], windowsOffset);

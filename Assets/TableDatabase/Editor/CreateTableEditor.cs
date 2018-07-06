@@ -101,26 +101,50 @@ public class CreateTableEditor : EditorWindow
         GUILayout.EndScrollView();
         if (removeIndex > -1)
         {
-
+            EditorUtility.DisplayProgressBar("删除", "正在删除...", 0f);
             EditorApplication.LockReloadAssemblies();
             TableConfig config = TableDatabaseUtils.TableConfigSerializeData.TableConfigList[removeIndex];
             TableDatabaseUtils.TableConfigSerializeData.TableConfigList.RemoveAt(removeIndex);
             if (!string.IsNullOrEmpty(config.DataPath))
             {
                 File.Delete(Path.GetFullPath(config.DataPath));
+                if (TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic.ContainsKey(config.TableName))
+                {
+                    TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic.Remove(config.TableName);
+                }
+            }
+            EditorUtility.DisplayProgressBar("删除", "正在删除...", 0.5f);
+            if (!string.IsNullOrEmpty(config.CodePath))
+            {
+                File.Delete(Path.GetFullPath(config.CodePath));
+
                 string editorPath = TableDatabaseUtils.EditorFullPath + "/TableEditor/" + config.TableName + "EditorData.cs";
                 if (File.Exists(editorPath))
                 {
                     File.Delete(editorPath);
                 }
+                string configPath = TableDatabaseUtils.EditorFullPath + "/Data/Table/" + config.TableName + "Config.cs";
+                if (File.Exists(configPath))
+                {
+                    File.Delete(configPath);
+                }
+                string configDataPath = TableDatabaseUtils.EditorFullPath + "/Config/Table/" + config.TableName + "Config.asset";
+                if (File.Exists(configDataPath))
+                {
+                    File.Delete(configDataPath);
+                }
             }
-            if (!string.IsNullOrEmpty(config.CodePath))
-            {
-                File.Delete(Path.GetFullPath(config.CodePath));
-            }
+            EditorUtility.DisplayProgressBar("删除", "正在删除...", 1f);
+
             EditorApplication.UnlockReloadAssemblies();
             WriteConfig();
             AssetDatabase.Refresh();
+            if (_tempTableConfig == config)
+            {
+                _tempTableConfig = null;
+            }
+            EditorUtility.ClearProgressBar();
+            EditorUtility.DisplayDialog("删除", "删除完毕", "OK");
         }
         GUILayout.EndArea();
     }

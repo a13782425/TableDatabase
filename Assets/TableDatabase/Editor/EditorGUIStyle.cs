@@ -21,68 +21,67 @@ using UnityEngine;
 
 public class EditorGUIStyle
 {
-    private static Texture2D MainBg { get; set; }
-    private static Texture2D TagBg { get; set; }
 
-
-
-    private static GUIStyle tagButtonStyle;
-    private static GUIStyle groupBoxStyle;
-    private static GUIStyle horizontalScrollbarStyle;
-    private static GUIStyle pageLabelGuiStyle;
-    private static GUIStyle tableGroupBoxStyle;
-    private static GUIStyle textGuiStyle;
-    private static GUIStyle jumpButtonGuiStyle;
-    private static GUIStyle ToggleStyle;
-    private static Dictionary<string, GUIStyle> _titleButtonStyleDic = new Dictionary<string, GUIStyle>();
-    private static GUIStyle MiddleButton;
-    private static GUIStyle _titleButton;
-    private static GUIStyle _minusButton;
-    public static T LoadEditorResource<T>(string file_name_with_extension) where T : UnityEngine.Object
-    {
-        //            string path = string.Format("{0}/EditorResources/", PathMapping.GetSmartDataViewEditorPath());
-        string path = TableDatabaseUtils.EditorPath + "/EditorResources/" + file_name_with_extension;
-        return AssetDatabase.LoadAssetAtPath<T>(path);
-    }
-    public static GUIStyle GetMinusButton
+    private static GUIStyle _minusTableButtonStyle = null;
+    public static GUIStyle TableMinusButtonStyle
     {
         get
         {
-            if (_minusButton == null)
+            if (_minusTableButtonStyle == null)
             {
-                _minusButton = new GUIStyle("OL Minus");
-                _minusButton.alignment = TextAnchor.MiddleCenter;
+                _minusTableButtonStyle = new GUIStyle("OL Minus");
+                _minusTableButtonStyle.alignment = TextAnchor.MiddleCenter;
+                _minusTableButtonStyle.margin = new RectOffset(15, 0, 2, 0);
+                _minusTableButtonStyle.padding = new RectOffset(0, 0, 0, 0);
             }
-            return _minusButton;
+            return _minusTableButtonStyle;
         }
     }
-    public static GUIStyle GetMiddleButton
+    private static GUIStyle _getTableNumberStyle = null;
+    public static GUIStyle TableNumberStyle
     {
         get
         {
-            if (MiddleButton == null)
+            if (_getTableNumberStyle == null)
             {
-                MiddleButton = new GUIStyle("OL Title");
-                MiddleButton.alignment = TextAnchor.MiddleCenter;
-                MiddleButton.fixedHeight = 0;
-                MiddleButton.margin = new RectOffset(0, 0, 0, 0);
-                MiddleButton.padding = new RectOffset(0, 0, 0, 0);
+                _getTableNumberStyle = new GUIStyle(GUI.skin.label);
+                _getTableNumberStyle.alignment = TextAnchor.MiddleCenter;
+                _getTableNumberStyle.margin = new RectOffset(0, 0, 0, 2);
+                _getTableNumberStyle.padding = new RectOffset(0, 0, 0, 0);
             }
-            return MiddleButton;
+            return _getTableNumberStyle;
         }
     }
-    public static GUIStyle GetTitleButton
+    private static GUIStyle _middleButtonStyle = null;
+    public static GUIStyle MiddleButtonStyle
     {
         get
         {
-            if (_titleButton == null)
+            if (_middleButtonStyle == null)
             {
-                _titleButton = new GUIStyle("OL Title");
-                _titleButton.alignment = TextAnchor.MiddleCenter;
-                _titleButton.fixedHeight = 0;
-                _titleButton.margin = new RectOffset(0, 0, 0, 0);
-                _titleButton.padding = new RectOffset(0, 0, 0, 0);
-                _titleButton.normal.background = null;
+                _middleButtonStyle = new GUIStyle("OL Title");
+                _middleButtonStyle.alignment = TextAnchor.MiddleCenter;
+                _middleButtonStyle.fixedHeight = 0;
+                _middleButtonStyle.margin = new RectOffset(0, 0, 0, 0);
+                _middleButtonStyle.padding = new RectOffset(0, 0, 0, 0);
+            }
+            return _middleButtonStyle;
+        }
+    }
+
+    private static GUIStyle _titleButtonStyle = null;
+    public static GUIStyle TitleButtonStyle
+    {
+        get
+        {
+            if (_titleButtonStyle == null)
+            {
+                _titleButtonStyle = new GUIStyle("OL Title");
+                _titleButtonStyle.alignment = TextAnchor.MiddleCenter;
+                _titleButtonStyle.fixedHeight = 0;
+                _titleButtonStyle.margin = new RectOffset(0, 0, 0, 0);
+                _titleButtonStyle.padding = new RectOffset(0, 0, 0, 0);
+                _titleButtonStyle.normal.background = null;
                 Texture2D texture2D = new Texture2D(64, 64);
                 for (int i = 0; i < texture2D.width; i++)
                 {
@@ -91,121 +90,60 @@ public class EditorGUIStyle
                         texture2D.SetPixel(i, j, new Color(0.77f, 0.77f, 0.77f));
                     }
                 }
-                _titleButton.active.background = texture2D;
+                _titleButtonStyle.active.background = texture2D;
             }
-            return _titleButton;
+            return _titleButtonStyle;
         }
     }
 
 
-    public static GUIStyle GetTogleStyle()
+
+    private static GUIStyle _searchPanelStyle = null;
+    public static GUIStyle SearchPanelStyle
     {
-        if (ToggleStyle == null)
+        get
         {
-            ToggleStyle = new GUIStyle(GUI.skin.toggle);
-            ToggleStyle.margin = new RectOffset(0, 0, 3, 0);
-            ToggleStyle.padding = new RectOffset(0, 0, 0, 0);
+            if (_searchPanelStyle == null)
+            {
+                _searchPanelStyle = new GUIStyle(GUI.skin.box);
+                _searchPanelStyle.margin = new RectOffset(0, 0, 0, 0);
+                _searchPanelStyle.padding = new RectOffset(5, 5, 5, 5);
+            }
+            return _searchPanelStyle;
         }
-
-        return ToggleStyle;
     }
 
+    private static GUIStyle _listBoxStyle = null;
 
-    public static GUIStyle GetJumpButtonGuiStyle()
+    public static GUIStyle ListBoxStyle
     {
-        if (jumpButtonGuiStyle == null)
+        get
         {
-            jumpButtonGuiStyle = new GUIStyle(GUI.skin.button);
-            jumpButtonGuiStyle.margin = new RectOffset(0, 0, 3, 0);
-            jumpButtonGuiStyle.padding = new RectOffset(0, 0, 0, 0);
-        }
+            if (_listBoxStyle == null)
+            {
+                _listBoxStyle = new GUIStyle(GUI.skin.label);
+                _listBoxStyle.margin = new RectOffset(0, 0, 0, 0);
 
-        return jumpButtonGuiStyle;
+                _listBoxStyle.padding = new RectOffset(0, 0, 0, 0);
+            }
+            return _listBoxStyle;
+        }
     }
 
-
-    public static GUIStyle GetPageLabelGuiStyle()
+    private static GUIStyle _groupBoxStyle = null;
+    public static GUIStyle GroupBoxStyle
     {
-        if (pageLabelGuiStyle == null)
+        get
         {
-            pageLabelGuiStyle = new GUIStyle(GUI.skin.box);
-            pageLabelGuiStyle.margin = new RectOffset(0, 0, 0, 0);
-            pageLabelGuiStyle.padding = new RectOffset(5, 5, 5, 5);
+            if (_groupBoxStyle == null)
+            {
+                _groupBoxStyle = new GUIStyle(GUI.skin.box);
+                _groupBoxStyle.margin = new RectOffset(0, 0, 0, 0);
+                _groupBoxStyle.padding = new RectOffset(0, 0, 0, 0);
+                _groupBoxStyle.fixedHeight = 0;
+                _groupBoxStyle.stretchHeight = true;
+            }
+            return _groupBoxStyle;
         }
-        return pageLabelGuiStyle;
     }
-
-    public static GUIStyle GetFieldBoxStyle()
-    {
-        if (groupBoxStyle == null)
-        {
-            groupBoxStyle = new GUIStyle(GUI.skin.label);
-            groupBoxStyle.margin = new RectOffset(0, 0, 0, 0);
-
-            groupBoxStyle.padding = new RectOffset(0, 0, 0, 0);
-        }
-
-        return groupBoxStyle;
-    }
-
-
-    public static GUIStyle GetGroupBoxStyle()
-    {
-        if (groupBoxStyle == null)
-        {
-            groupBoxStyle = new GUIStyle(GUI.skin.box);
-            groupBoxStyle.margin = new RectOffset(0, 0, 0, 0);
-            groupBoxStyle.padding = new RectOffset(0, 0, 0, 0);
-        }
-
-        return groupBoxStyle;
-    }
-
-
-    public static GUIStyle GetTableGroupBoxStyle()
-    {
-        if (tableGroupBoxStyle == null)
-        {
-            tableGroupBoxStyle = new GUIStyle(GUI.skin.box);
-            tableGroupBoxStyle.margin = new RectOffset(0, 0, 0, 0);
-            tableGroupBoxStyle.padding = new RectOffset(0, 0, 0, 0);
-        }
-
-        return tableGroupBoxStyle;
-    }
-
-
-    public static GUIStyle GetHorizontalScrollbarStyle()
-    {
-        if (horizontalScrollbarStyle == null)
-        {
-            horizontalScrollbarStyle = new GUIStyle(GUI.skin.horizontalScrollbar);
-            horizontalScrollbarStyle.margin = new RectOffset(0, 0, 0, 0);
-            horizontalScrollbarStyle.padding = new RectOffset(0, 0, 0, 0);
-        }
-
-        return horizontalScrollbarStyle;
-    }
-
-
-    public static GUIStyle GetTextGuiStyle()
-    {
-        if (textGuiStyle == null)
-        {
-            textGuiStyle = new GUIStyle(GUI.skin.textField);
-            textGuiStyle.margin = new RectOffset(0, 0, 0, 0);
-            textGuiStyle.padding = new RectOffset(0, 0, 0, 0);
-            textGuiStyle.wordWrap = false;
-        }
-
-        return textGuiStyle;
-    }
-
-    public static void DrawLine(GUIStyle rLineStyle)
-    {
-        GUILayout.BeginHorizontal(rLineStyle);
-        GUILayout.FlexibleSpace();
-        GUILayout.EndHorizontal();
-    }
-
 }

@@ -18,7 +18,7 @@ public class SearchPanel : EditorWindow
             GUILayout.BeginVertical();
             for (int i = 0; i < SearchTableData.ShowList.Count; i++)
             {
-                if (GUILayout.Button(SearchTableData.ShowList[i], EditorGUIStyle.GetMiddleButton, GUILayout.Height(20)))
+                if (GUILayout.Button(SearchTableData.ShowList[i], EditorGUIStyle.MiddleButtonStyle, GUILayout.Height(20)))
                 {
                     if (CallBack != null)
                     {

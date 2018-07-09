@@ -46,13 +46,14 @@ public class GenerateEditorCode
             File.Create(_csPath).Dispose();
         }
     }
-    public void GenerateCode()
+    public bool GenerateCode()
     {
         if (!GenerateDataCode())
-            return;
+            return false;
         GenerateConfig();
 
         GenerateEditor();
+        return true;
     }
 
     private bool GenerateDataCode()
@@ -114,7 +115,16 @@ public class GenerateEditorCode
             switch (fieldConfig.FieldType)
             {
                 case "List":
-                    codeSb.AppendLine("    public List<" + fieldConfig.GenericType + "> " + fieldConfig.Name + " = new List<" + fieldConfig.GenericType + ">();");
+                    switch (fieldConfig.GenericType)
+                    {
+                        case "enum":
+                            codeSb.AppendLine("    public List<" + fieldConfig.EnumName + "> " + fieldConfig.Name + " = new List<" + fieldConfig.EnumName + ">();");
+                            break;
+                        default:
+                            codeSb.AppendLine("    public List<" + fieldConfig.GenericType + "> " + fieldConfig.Name + " = new List<" + fieldConfig.GenericType + ">();");
+                            break;
+                    }
+
                     break;
                 case "enum":
                     codeSb.AppendLine("    public " + fieldConfig.EnumName + " " + fieldConfig.Name + ";");
@@ -261,7 +271,18 @@ public class GenerateEditorCode
                 sb.AppendLine("            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));");
                 if (fieldConfig.FieldType == "List")
                 {
-                    sb.AppendLine("            _dataList[i]." + fieldConfig.Name + " = (" + fieldConfig.FieldType + "<" + fieldConfig.GenericType + ">)TableDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.Name + ");");
+                    if (fieldConfig.GenericType == "enum")
+                    {
+                        sb.AppendLine("            _dataList[i]." + fieldConfig.Name + " = (" + fieldConfig.FieldType + "<" + fieldConfig.EnumName + ">)TableDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.Name + ");");
+                    }
+                    else
+                    {
+                        sb.AppendLine("            _dataList[i]." + fieldConfig.Name + " = (" + fieldConfig.FieldType + "<" + fieldConfig.GenericType + ">)TableDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.Name + ");");
+                    }
+                }
+                else if (fieldConfig.FieldType == "enum")
+                {
+                    sb.AppendLine("            _dataList[i]." + fieldConfig.Name + " = (" + fieldConfig.EnumName + ")TableDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.Name + ");");
                 }
                 else
                 {

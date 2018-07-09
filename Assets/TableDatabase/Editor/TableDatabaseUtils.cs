@@ -10,7 +10,7 @@ public class TableDatabaseUtils
 {
     public static string[] BaseType = new string[] { "int", "float", "string", "bool", "enum", "Vector2", "Vector3", "Rect", "Vector4", "Quaternion", "Color", "Color32", "Sprite", "Texture", "GameObject", "List" };
 
-    public static string[] GenericType = new string[] { "int", "float", "string", "bool", "Vector2", "Vector3", "Vector4", "Quaternion", "Color", "Color32", "Sprite", "Texture", "GameObject" };
+    public static string[] GenericType = new string[] { "int", "float", "string", "bool", "enum", "Vector2", "Vector3", "Vector4", "Quaternion", "Color", "Color32", "Sprite", "Texture", "GameObject" };
 
     private static string _editorPullPath;
 
@@ -206,7 +206,14 @@ public class TableDatabaseUtils
                 {
                     GUILayout.BeginHorizontal();
                     object item = itemPropertyInfo.GetValue(value, new object[] { i });
-                    item = RenderFieldInfoControl(width - 20, elementType.Name, item);
+                    if (elementType.IsEnum)
+                    {
+                        item = RenderFieldInfoControl(width - 20, "enum", item);
+                    }
+                    else
+                    {
+                        item = RenderFieldInfoControl(width - 20, elementType.Name, item);
+                    }
                     itemPropertyInfo.SetValue(value, item, new object[] { i });
                     if (GUILayout.Button("", "OL Minus"))
                     {

@@ -228,7 +228,7 @@ public class CreateTableEditor : EditorWindow
 
     private void ShowConfigInfo()
     {
-        _infoScollViewVec = GUILayout.BeginScrollView(_infoScollViewVec, false, false);
+        _infoScollViewVec = GUILayout.BeginScrollView(_infoScollViewVec, false, false, GUIStyle.none, GUI.skin.verticalScrollbar);
         List<FieldConfig> removeList = new List<FieldConfig>();
         for (int i = 0; i < _tempTableConfig.FieldList.Count; i++)
         {
@@ -265,13 +265,46 @@ public class CreateTableEditor : EditorWindow
                 {
                     fieldConfig.GenericIndex = collectionIndex;
                     fieldConfig.GenericType = TableDatabaseUtils.GenericType[collectionIndex];
+                    if (fieldConfig.GenericType == "enum" && !string.IsNullOrEmpty(fieldConfig.EnumName))
+                    {
+                        for (int j = 0; j < _enumArray.Length; j++)
+                        {
+                            if (fieldConfig.EnumName == _enumArray[j])
+                            {
+                                fieldConfig.EnumIndex = j;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
             if (fieldConfig.FieldType == "enum")
             {
                 GUILayout.Label("枚举类型:", GUILayout.Width(50));
-                fieldConfig.EnumIndex = EditorGUILayout.Popup(fieldConfig.EnumIndex, _enumArray, GUILayout.Width(INFO_POPUP_WIDTH));
-                fieldConfig.EnumName = _enumArray[fieldConfig.EnumIndex];
+                if (_enumArray.Length == 0)
+                {
+                    GUILayout.Label("没有枚举", GUILayout.Width(50));
+                    fieldConfig.EnumName = "";
+                }
+                else
+                {
+                    fieldConfig.EnumIndex = EditorGUILayout.Popup(fieldConfig.EnumIndex, _enumArray, GUILayout.Width(INFO_POPUP_WIDTH));
+                    fieldConfig.EnumName = _enumArray[fieldConfig.EnumIndex];
+                }
+            }
+            if (fieldConfig.GenericType == "enum")
+            {
+                if (_enumArray.Length == 0)
+                {
+                    GUILayout.Label("没有枚举", GUILayout.Width(50));
+                    fieldConfig.EnumName = "";
+                }
+                else
+                {
+                    GUILayout.Label("枚举类型:", GUILayout.Width(50));
+                    fieldConfig.EnumIndex = EditorGUILayout.Popup(fieldConfig.EnumIndex, _enumArray, GUILayout.Width(INFO_POPUP_WIDTH));
+                    fieldConfig.EnumName = _enumArray[fieldConfig.EnumIndex];
+                }
             }
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("删除", "OL Minus"))
@@ -382,7 +415,15 @@ public class CreateTableEditor : EditorWindow
         {
 
             GenerateEditorCode code = new GenerateEditorCode(_tempTableConfig);
-            code.GenerateCode();
+            if (!code.GenerateCode())
+            {
+                if (EditorUtility.DisplayDialog("保存失败", "生成代码失败!!!", "OK"))
+                {
+                    _isGenerateCode = false;
+                    return;
+                }
+            }
+
 
             EditorApplication.UnlockReloadAssemblies();
 

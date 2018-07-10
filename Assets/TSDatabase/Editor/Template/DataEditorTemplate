@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class $(DataClassName)DataEditor : EditorWindow
 {
-    [MenuItem("Table/Tables/$(TableShowName)", priority = 30)]
+    [MenuItem("TSTable/Tables/$(TableShowName)", priority = 30)]
     static void CreateTable()
     {
         EditorWindow.GetWindow<$(DataClassName)DataEditor>(false, "$(TableShowName)数据").minSize = new Vector2(600, 500);
@@ -38,8 +38,6 @@ public class $(DataClassName)DataEditor : EditorWindow
 
     private bool _isMouseInSearch;
 
-    private Event currentEvent = null;
-
     private int _pageNum = 1;
 
     private int _pageMaxNum = 1;
@@ -52,50 +50,64 @@ public class $(DataClassName)DataEditor : EditorWindow
 
     private int _showCountIndex = 0;
 
-    private List<Rect> rectList;
+    private List<Rect> _rectList;
+	
+	//key:fieldName.
+	//value:sort rule,-1,0,1
+	private Dictionary<string, int> _sortFieldDic;
 
     void OnGUI()
     {
-        if (_serializeData == null)
+        try
         {
-            return;
-        }
-        currentEvent = Event.current;
-        GUI.SetNextControlName("GUIArea");
-        GUILayout.BeginArea(new Rect(5, 5, position.width - 10, position.height - 10), "", "box");
-        GUILayout.BeginVertical();
-        GUITitleInfo();
-        GUISearchInfo();
-        GUIShowTableHead();
-        GUIShowTableBody();
-        GUIFooterInfo();
-        GUILayout.EndVertical();
-        GUILayout.EndArea();
-
-        if (GUI.enabled)
-        {
-            switch (currentEvent.type)
+            if (_serializeData == null)
             {
-                case EventType.Used:
-                    _isMouseInSearch = GUI.GetNameOfFocusedControl() == "SearchText";
-                    break;
-                case EventType.mouseUp:
-                    if (0 == GUIUtility.hotControl)//0为面板
-                    {
-                        if (GUI.GetNameOfFocusedControl() == "SearchText" && _isMouseInSearch)
-                        {
-                            GUI.FocusControl("GUIArea");
-                            _isMouseInSearch = false;
-                        }
-                    }
-                    break;
-                default:
-                    break;
+                return;
             }
+            GUI.SetNextControlName("GUIArea");
+            GUILayout.BeginArea(new Rect(5, 5, position.width - 10, position.height - 10), "", "box");
+			if (GUI.enabled)
+            {
+                switch (Event.current.type)
+                {
+                    case EventType.Used:
+                        _isMouseInSearch = GUI.GetNameOfFocusedControl() == "SearchText";
+                        break;
+                    case EventType.mouseUp:
+                        if (0 == GUIUtility.hotControl)//0为面板
+                        {
+                            if (GUI.GetNameOfFocusedControl() == "SearchText" && _isMouseInSearch)
+                            {
+                                GUI.FocusControl("GUIArea");
+                                _isMouseInSearch = false;
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            if (Event.current.keyCode == KeyCode.Escape)
+            {
+                GUI.FocusControl("GUIArea");
+                _isMouseInSearch = false;
+                _searchValue = "";
+            }
+            GUILayout.BeginVertical();
+            GUITitleInfo();
+            GUISearchInfo();
+            GUIShowTableHead();
+            GUIShowTableBody();
+            GUIFooterInfo();
+            GUILayout.EndVertical();
+            GUILayout.EndArea();
+
+
         }
-        if (currentEvent.keyCode == KeyCode.Escape)
+        catch (Exception ex)
         {
-            GUI.FocusControl("GUIArea");
+
+            throw ex;
         }
     }
 
@@ -125,9 +137,11 @@ public class $(DataClassName)DataEditor : EditorWindow
                     _primaryKeyInfo.Values[value]++;
                 }
             }
-            TableDatabaseUtils.SavaGlobalData();
+            TSDatabaseUtils.SavaGlobalData();
             EditorUtility.SetDirty(_serializeData);
             AssetDatabase.SaveAssets();
+			this.RemoveNotification();
+            EditorUtility.DisplayDialog("保存", "保存成功", "Ok");
         }
 
         GUILayout.FlexibleSpace();
@@ -238,7 +252,7 @@ public class $(DataClassName)DataEditor : EditorWindow
         {
             if (_isAdvancedSearch)
             {
-                _dataList = SearchTableData.AdvancedSearch<$(DataClassName)>(this, _searchFieldArray[_searchFieldIndex], _searchValue, _serializeData.DataList);
+                _dataList = SearchTableData.AdvancedSearch<$(DataClassName)>(this, _tableConfig, _searchFieldArray[_searchFieldIndex], _searchValue, _serializeData.DataList);
             }
         }
         GUILayout.EndHorizontal();
@@ -252,7 +266,7 @@ public class $(DataClassName)DataEditor : EditorWindow
             _areaWidht += _excelConfig.ColumnsWidth[i];
         }
         Rect areaRect = new Rect(55, 55, _areaWidht, 30);
-        rectList = new List<Rect>(_divisionSlider.HorizontalLayoutRects(areaRect));
+        _rectList = new List<Rect>(_divisionSlider.HorizontalLayoutRects(areaRect));
         GUILayout.BeginArea(new Rect(3, 50, position.width - 20, 50));
         GUILayout.BeginScrollView(new Vector2(_tableScrollView.x, 0), GUIStyle.none, GUIStyle.none);
         GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(_areaWidht), GUILayout.Height(30));
@@ -268,6 +282,11 @@ public class $(DataClassName)DataEditor : EditorWindow
             SearchTableData.Hide();
             GUI.FocusControl("GUIArea");
             _isSort = false;
+            List<string> tempList = _sortFieldDic.Keys.ToList();
+            foreach (string item in tempList)
+            {
+                _sortFieldDic[item] = 0;
+            }
         }
         GUILayout.EndVertical();
         GUILayout.Space(2);
@@ -275,8 +294,8 @@ public class $(DataClassName)DataEditor : EditorWindow
 
         for (index = 0; index < _tableConfig.FieldList.Count; index++)
         {
-            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(rectList[index].width), GUILayout.MaxHeight(30));
-            string fieldName = _tableConfig.FieldList[index].Name;
+            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(_rectList[index].width), GUILayout.MaxHeight(30));
+            string fieldName = _tableConfig.FieldList[index].FieldName;
             if (!string.IsNullOrEmpty(_tableConfig.FieldList[index].ShowName))
             {
                 fieldName += "\r\n" + _tableConfig.FieldList[index].ShowName;
@@ -286,23 +305,43 @@ public class $(DataClassName)DataEditor : EditorWindow
             GUILayout.Space(2);
             if (GUILayout.Button(fieldName, EditorGUIStyle.TitleButtonStyle, GUILayout.Height(25)))
             {
-                //_dataList.Clear();
-                //_dataList.AddRange(_serializeData.DataList.OrderBy(a => a.T));
-                //_isSort = true;
+			    _isSort = true;
+                _dataList.Clear();
+                _dataList.AddRange(_serializeData.DataList);
+                if (_isMouseInSearch)
+                {
+                    GUI.FocusControl("GUIArea");
+                    _isMouseInSearch = false;
+                    _searchValue = "";
+                }
+                switch (fieldName)
+                {
+$(SortColumn)
+                    default:
+                        break;
+                }
+                List<string> tempList = _sortFieldDic.Keys.ToList();
+                foreach (string item in tempList)
+                {
+                    if (item != fieldName)
+                    {
+                        _sortFieldDic[item] = 0;
+                    }
+                }
             }
-            _excelConfig.ColumnsWidth[index] = rectList[index].width;
+            _excelConfig.ColumnsWidth[index] = _rectList[index].width;
             GUILayout.EndVertical();
             GUILayout.Space(5);
             GUILayout.EndHorizontal();
         }
         for (; index < _excelConfig.ColumnsWidth.Count; index++)
         {
-            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(rectList[index].width), GUILayout.MaxHeight(30));
+            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(_rectList[index].width), GUILayout.MaxHeight(30));
             GUILayout.Space(5);
             GUILayout.BeginVertical();
             GUILayout.Space(2);
             GUILayout.Label("", GUILayout.Height(25));
-			_excelConfig.ColumnsWidth[index] = rectList[index].width;
+			_excelConfig.ColumnsWidth[index] = _rectList[index].width;
             GUILayout.EndVertical();
             GUILayout.Space(5);
             GUILayout.EndHorizontal();
@@ -394,7 +433,7 @@ $(ShowDataInfo)
             _pageNum = 1;
         }
         GUILayout.FlexibleSpace();
-        if (GUILayout.Button("◀"))
+        if (GUILayout.Button("<"))
         {
             if (_pageNum != 1)
             {
@@ -404,7 +443,7 @@ $(ShowDataInfo)
         GUI.color = Color.black;
         GUILayout.Label(_pageNum + "/" + _pageMaxNum);
         GUI.color = Color.white;
-        if (GUILayout.Button("▶"))
+        if (GUILayout.Button(">"))
         {
             if (_pageNum < _pageMaxNum)
             {
@@ -432,27 +471,46 @@ $(ShowDataInfo)
 
     private void OnEnable()
     {
-        CheckPlayerData();
-        CheckPlayerConfig();
-        CheckSearch();
-        InitDivisionSlider();
+        try
+        {
+            CheckPlayerData();
+            CheckPlayerConfig();
+            CheckSearch();
+            InitDivisionSlider();
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
     private void OnDestroy()
     {
-        EditorUtility.SetDirty(_excelConfig);
-        TableDatabaseUtils.SavaGlobalData();
+        try
+        {
+            EditorUtility.SetDirty(_excelConfig);
+            TSDatabaseUtils.SavaGlobalData();
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
 
     private void CheckSearch()
     {
         List<string> tempList = new List<string>();
+        _sortFieldDic = new Dictionary<string, int>();
         for (int i = 0; i < _tableConfig.FieldList.Count; i++)
         {
             if (_tableConfig.FieldList[i].FieldType != "List" && _tableConfig.FieldList[i].FieldType != "Vector2" && _tableConfig.FieldList[i].FieldType != "Vector3" && _tableConfig.FieldList[i].FieldType != "Quaternion")
             {
-                tempList.Add(_tableConfig.FieldList[i].Name);
+                tempList.Add(_tableConfig.FieldList[i].FieldName);
+            }
+            if (_tableConfig.FieldList[i].FieldType != "List")
+            {
+                _sortFieldDic.Add(_tableConfig.FieldList[i].FieldName, 0);
             }
         }
         _searchFieldArray = tempList.ToArray();
@@ -465,18 +523,18 @@ $(ShowDataInfo)
             _divisionSlider = new DivisionSlider(5, false, _excelConfig.ColumnsWidth.ToArray());
             for (int i = _tableConfig.FieldList.Count; i < _excelConfig.ColumnsWidth.Count; i++)
             {
-                _divisionSlider.MinSizes[i] = TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth;
+                _divisionSlider.MinSizes[i] = TSDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth;
             }
         }
     }
 
     private void CheckPlayerData()
     {
-        for (int i = 0; i < TableDatabaseUtils.TableConfigSerializeData.TableConfigList.Count; i++)
+        for (int i = 0; i < TSDatabaseUtils.TableConfigSerializeData.TableConfigList.Count; i++)
         {
-            if (TableDatabaseUtils.TableConfigSerializeData.TableConfigList[i].TableName == "$(DataClassName)")
+            if (TSDatabaseUtils.TableConfigSerializeData.TableConfigList[i].TableName == "$(DataClassName)")
             {
-                _tableConfig = TableDatabaseUtils.TableConfigSerializeData.TableConfigList[i];
+                _tableConfig = TSDatabaseUtils.TableConfigSerializeData.TableConfigList[i];
                 break;
             }
         }
@@ -492,13 +550,13 @@ $(ShowDataInfo)
             }
             _tableConfig.DataPath = path;
             _serializeData = ScriptableObject.CreateInstance<$(DataClassName)SerializeData>();
-            TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic.Add(_tableConfig.TableName, new PrimaryKeyInfo());
-            _primaryKeyInfo = TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic[_tableConfig.TableName];
+            TSDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic.Add(_tableConfig.TableName, new PrimaryKeyInfo());
+            _primaryKeyInfo = TSDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic[_tableConfig.TableName];
             _primaryKeyInfo.TableName = _tableConfig.TableName;
             _primaryKeyInfo.PrimaryKey = _tableConfig.PrimaryKey;
             _primaryKeyInfo.PrimaryType = _tableConfig.PrimaryType;
             _primaryKeyInfo.Values = new Dictionary<string, int>();
-            TableDatabaseUtils.SavaGlobalData();
+            TSDatabaseUtils.SavaGlobalData();
             AssetDatabase.CreateAsset(_serializeData, path);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -506,7 +564,7 @@ $(ShowDataInfo)
         else
         {
             _serializeData = AssetDatabase.LoadAssetAtPath<$(DataClassName)SerializeData>(_tableConfig.DataPath);
-            _primaryKeyInfo = TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic[_tableConfig.TableName];
+            _primaryKeyInfo = TSDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic[_tableConfig.TableName];
             if (_tableConfig.PrimaryKey != _primaryKeyInfo.PrimaryKey)
             {
                 //更换主键
@@ -526,7 +584,7 @@ $(ShowDataInfo)
                         _primaryKeyInfo.Values[value]++;
                     }
                 }
-                TableDatabaseUtils.SavaGlobalData();
+                TSDatabaseUtils.SavaGlobalData();
             }
         }
         _dataList = new List<$(DataClassName)>();
@@ -537,7 +595,7 @@ $(ShowDataInfo)
     {
         if (_excelConfig == null)
         {
-            string path = TableDatabaseUtils.EditorPath + "/Config/Table";
+            string path = TSDatabaseUtils.EditorPath + "/Config/Table";
             if (!Directory.Exists(Path.GetFullPath(path)))
             {
                 Directory.CreateDirectory(Path.GetFullPath(path));
@@ -548,11 +606,11 @@ $(ShowDataInfo)
                 _excelConfig = ScriptableObject.CreateInstance<$(DataClassName)Config>();
 				for (int i = 0; i < _tableConfig.FieldList.Count; i++)
                 {
-                    _excelConfig.ColumnsWidth.Add(TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth);
+                    _excelConfig.ColumnsWidth.Add(TSDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth);
                 }
 				for	(int i = 0; i < 10; i++)
 				{
-				    _excelConfig.ColumnsWidth.Add(TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth);
+				    _excelConfig.ColumnsWidth.Add(TSDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth);
 				}
                 AssetDatabase.CreateAsset(_excelConfig, path);
                 AssetDatabase.SaveAssets();
@@ -573,7 +631,7 @@ $(ShowDataInfo)
                 {
                     while (_excelConfig.ColumnsWidth.Count < _tableConfig.FieldList.Count + 10)
                     {
-                        _excelConfig.ColumnsWidth.Add(TableDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth);
+                        _excelConfig.ColumnsWidth.Add(TSDatabaseUtils.TableConfigSerializeData.Setting.ColumnWidth);
                     }
                 }
             }

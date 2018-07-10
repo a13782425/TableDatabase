@@ -16,6 +16,7 @@ public class TableSetting
     public float ColumnWidth = 150;
     public string SplitVecChar = "|";
     public string SplitListChar = ",";
+    public SystemLanguage CurrentLanguage = SystemLanguage.English;
 }
 
 
@@ -23,31 +24,31 @@ public class TableSetting
 public class TableConfig
 {
     /// <summary>
-    /// 表名
+    /// TableName
     /// </summary>
     public string TableName = "";
     /// <summary>
-    /// 显示名称
+    /// ShowName
     /// </summary>
     public string ShowName = "";
     /// <summary>
-    /// 代码路径
+    /// CodePath
     /// </summary>
     public string CodePath;
     /// <summary>
-    /// 数据路径
+    /// DataPath
     /// </summary>
     public string DataPath;
 
     public bool HasPrimaryKey = false;
     /// <summary>
-    /// 主键
+    /// PrimaryKey
     /// </summary>
     public string PrimaryKey;
     public int PrimaryIndex;
     public string PrimaryType;
     /// <summary>
-    /// 所有字段
+    /// All Field
     /// </summary>
     public List<FieldConfig> FieldList = new List<FieldConfig>();
 }
@@ -56,21 +57,23 @@ public class TableConfig
 public class FieldConfig
 {
     /// <summary>
-    /// 字段名
+    /// FieldName
     /// </summary>
-    public string Name = "";
+    public string FieldName = "";
     /// <summary>
-    /// 显示名称
+    /// ShowName
     /// </summary>
     public string ShowName = "";
     /// <summary>
-    /// 字段类型
+    /// FieldType
     /// </summary>
     public string FieldType = "int";
-
+    /// <summary>
+    /// FieldType Index
+    /// </summary>
     public int FieldIndex = 0;
     /// <summary>
-    /// 字段泛型类型
+    /// GenericType
     /// </summary>
     public string GenericType = "int";
 
@@ -86,7 +89,7 @@ public class FieldConfig
 
     public int ForeignKeyIndex;
     /// <summary>
-    /// 外键
+    /// ForeignKey
     /// </summary>
     public string ForeignKey;
 }

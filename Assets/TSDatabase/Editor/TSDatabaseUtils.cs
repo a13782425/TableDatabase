@@ -6,7 +6,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-public class TableDatabaseUtils
+public class TSDatabaseUtils
 {
     public static string[] BaseType = new string[] { "int", "float", "string", "bool", "enum", "Vector2", "Vector3", "Rect", "Vector4", "Quaternion", "Color", "Color32", "Sprite", "Texture", "GameObject", "List" };
 
@@ -75,13 +75,13 @@ public class TableDatabaseUtils
         keys.Add("");
         for (int i = 0; i < config.FieldList.Count; i++)
         {
-            if (string.IsNullOrEmpty(config.FieldList[i].Name))
+            if (string.IsNullOrEmpty(config.FieldList[i].FieldName))
             {
                 continue;
             }
             if (config.FieldList[i].FieldType == "int" || config.FieldList[i].FieldType == "string")
             {
-                keys.Add(config.FieldList[i].Name);
+                keys.Add(config.FieldList[i].FieldName);
             }
         }
         return keys.ToArray();
@@ -125,7 +125,7 @@ public class TableDatabaseUtils
     }
 
 
-    public static object RenderFieldInfoControl(float width, string fieldType, object value, string otherType = "")
+    public static object RenderFieldInfoControl(float width, string fieldType, object value, string foreignKey = "")
     {
         object result = null;
         switch (fieldType)
@@ -204,8 +204,29 @@ public class TableDatabaseUtils
                 int removeAt = -1;
                 for (int i = 0; i < count; i++)
                 {
-                    GUILayout.BeginHorizontal();
                     object item = itemPropertyInfo.GetValue(value, new object[] { i });
+                    if (!string.IsNullOrEmpty(foreignKey))
+                    {
+                        if (TSDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic.ContainsKey(foreignKey))
+                        {
+                            if (TSDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic[foreignKey].Values.ContainsKey(item.ToString()))
+                            {
+                                if (TSDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic[foreignKey].Values[item.ToString()] < 1)
+                                {
+                                    GUI.color = new Color(1, 0.5f, 0);
+                                }
+                            }
+                            else
+                            {
+                                GUI.color = new Color(1, 0.5f, 0);
+                            }
+                        }
+                        else
+                        {
+                            GUI.color = new Color(1, 0.5f, 0);
+                        }
+                    }
+                    GUILayout.BeginHorizontal();
                     if (elementType.IsEnum)
                     {
                         item = RenderFieldInfoControl(width - 20, "enum", item);
@@ -214,6 +235,7 @@ public class TableDatabaseUtils
                     {
                         item = RenderFieldInfoControl(width - 20, elementType.Name, item);
                     }
+                    GUI.color = Color.white;
                     itemPropertyInfo.SetValue(value, item, new object[] { i });
                     if (GUILayout.Button("", "OL Minus"))
                     {
@@ -259,7 +281,7 @@ public class TableDatabaseUtils
     /// </summary>
     private static void GetGlobalSerializeData()
     {
-        string[] guids = AssetDatabase.FindAssets(typeof(CreateTableEditor).Name);
+        string[] guids = AssetDatabase.FindAssets(typeof(TSDatabaseUtils).Name);
         if (guids.Length != 1)
         {
             Debug.LogError("guids存在多个");
@@ -289,14 +311,9 @@ public class TableDatabaseUtils
         {
             File.Create(Path.GetFullPath(_primaryKeyPath)).Dispose();
             _primaryKeySerializeData = new PrimaryKeySerializeData();
-            //_primaryKeySerializeData = ScriptableObject.CreateInstance<PrimaryKeySerializeData>();
-            //AssetDatabase.CreateAsset(_primaryKeySerializeData, keyPath);
-            //AssetDatabase.SaveAssets();
-            //AssetDatabase.Refresh();
         }
         else
         {
-            //_primaryKeySerializeData = AssetDatabase.LoadAssetAtPath<PrimaryKeySerializeData>(keyPath);
             _primaryKeySerializeData = (PrimaryKeySerializeData)DeserializeWithBinary(File.ReadAllBytes(Path.GetFullPath(_primaryKeyPath)));
         }
 
@@ -336,4 +353,126 @@ public class TableDatabaseUtils
 
         return obj;
     }
+}
+
+
+public class LanguageUtils
+{
+    public static string Save
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case SystemLanguage.ChineseSimplified:
+                    return "保存";
+                case SystemLanguage.ChineseTraditional:
+                    return "保存";
+                case SystemLanguage.English:
+                default:
+                    return "Save";
+            }
+        }
+    }
+
+    public static string Data
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case SystemLanguage.ChineseSimplified:
+                    return "数据";
+                case SystemLanguage.ChineseTraditional:
+                    return "數據";
+                case SystemLanguage.English:
+                default:
+                    return " Data";
+            }
+        }
+    }
+
+    public static string SaveFail
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case SystemLanguage.ChineseSimplified:
+                    return "保存失败";
+                case SystemLanguage.ChineseTraditional:
+                    return "保存失敗";
+                case SystemLanguage.English:
+                default:
+                    return "Save Fail";
+            }
+        }
+    }
+
+    public static string SaveFile
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case SystemLanguage.ChineseSimplified:
+                    return "保存文件";
+                case SystemLanguage.ChineseTraditional:
+                    return "保存文件";
+                case SystemLanguage.English:
+                default:
+                    return "Save File";
+            }
+        }
+    }
+
+    public static string DataNullPath
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case SystemLanguage.ChineseSimplified:
+                    return "数据路径为空！！！";
+                case SystemLanguage.ChineseTraditional:
+                    return "數據路徑為空！！！";
+                case SystemLanguage.English:
+                default:
+                    return "data path is null !!!";
+            }
+        }
+    }
+    public static string DataList
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case SystemLanguage.ChineseSimplified:
+                    return "数据列表";
+                case SystemLanguage.ChineseTraditional:
+                    return "數據列表";
+                case SystemLanguage.English:
+                default:
+                    return "DataList";
+            }
+        }
+    }
+    public static string Count
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case SystemLanguage.ChineseSimplified:
+                    return "条";
+                case SystemLanguage.ChineseTraditional:
+                    return "條";
+                case SystemLanguage.English:
+                default:
+                    return "Count";
+            }
+        }
+    }
+
 }

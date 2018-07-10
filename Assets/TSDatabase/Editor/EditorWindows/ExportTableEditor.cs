@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class ExportTableEditor : EditorWindow
 {
-    [MenuItem("Table/ExportTable", priority = 51)]
+    [MenuItem("TSTable/ExportTable", priority = 51)]
     static void CreateTable()
     {
         EditorWindow.GetWindowWithRect<ExportTableEditor>(new Rect(100, 100, 500, 500), false, "导出数据");
@@ -35,7 +35,7 @@ public class ExportTableEditor : EditorWindow
     {
         GUILayout.Space(10);
         GUILayout.BeginVertical();
-        GUILayout.BeginScrollView(_tableScrollVec, false, false);
+        _tableScrollVec = GUILayout.BeginScrollView(_tableScrollVec, false, false);
         for (int i = 0; i < _exportDtoList.Count; i++)
         {
             ExportDto dto = _exportDtoList[i];
@@ -75,7 +75,7 @@ public class ExportTableEditor : EditorWindow
         {
             if (dto.CurrentConfig.FieldList[i].IsExport)
             {
-                sb.Append(dto.CurrentConfig.FieldList[i].Name);
+                sb.Append(dto.CurrentConfig.FieldList[i].FieldName);
             }
             sb.Append("\t");
         }
@@ -94,7 +94,7 @@ public class ExportTableEditor : EditorWindow
                     if (dto.CurrentConfig.FieldList[i].IsExport)
                     {
                         string str = "";
-                        object obj = o.GetType().GetField(dto.CurrentConfig.FieldList[i].Name).GetValue(o);
+                        object obj = o.GetType().GetField(dto.CurrentConfig.FieldList[i].FieldName).GetValue(o);
 
                         GetString(dto.CurrentConfig.FieldList[i].FieldType, obj, ref str);
 
@@ -120,31 +120,31 @@ public class ExportTableEditor : EditorWindow
         {
             case "Vector2":
                 Vector2 vector2 = (Vector2)obj;
-                str += vector2.x + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector2.y;
+                str += vector2.x + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector2.y;
                 break;
             case "Vector3":
                 Vector3 vector3 = (Vector3)obj;
-                str += vector3.x + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector3.y + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector3.z;
+                str += vector3.x + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector3.y + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector3.z;
                 break;
             case "Vector4":
                 Vector4 vector4 = (Vector4)obj;
-                str += vector4.x + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector4.y + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector4.z + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector4.w;
+                str += vector4.x + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector4.y + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector4.z + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector4.w;
                 break;
             case "Quaternion":
                 Quaternion quaternion = (Quaternion)obj;
-                str += quaternion.x + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + quaternion.y + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + quaternion.z + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + quaternion.w;
+                str += quaternion.x + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + quaternion.y + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + quaternion.z + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + quaternion.w;
                 break;
             case "Rect":
                 Rect rect = (Rect)obj;
-                str += rect.x + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + rect.y + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + rect.width + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + rect.height;
+                str += rect.x + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + rect.y + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + rect.width + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + rect.height;
                 break;
             case "Color":
                 Color color = (Color)obj;
-                str += color.r + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color.g + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color.b + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color.a;
+                str += color.r + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color.g + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color.b + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color.a;
                 break;
             case "Color32":
                 Color32 color32 = (Color32)obj;
-                str += color32.r + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color32.g + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color32.b + TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color32.a;
+                str += color32.r + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color32.g + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color32.b + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color32.a;
                 break;
             case "Sprite":
             case "Texture":
@@ -165,9 +165,9 @@ public class ExportTableEditor : EditorWindow
                 foreach (object item in enumerator)
                 {
                     GetString(item.GetType().Name, item, ref str);
-                    str += TableDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar;
+                    str += TSDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar;
                 }
-                int length = str.LastIndexOf(TableDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar);
+                int length = str.LastIndexOf(TSDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar);
                 if (length > 0)
                 {
                     str = str.Substring(0, length);
@@ -189,14 +189,14 @@ public class ExportTableEditor : EditorWindow
         GUI.color = Color.white;
         GUILayout.Space(5);
         GUILayout.Label("Vector分割符:");
-        TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar = GUILayout.TextField(TableDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar, GUILayout.Width(40));
+        TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar = GUILayout.TextField(TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar, GUILayout.Width(40));
         GUILayout.Space(5);
         GUILayout.Label("List分隔符:");
-        TableDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar = GUILayout.TextField(TableDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar, GUILayout.Width(40));
+        TSDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar = GUILayout.TextField(TSDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar, GUILayout.Width(40));
         GUILayout.Space(5);
         if (GUILayout.Button("保存配置"))
         {
-            TableDatabaseUtils.SavaGlobalData();
+            TSDatabaseUtils.SavaGlobalData();
         }
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
@@ -205,9 +205,9 @@ public class ExportTableEditor : EditorWindow
     private void OnEnable()
     {
         _exportDtoList = new List<ExportDto>();
-        for (int i = 0; i < TableDatabaseUtils.TableConfigSerializeData.TableConfigList.Count; i++)
+        for (int i = 0; i < TSDatabaseUtils.TableConfigSerializeData.TableConfigList.Count; i++)
         {
-            TableConfig config = TableDatabaseUtils.TableConfigSerializeData.TableConfigList[i];
+            TableConfig config = TSDatabaseUtils.TableConfigSerializeData.TableConfigList[i];
             ExportDto dto = new ExportDto();
             dto.CurrentConfig = config;
             dto.Count = 0;

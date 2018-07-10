@@ -10,7 +10,7 @@ using UnityEngine;
 public class CreateTableEditor : EditorWindow
 {
 
-    [MenuItem("Table/CreateTable", priority = 50)]
+    [MenuItem("TSTable/CreateTable", priority = 50)]
     static void CreateTable()
     {
         EditorWindow.GetWindowWithRect<CreateTableEditor>(new Rect(100, 100, 800, 500), false, "创建表格");
@@ -67,27 +67,27 @@ public class CreateTableEditor : EditorWindow
         {
             _tempTableConfig = new TableConfig();
             _tempTableConfig.HasPrimaryKey = true;
-            TableDatabaseUtils.TableConfigSerializeData.TableConfigList.Add(_tempTableConfig);
-            _selectConfigIndex = TableDatabaseUtils.TableConfigSerializeData.TableConfigList.Count - 1;
+            TSDatabaseUtils.TableConfigSerializeData.TableConfigList.Add(_tempTableConfig);
+            _selectConfigIndex = TSDatabaseUtils.TableConfigSerializeData.TableConfigList.Count - 1;
             GUI.FocusControl("DataList");
         }
         GUILayout.EndHorizontal();
         int removeIndex = -1;
         GUILayout.Space(5);
         _listScollViewVec = GUILayout.BeginScrollView(_listScollViewVec, false, true);
-        for (int i = 0; i < TableDatabaseUtils.TableConfigSerializeData.TableConfigList.Count; i++)
+        for (int i = 0; i < TSDatabaseUtils.TableConfigSerializeData.TableConfigList.Count; i++)
         {
-            if (_tempTableConfig == TableDatabaseUtils.TableConfigSerializeData.TableConfigList[i])
+            if (_tempTableConfig == TSDatabaseUtils.TableConfigSerializeData.TableConfigList[i])
             {
                 GUI.color = Color.yellow;
             }
             GUILayout.BeginHorizontal("GroupBox", GUILayout.Height(30));
             GUI.color = Color.white;
             GUILayout.Space(5);
-            if (GUILayout.Button(TableDatabaseUtils.TableConfigSerializeData.TableConfigList[i].TableName, "OL Title", GUILayout.Width(90)))
+            if (GUILayout.Button(TSDatabaseUtils.TableConfigSerializeData.TableConfigList[i].TableName, "OL Title", GUILayout.Width(90)))
             {
                 _selectConfigIndex = i;
-                _tempTableConfig = TableDatabaseUtils.TableConfigSerializeData.TableConfigList[i];
+                _tempTableConfig = TSDatabaseUtils.TableConfigSerializeData.TableConfigList[i];
             }
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("删除", "OL Minus"))
@@ -103,14 +103,14 @@ public class CreateTableEditor : EditorWindow
         {
             EditorUtility.DisplayProgressBar("删除", "正在删除...", 0f);
             EditorApplication.LockReloadAssemblies();
-            TableConfig config = TableDatabaseUtils.TableConfigSerializeData.TableConfigList[removeIndex];
-            TableDatabaseUtils.TableConfigSerializeData.TableConfigList.RemoveAt(removeIndex);
+            TableConfig config = TSDatabaseUtils.TableConfigSerializeData.TableConfigList[removeIndex];
+            TSDatabaseUtils.TableConfigSerializeData.TableConfigList.RemoveAt(removeIndex);
             if (!string.IsNullOrEmpty(config.DataPath))
             {
                 File.Delete(Path.GetFullPath(config.DataPath));
-                if (TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic.ContainsKey(config.TableName))
+                if (TSDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic.ContainsKey(config.TableName))
                 {
-                    TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic.Remove(config.TableName);
+                    TSDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic.Remove(config.TableName);
                 }
             }
             EditorUtility.DisplayProgressBar("删除", "正在删除...", 0.5f);
@@ -118,17 +118,17 @@ public class CreateTableEditor : EditorWindow
             {
                 File.Delete(Path.GetFullPath(config.CodePath));
 
-                string editorPath = TableDatabaseUtils.EditorFullPath + "/TableEditor/" + config.TableName + "EditorData.cs";
+                string editorPath = TSDatabaseUtils.EditorFullPath + "/TableEditor/" + config.TableName + "EditorData.cs";
                 if (File.Exists(editorPath))
                 {
                     File.Delete(editorPath);
                 }
-                string configPath = TableDatabaseUtils.EditorFullPath + "/Data/Table/" + config.TableName + "Config.cs";
+                string configPath = TSDatabaseUtils.EditorFullPath + "/Data/Table/" + config.TableName + "Config.cs";
                 if (File.Exists(configPath))
                 {
                     File.Delete(configPath);
                 }
-                string configDataPath = TableDatabaseUtils.EditorFullPath + "/Config/Table/" + config.TableName + "Config.asset";
+                string configDataPath = TSDatabaseUtils.EditorFullPath + "/Config/Table/" + config.TableName + "Config.asset";
                 if (File.Exists(configDataPath))
                 {
                     File.Delete(configDataPath);
@@ -176,7 +176,7 @@ public class CreateTableEditor : EditorWindow
             GUILayout.Label("别名：", GUILayout.Width(INFO_LABEL_WIDTH));
             _tempTableConfig.ShowName = GUILayout.TextField(_tempTableConfig.ShowName, GUILayout.Width(INFO_TEXT_WIDTH));
             GUILayout.Label("主键：", GUILayout.Width(INFO_LABEL_WIDTH));
-            string[] keys = TableDatabaseUtils.GetPrimaryKey(_tempTableConfig);
+            string[] keys = TSDatabaseUtils.GetPrimaryKey(_tempTableConfig);
             if (keys.Length == 1)
             {
                 EditorGUILayout.Popup(0, new string[0], GUILayout.Width(INFO_POPUP_WIDTH));
@@ -188,7 +188,7 @@ public class CreateTableEditor : EditorWindow
                 _tempTableConfig.PrimaryKey = keys[_tempTableConfig.PrimaryIndex];
                 for (int i = 0; i < _tempTableConfig.FieldList.Count; i++)
                 {
-                    if (_tempTableConfig.FieldList[i].Name == _tempTableConfig.PrimaryKey)
+                    if (_tempTableConfig.FieldList[i].FieldName == _tempTableConfig.PrimaryKey)
                     {
                         _tempTableConfig.PrimaryType = _tempTableConfig.FieldList[i].FieldType;
                         break;
@@ -237,14 +237,14 @@ public class CreateTableEditor : EditorWindow
             GUILayout.BeginVertical();
             GUILayout.BeginHorizontal();
             GUILayout.Label("列名：", GUILayout.Width(INFO_LABEL_WIDTH));
-            fieldConfig.Name = GUILayout.TextField(fieldConfig.Name, GUILayout.Width(INFO_TEXT_WIDTH));
+            fieldConfig.FieldName = GUILayout.TextField(fieldConfig.FieldName, GUILayout.Width(INFO_TEXT_WIDTH));
 
             GUILayout.Label("类型：", GUILayout.Width(INFO_LABEL_WIDTH));
-            int baseIndex = EditorGUILayout.Popup(fieldConfig.FieldIndex, TableDatabaseUtils.BaseType, GUILayout.Width(INFO_POPUP_WIDTH));
+            int baseIndex = EditorGUILayout.Popup(fieldConfig.FieldIndex, TSDatabaseUtils.BaseType, GUILayout.Width(INFO_POPUP_WIDTH));
             if (baseIndex != fieldConfig.FieldIndex)
             {
                 fieldConfig.FieldIndex = baseIndex;
-                fieldConfig.FieldType = TableDatabaseUtils.BaseType[baseIndex];
+                fieldConfig.FieldType = TSDatabaseUtils.BaseType[baseIndex];
                 if (fieldConfig.FieldType == "enum" && !string.IsNullOrEmpty(fieldConfig.EnumName))
                 {
                     for (int j = 0; j < _enumArray.Length; j++)
@@ -260,11 +260,11 @@ public class CreateTableEditor : EditorWindow
             if (fieldConfig.FieldType == "List")
             {
                 GUILayout.Label("集合类型:", GUILayout.Width(50));
-                int collectionIndex = EditorGUILayout.Popup(fieldConfig.GenericIndex, TableDatabaseUtils.GenericType, GUILayout.Width(INFO_POPUP_WIDTH));
+                int collectionIndex = EditorGUILayout.Popup(fieldConfig.GenericIndex, TSDatabaseUtils.GenericType, GUILayout.Width(INFO_POPUP_WIDTH));
                 if (collectionIndex != fieldConfig.GenericIndex)
                 {
                     fieldConfig.GenericIndex = collectionIndex;
-                    fieldConfig.GenericType = TableDatabaseUtils.GenericType[collectionIndex];
+                    fieldConfig.GenericType = TSDatabaseUtils.GenericType[collectionIndex];
                     if (fieldConfig.GenericType == "enum" && !string.IsNullOrEmpty(fieldConfig.EnumName))
                     {
                         for (int j = 0; j < _enumArray.Length; j++)
@@ -316,14 +316,36 @@ public class CreateTableEditor : EditorWindow
             GUILayout.BeginHorizontal();
             GUILayout.Label("别名：", GUILayout.Width(INFO_LABEL_WIDTH));
             fieldConfig.ShowName = GUILayout.TextField(fieldConfig.ShowName, GUILayout.Width(INFO_TEXT_WIDTH));
+
+            if (fieldConfig.FieldType == "List" && (fieldConfig.GenericType == "int" || fieldConfig.GenericType == "string"))
+            {
+                GUILayout.Label("外键：", GUILayout.Width(INFO_LABEL_WIDTH));
+                fieldConfig.HasForeignKey = GUILayout.Toggle(fieldConfig.HasForeignKey, "", GUILayout.Width(20));
+                if (fieldConfig.HasForeignKey)
+                {
+                    string[] keys = TSDatabaseUtils.GetForeignKey(_tempTableConfig, fieldConfig.GenericType);
+                    if (keys.Length == 1)
+                    {
+                        fieldConfig.ForeignKeyIndex = 0;
+                        fieldConfig.ForeignKey = "";
+                        keys = new string[0];
+                        EditorGUILayout.Popup(fieldConfig.ForeignKeyIndex, keys, GUILayout.Width(INFO_POPUP_WIDTH));
+                    }
+                    else
+                    {
+                        fieldConfig.ForeignKeyIndex = EditorGUILayout.Popup(fieldConfig.ForeignKeyIndex, keys, GUILayout.Width(INFO_POPUP_WIDTH));
+                        fieldConfig.ForeignKey = keys[fieldConfig.ForeignKeyIndex];
+                    }
+                }
+            }
+
             if (fieldConfig.FieldType == "int" || fieldConfig.FieldType == "string")
             {
                 GUILayout.Label("外键：", GUILayout.Width(INFO_LABEL_WIDTH));
-                fieldConfig.HasForeignKey = GUILayout.Toggle(fieldConfig.HasForeignKey, "", GUILayout.Width(20));//, "MiniToolbarPopup"
+                fieldConfig.HasForeignKey = GUILayout.Toggle(fieldConfig.HasForeignKey, "", GUILayout.Width(20));
                 if (fieldConfig.HasForeignKey)
                 {
-                    //GUILayout.Label("外键：", GUILayout.Width(INFO_LABEL_WIDTH));
-                    string[] keys = TableDatabaseUtils.GetForeignKey(_tempTableConfig, fieldConfig.FieldType);
+                    string[] keys = TSDatabaseUtils.GetForeignKey(_tempTableConfig, fieldConfig.FieldType);
                     if (keys.Length == 1)
                     {
                         fieldConfig.ForeignKeyIndex = 0;
@@ -340,7 +362,7 @@ public class CreateTableEditor : EditorWindow
             }
             GUILayout.Space(10);
             GUILayout.Label("是否导出：", GUILayout.Width(INFO_LABEL_WIDTH + 20));
-            fieldConfig.IsExport = GUILayout.Toggle(fieldConfig.IsExport, "", GUILayout.Width(20));//, "MiniToolbarPopup"
+            fieldConfig.IsExport = GUILayout.Toggle(fieldConfig.IsExport, "", GUILayout.Width(20));
             GUILayout.EndHorizontal();
 
             GUILayout.EndVertical();
@@ -351,7 +373,6 @@ public class CreateTableEditor : EditorWindow
             for (int i = 0; i < removeList.Count; i++)
             {
                 _tempTableConfig.FieldList.Remove(removeList[i]);
-                //todo 删除一个表（同时删除数据和代码）
             }
             WriteConfig();
         }
@@ -360,22 +381,32 @@ public class CreateTableEditor : EditorWindow
 
     #region 初始化和功能方法
 
+    void OnDestroy()
+    {
+        try
+        {
+            TSDatabaseUtils.SavaGlobalData();
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
     void OnEnable()
     {
-        //GetConfigPath();
-        //ReadConfig();
         if (_selectConfigIndex >= 0)
         {
-            if (_selectConfigIndex >= TableDatabaseUtils.TableConfigSerializeData.TableConfigList.Count)
+            if (_selectConfigIndex >= TSDatabaseUtils.TableConfigSerializeData.TableConfigList.Count)
             {
                 _selectConfigIndex = 0;
             }
             else
             {
-                _tempTableConfig = TableDatabaseUtils.TableConfigSerializeData.TableConfigList[_selectConfigIndex];
+                _tempTableConfig = TSDatabaseUtils.TableConfigSerializeData.TableConfigList[_selectConfigIndex];
             }
         }
-        _enumArray = TableDatabaseUtils.GetEnums();
+        _enumArray = TSDatabaseUtils.GetEnums();
     }
 
     private void GenerateCode()
@@ -414,8 +445,8 @@ public class CreateTableEditor : EditorWindow
         try
         {
 
-            GenerateEditorCode code = new GenerateEditorCode(_tempTableConfig);
-            if (!code.GenerateCode())
+            GenerateCode code = new GenerateCode(_tempTableConfig);
+            if (!code.GenerateTable())
             {
                 if (EditorUtility.DisplayDialog("保存失败", "生成代码失败!!!", "OK"))
                 {
@@ -423,10 +454,7 @@ public class CreateTableEditor : EditorWindow
                     return;
                 }
             }
-
-
             EditorApplication.UnlockReloadAssemblies();
-
             _isGenerateCode = false;
             if (EditorUtility.DisplayDialog("生成成功", "生成成功", "OK"))
             {
@@ -443,7 +471,7 @@ public class CreateTableEditor : EditorWindow
 
     private void WriteConfig()
     {
-        TableDatabaseUtils.SavaGlobalData();
+        TSDatabaseUtils.SavaGlobalData();
         //EditorUtility.SetDirty(TableDatabaseUtils.TableConfigSerializeData);
         AssetDatabase.SaveAssets();
     }

@@ -6,7 +6,7 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
-public class GenerateEditorCode
+public class GenerateCode
 {
     private TableConfig _currentConfig;
 
@@ -16,14 +16,14 @@ public class GenerateEditorCode
 
     private Encoding encoding = new UTF8Encoding();
 
-    public GenerateEditorCode(TableConfig config)
+    public GenerateCode(TableConfig config)
     {
         if (config == null)
         {
             throw new Exception("表配置异常");
         }
         _currentConfig = config;
-        string[] guids = AssetDatabase.FindAssets(typeof(GenerateEditorCode).Name);
+        string[] guids = AssetDatabase.FindAssets(typeof(GenerateCode).Name);
         if (guids.Length != 1)
         {
             Debug.LogError("guids存在多个");
@@ -46,7 +46,7 @@ public class GenerateEditorCode
             File.Create(_csPath).Dispose();
         }
     }
-    public bool GenerateCode()
+    public bool GenerateTable()
     {
         if (!GenerateDataCode())
             return false;
@@ -86,28 +86,28 @@ public class GenerateEditorCode
         for (int i = 0; i < _currentConfig.FieldList.Count; i++)
         {
             FieldConfig fieldConfig = _currentConfig.FieldList[i];
-            if (tableName == fieldConfig.Name)
+            if (tableName == fieldConfig.FieldName)
             {
                 if (EditorUtility.DisplayDialog("生成失败", "变量名和类名重复!!!", "OK"))
                 {
                     return false;
                 }
             }
-            if (string.IsNullOrEmpty(fieldConfig.Name))
+            if (string.IsNullOrEmpty(fieldConfig.FieldName))
             {
                 if (EditorUtility.DisplayDialog("生成失败", "变量名为空!!!", "OK"))
                 {
                     return false;
                 }
             }
-            if (fieldNameList.Contains(fieldConfig.Name))
+            if (fieldNameList.Contains(fieldConfig.FieldName))
             {
                 if (EditorUtility.DisplayDialog("生成失败", "变量名重复!!!", "OK"))
                 {
                     return false;
                 }
             }
-            fieldNameList.Add(fieldConfig.Name);
+            fieldNameList.Add(fieldConfig.FieldName);
             //if (!string.IsNullOrEmpty(fieldConfig.ShowName))
             //{
             //    codeSb.AppendLine("    [ShowName(\"" + fieldConfig.ShowName + "\")]");
@@ -118,19 +118,19 @@ public class GenerateEditorCode
                     switch (fieldConfig.GenericType)
                     {
                         case "enum":
-                            codeSb.AppendLine("    public List<" + fieldConfig.EnumName + "> " + fieldConfig.Name + " = new List<" + fieldConfig.EnumName + ">();");
+                            codeSb.AppendLine("    public List<" + fieldConfig.EnumName + "> " + fieldConfig.FieldName + " = new List<" + fieldConfig.EnumName + ">();");
                             break;
                         default:
-                            codeSb.AppendLine("    public List<" + fieldConfig.GenericType + "> " + fieldConfig.Name + " = new List<" + fieldConfig.GenericType + ">();");
+                            codeSb.AppendLine("    public List<" + fieldConfig.GenericType + "> " + fieldConfig.FieldName + " = new List<" + fieldConfig.GenericType + ">();");
                             break;
                     }
 
                     break;
                 case "enum":
-                    codeSb.AppendLine("    public " + fieldConfig.EnumName + " " + fieldConfig.Name + ";");
+                    codeSb.AppendLine("    public " + fieldConfig.EnumName + " " + fieldConfig.FieldName + ";");
                     break;
                 default:
-                    codeSb.AppendLine("    public " + fieldConfig.FieldType + " " + fieldConfig.Name + ";");
+                    codeSb.AppendLine("    public " + fieldConfig.FieldType + " " + fieldConfig.FieldName + ";");
                     break;
             }
 
@@ -146,7 +146,7 @@ public class GenerateEditorCode
 
     private void GenerateConfig()
     {
-        string directory = TableDatabaseUtils.EditorFullPath + "/Data/Table";
+        string directory = TSDatabaseUtils.EditorFullPath + "/Data/Table";
         if (!Directory.Exists(directory))
         {
             Directory.CreateDirectory(directory);
@@ -174,26 +174,36 @@ public class GenerateEditorCode
         templateText = templateText.Replace("$(TableShowName)", string.IsNullOrEmpty(_currentConfig.ShowName) ? _currentConfig.TableName : _currentConfig.ShowName);
         templateText = templateText.Replace("$(DataClassName)", _currentConfig.TableName);
         templateText = templateText.Replace("$(Primary)", _currentConfig.PrimaryKey);
-        //if (_currentConfig.HasDescription)
-        //{
-        //    if (!string.IsNullOrEmpty(_currentConfig.Description))
-        //    {
-        //        //object.Equals(data.PlayerId, null) ? "null" : data.PlayerId.ToString()
-        //        templateText = templateText.Replace("$(SelectName)", "object.Equals(data." + _currentConfig.Description + ", null) ? \"null\" : data." + _currentConfig.Description + ".ToString()");
-        //    }
-        //    else
-        //    {
-        //        templateText = templateText.Replace("$(SelectName)", "\"选择\"");
-        //    }
-        //}
-        //else
-        //{
-        //    templateText = templateText.Replace("$(SelectName)", "\"选择\"");
-        //}
         StringBuilder sb = new StringBuilder();
+        GenerateSort(sb);
+        templateText = templateText.Replace("$(SortColumn)", sb.ToString());
+        sb = new StringBuilder();
         GenerateDataInfo(sb);
         templateText = templateText.Replace("$(ShowDataInfo)", sb.ToString());
         File.WriteAllText(_csPath, templateText, encoding);
+    }
+
+    private void GenerateSort(StringBuilder sb)
+    {
+        for (int i = 0; i < _currentConfig.FieldList.Count; i++)
+        {
+            if (_currentConfig.FieldList[i].FieldType == "List")
+            {
+                continue;
+            }
+            sb.AppendLine("                    case \"" + _currentConfig.FieldList[i].FieldName + "\":");
+            sb.AppendLine("                        if (_sortFieldDic[fieldName] == -1)");
+            sb.AppendLine("                        {");
+            sb.AppendLine("                            _sortFieldDic[fieldName] = 1;");
+            sb.AppendLine("                            _dataList = _dataList.OrderBy(a => a." + _currentConfig.FieldList[i].FieldName + ").ToList();");
+            sb.AppendLine("                        }");
+            sb.AppendLine("                        else");
+            sb.AppendLine("                        {");
+            sb.AppendLine("                            _sortFieldDic[fieldName] = -1;");
+            sb.AppendLine("                            _dataList = _dataList.OrderByDescending(a => a." + _currentConfig.FieldList[i].FieldName + ").ToList();");
+            sb.AppendLine("                        }");
+            sb.AppendLine("                        break;");
+        }
     }
 
     private void GenerateDataInfo(StringBuilder sb)
@@ -201,22 +211,21 @@ public class GenerateEditorCode
         for (int i = 0; i < _currentConfig.FieldList.Count; i++)
         {
             FieldConfig fieldConfig = _currentConfig.FieldList[i];
-            string fieldName = string.IsNullOrEmpty(fieldConfig.ShowName) ? fieldConfig.Name : fieldConfig.ShowName;
-            if (fieldConfig.Name == _currentConfig.PrimaryKey)
+            if (fieldConfig.FieldName == _currentConfig.PrimaryKey)
             {
-                sb.AppendLine("            if (_primaryKeyInfo.Values.ContainsKey(_dataList[i]." + fieldConfig.Name + ".ToString()))");
+                sb.AppendLine("            if (_primaryKeyInfo.Values.ContainsKey(_dataList[i]." + fieldConfig.FieldName + ".ToString()))");
                 sb.AppendLine("            {");
-                sb.AppendLine("                if (_primaryKeyInfo.Values[_dataList[i]." + fieldConfig.Name + ".ToString()] > 1)");
+                sb.AppendLine("                if (_primaryKeyInfo.Values[_dataList[i]." + fieldConfig.FieldName + ".ToString()] > 1)");
                 sb.AppendLine("                {");
                 sb.AppendLine("                    GUI.color = Color.red;");
                 sb.AppendLine("                }");
                 sb.AppendLine("            }");
                 sb.AppendLine("            columnsWidth = _excelConfig.ColumnsWidth[" + i + "];");
                 sb.AppendLine("            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));");
-                sb.AppendLine("            " + _currentConfig.PrimaryType + " key = (" + fieldConfig.FieldType + ")TableDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.Name + ");");
-                sb.AppendLine("            if (key != _dataList[i]." + fieldConfig.Name + ")");
+                sb.AppendLine("            " + _currentConfig.PrimaryType + " key = (" + fieldConfig.FieldType + ")TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.FieldName + ");");
+                sb.AppendLine("            if (key != _dataList[i]." + fieldConfig.FieldName + ")");
                 sb.AppendLine("            {");
-                sb.AppendLine("                _primaryKeyInfo.Values[_dataList[i]." + fieldConfig.Name + ".ToString()]--;");
+                sb.AppendLine("                _primaryKeyInfo.Values[_dataList[i]." + fieldConfig.FieldName + ".ToString()]--;");
                 sb.AppendLine("                if (_primaryKeyInfo.Values.ContainsKey(key.ToString()))");
                 sb.AppendLine("                {");
                 sb.AppendLine("                    _primaryKeyInfo.Values[key.ToString()]++;");
@@ -225,7 +234,7 @@ public class GenerateEditorCode
                 sb.AppendLine("                {");
                 sb.AppendLine("                    _primaryKeyInfo.Values.Add(key.ToString(), 1);");
                 sb.AppendLine("                }");
-                sb.AppendLine("                _dataList[i]." + fieldConfig.Name + " = key;");
+                sb.AppendLine("                _dataList[i]." + fieldConfig.FieldName + " = key;");
                 sb.AppendLine("            }");
                 sb.AppendLine("            GUILayout.EndHorizontal();");
                 sb.AppendLine("            GUI.color = Color.white;");
@@ -233,33 +242,35 @@ public class GenerateEditorCode
             }
             else if (fieldConfig.HasForeignKey)
             {
-                sb.AppendLine("            if (TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic.ContainsKey(\"" + fieldConfig.ForeignKey + "\"))");
-                sb.AppendLine("            {");
-                sb.AppendLine("                if (TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic[\"" + fieldConfig.ForeignKey + "\"].Values.ContainsKey(_dataList[i]." + fieldConfig.Name + ".ToString()))");
-                sb.AppendLine("                {");
-                sb.AppendLine("                    if (TableDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic[\"" + fieldConfig.ForeignKey + "\"].Values[_dataList[i]." + fieldConfig.Name + ".ToString()] < 1)");
-                sb.AppendLine("                    {");
-                sb.AppendLine("                        GUI.color = new Color(1, 0.5f, 0);");
-                sb.AppendLine("                    }");
-                sb.AppendLine("                }");
-                sb.AppendLine("                else");
-                sb.AppendLine("                {");
-                sb.AppendLine("                    GUI.color = new Color(1, 0.5f, 0);");
-                sb.AppendLine("                }");
-                sb.AppendLine("            }");
-                sb.AppendLine("            else");
-                sb.AppendLine("            {");
-                sb.AppendLine("                GUI.color = new Color(1, 0.5f, 0);");
-                sb.AppendLine("            }");
-                sb.AppendLine("            columnsWidth = _excelConfig.ColumnsWidth[" + i + "];");
-                sb.AppendLine("            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));");
                 if (fieldConfig.FieldType == "List")
                 {
-                    sb.AppendLine("            _dataList[i]." + fieldConfig.Name + " = (" + fieldConfig.FieldType + "<" + fieldConfig.GenericType + ">)TableDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.Name + ");");
+                    sb.AppendLine("            columnsWidth = _excelConfig.ColumnsWidth[" + i + "];");
+                    sb.AppendLine("            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));");
+                    sb.AppendLine("            _dataList[i]." + fieldConfig.FieldName + " = (" + fieldConfig.FieldType + "<" + fieldConfig.GenericType + ">)TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.FieldName + ",_tableConfig.FieldList[" + i + "].ForeignKey);");
                 }
                 else
                 {
-                    sb.AppendLine("            _dataList[i]." + fieldConfig.Name + " = (" + fieldConfig.FieldType + ")TableDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.Name + ");");
+                    sb.AppendLine("            if (TSDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic.ContainsKey(\"" + fieldConfig.ForeignKey + "\"))");
+                    sb.AppendLine("            {");
+                    sb.AppendLine("                if (TSDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic[\"" + fieldConfig.ForeignKey + "\"].Values.ContainsKey(_dataList[i]." + fieldConfig.FieldName + ".ToString()))");
+                    sb.AppendLine("                {");
+                    sb.AppendLine("                    if (TSDatabaseUtils.PrimaryKeySerializeData.PrimaryKeyDic[\"" + fieldConfig.ForeignKey + "\"].Values[_dataList[i]." + fieldConfig.FieldName + ".ToString()] < 1)");
+                    sb.AppendLine("                    {");
+                    sb.AppendLine("                        GUI.color = new Color(1, 0.5f, 0);");
+                    sb.AppendLine("                    }");
+                    sb.AppendLine("                }");
+                    sb.AppendLine("                else");
+                    sb.AppendLine("                {");
+                    sb.AppendLine("                    GUI.color = new Color(1, 0.5f, 0);");
+                    sb.AppendLine("                }");
+                    sb.AppendLine("            }");
+                    sb.AppendLine("            else");
+                    sb.AppendLine("            {");
+                    sb.AppendLine("                GUI.color = new Color(1, 0.5f, 0);");
+                    sb.AppendLine("            }");
+                    sb.AppendLine("            columnsWidth = _excelConfig.ColumnsWidth[" + i + "];");
+                    sb.AppendLine("            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));");
+                    sb.AppendLine("            _dataList[i]." + fieldConfig.FieldName + " = (" + fieldConfig.FieldType + ")TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.FieldName + ");");
                 }
                 sb.AppendLine("            GUILayout.EndHorizontal();");
                 sb.AppendLine("            GUI.color = Color.white;");
@@ -273,20 +284,20 @@ public class GenerateEditorCode
                 {
                     if (fieldConfig.GenericType == "enum")
                     {
-                        sb.AppendLine("            _dataList[i]." + fieldConfig.Name + " = (" + fieldConfig.FieldType + "<" + fieldConfig.EnumName + ">)TableDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.Name + ");");
+                        sb.AppendLine("            _dataList[i]." + fieldConfig.FieldName + " = (" + fieldConfig.FieldType + "<" + fieldConfig.EnumName + ">)TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.FieldName + ");");
                     }
                     else
                     {
-                        sb.AppendLine("            _dataList[i]." + fieldConfig.Name + " = (" + fieldConfig.FieldType + "<" + fieldConfig.GenericType + ">)TableDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.Name + ");");
+                        sb.AppendLine("            _dataList[i]." + fieldConfig.FieldName + " = (" + fieldConfig.FieldType + "<" + fieldConfig.GenericType + ">)TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.FieldName + ");");
                     }
                 }
                 else if (fieldConfig.FieldType == "enum")
                 {
-                    sb.AppendLine("            _dataList[i]." + fieldConfig.Name + " = (" + fieldConfig.EnumName + ")TableDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.Name + ");");
+                    sb.AppendLine("            _dataList[i]." + fieldConfig.FieldName + " = (" + fieldConfig.EnumName + ")TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.FieldName + ");");
                 }
                 else
                 {
-                    sb.AppendLine("            _dataList[i]." + fieldConfig.Name + " = (" + fieldConfig.FieldType + ")TableDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.Name + ");");
+                    sb.AppendLine("            _dataList[i]." + fieldConfig.FieldName + " = (" + fieldConfig.FieldType + ")TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.FieldName + ");");
                 }
                 sb.AppendLine("            GUILayout.EndHorizontal();");
                 sb.AppendLine();

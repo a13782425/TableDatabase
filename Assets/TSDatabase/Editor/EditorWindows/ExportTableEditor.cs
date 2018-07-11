@@ -11,7 +11,7 @@ public class ExportTableEditor : EditorWindow
     [MenuItem("TSTable/ExportTable", priority = 51)]
     static void CreateTable()
     {
-        EditorWindow.GetWindowWithRect<ExportTableEditor>(new Rect(100, 100, 500, 500), false, "导出数据");
+        EditorWindow.GetWindowWithRect<ExportTableEditor>(new Rect(100, 100, 500, 500), false, LanguageUtils.ExportTitle);
     }
 
     class ExportDto
@@ -25,10 +25,21 @@ public class ExportTableEditor : EditorWindow
     private Vector2 _tableScrollVec;
     private void OnGUI()
     {
-        SettingGUI();
+        HeadGUI();
 
         TableGUI();
 
+    }
+
+    private void HeadGUI()
+    {
+        GUI.color = new Color(0.8f, 0.8f, 0.8f);
+        GUILayout.BeginHorizontal("OL Title");
+        GUI.color = Color.white;
+        GUILayout.Space(5);
+        GUILayout.Label(LanguageUtils.ExportHead);
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
     }
 
     private void TableGUI()
@@ -120,31 +131,31 @@ public class ExportTableEditor : EditorWindow
         {
             case "Vector2":
                 Vector2 vector2 = (Vector2)obj;
-                str += vector2.x + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector2.y;
+                str += vector2.x + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar + vector2.y;
                 break;
             case "Vector3":
                 Vector3 vector3 = (Vector3)obj;
-                str += vector3.x + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector3.y + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector3.z;
+                str += vector3.x + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar + vector3.y + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar + vector3.z;
                 break;
             case "Vector4":
                 Vector4 vector4 = (Vector4)obj;
-                str += vector4.x + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector4.y + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector4.z + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + vector4.w;
+                str += vector4.x + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar + vector4.y + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar + vector4.z + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar + vector4.w;
                 break;
             case "Quaternion":
                 Quaternion quaternion = (Quaternion)obj;
-                str += quaternion.x + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + quaternion.y + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + quaternion.z + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + quaternion.w;
+                str += quaternion.x + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar + quaternion.y + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar + quaternion.z + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar + quaternion.w;
                 break;
             case "Rect":
                 Rect rect = (Rect)obj;
-                str += rect.x + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + rect.y + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + rect.width + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + rect.height;
+                str += rect.x + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar + rect.y + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar + rect.width + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar + rect.height;
                 break;
             case "Color":
                 Color color = (Color)obj;
-                str += color.r + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color.g + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color.b + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color.a;
+                str += color.r + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar + color.g + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar + color.b + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar + color.a;
                 break;
             case "Color32":
                 Color32 color32 = (Color32)obj;
-                str += color32.r + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color32.g + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color32.b + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar + color32.a;
+                str += color32.r + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar + color32.g + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar + color32.b + TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar + color32.a;
                 break;
             case "Sprite":
             case "Texture":
@@ -182,25 +193,7 @@ public class ExportTableEditor : EditorWindow
         }
     }
 
-    private void SettingGUI()
-    {
-        GUI.color = new Color(0.8f, 0.8f, 0.8f);
-        GUILayout.BeginHorizontal("OL Title");
-        GUI.color = Color.white;
-        GUILayout.Space(5);
-        GUILayout.Label("Vector分割符:");
-        TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar = GUILayout.TextField(TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVecChar, GUILayout.Width(40));
-        GUILayout.Space(5);
-        GUILayout.Label("List分隔符:");
-        TSDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar = GUILayout.TextField(TSDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar, GUILayout.Width(40));
-        GUILayout.Space(5);
-        if (GUILayout.Button("保存配置"))
-        {
-            TSDatabaseUtils.SavaGlobalData();
-        }
-        GUILayout.FlexibleSpace();
-        GUILayout.EndHorizontal();
-    }
+    
 
     private void OnEnable()
     {

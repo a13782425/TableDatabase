@@ -13,7 +13,7 @@ public class CreateTableEditor : EditorWindow
     [MenuItem("TSTable/CreateTable", priority = 50)]
     static void CreateTable()
     {
-        EditorWindow.GetWindowWithRect<CreateTableEditor>(new Rect(100, 100, 800, 500), false, "创建表格");
+        EditorWindow.GetWindowWithRect<CreateTableEditor>(new Rect(100, 100, 800, 500), false, LanguageUtils.CreateTitle);
     }
 
     private CreateTableEditor createTableEditor;
@@ -61,9 +61,9 @@ public class CreateTableEditor : EditorWindow
         GUI.color = new Color(0.8f, 0.8f, 0.8f);
         GUILayout.BeginHorizontal("OL Title");
         GUI.color = Color.white;
-        GUILayout.Label("Table列表");
+        GUILayout.Label(LanguageUtils.CreateListHead);
         GUILayout.FlexibleSpace();
-        if (GUILayout.Button("添加", "OL Plus"))
+        if (GUILayout.Button(LanguageUtils.CreateListAdd, "OL Plus"))
         {
             _tempTableConfig = new TableConfig();
             _tempTableConfig.HasPrimaryKey = true;
@@ -90,7 +90,7 @@ public class CreateTableEditor : EditorWindow
                 _tempTableConfig = TSDatabaseUtils.TableConfigSerializeData.TableConfigList[i];
             }
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("删除", "OL Minus"))
+            if (GUILayout.Button(LanguageUtils.CommonDelete, "OL Minus"))
             {
                 removeIndex = i;
             }
@@ -160,9 +160,9 @@ public class CreateTableEditor : EditorWindow
             GUI.color = new Color(0.8f, 0.8f, 0.8f); ;
             GUILayout.BeginHorizontal("OL Title");
             GUI.color = Color.white;
-            GUILayout.Label("Table信息");
+            GUILayout.Label(LanguageUtils.CreateInfoTitle);
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("添加字段", "OL Plus"))
+            if (GUILayout.Button(LanguageUtils.CreateInfoAddField, "OL Plus"))
             {
                 _tempTableConfig.FieldList.Add(new FieldConfig() { FieldIndex = 0, FieldType = "int", GenericIndex = 0, GenericType = "int" });
             }
@@ -171,11 +171,11 @@ public class CreateTableEditor : EditorWindow
             GUILayout.BeginArea(new Rect(10, 30, 550, 440), "", "box");
             GUILayout.Space(5);
             GUILayout.BeginHorizontal();
-            GUILayout.Label("表名：", GUILayout.Width(INFO_LABEL_WIDTH));
+            GUILayout.Label(LanguageUtils.CreateInfoTableName, GUILayout.Width(INFO_LABEL_WIDTH));
             _tempTableConfig.TableName = GUILayout.TextField(_tempTableConfig.TableName, GUILayout.Width(INFO_TEXT_WIDTH));
-            GUILayout.Label("别名：", GUILayout.Width(INFO_LABEL_WIDTH));
+            GUILayout.Label(LanguageUtils.CreateInfoShowName, GUILayout.Width(INFO_LABEL_WIDTH));
             _tempTableConfig.ShowName = GUILayout.TextField(_tempTableConfig.ShowName, GUILayout.Width(INFO_TEXT_WIDTH));
-            GUILayout.Label("主键：", GUILayout.Width(INFO_LABEL_WIDTH));
+            GUILayout.Label(LanguageUtils.CreateInfoPrimaryKey, GUILayout.Width(INFO_LABEL_WIDTH));
             string[] keys = TSDatabaseUtils.GetPrimaryKey(_tempTableConfig);
             if (keys.Length == 1)
             {
@@ -197,7 +197,7 @@ public class CreateTableEditor : EditorWindow
             }
             //}
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("保存配置"))
+            if (GUILayout.Button(LanguageUtils.CommonSaveSetting))
             {
                 WriteConfig();
             }
@@ -207,11 +207,11 @@ public class CreateTableEditor : EditorWindow
             ShowConfigInfo();
             GUILayout.FlexibleSpace();
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("生成脚本"))
+            if (GUILayout.Button(LanguageUtils.CreateInfoGenerateScript))
             {
                 GenerateCode();
             }
-            if (GUILayout.Button("另存脚本"))
+            if (GUILayout.Button(LanguageUtils.CreateInfoSaveOther))
             {
                 _tempTableConfig.CodePath = "";
                 _tempTableConfig.DataPath = "";
@@ -236,7 +236,7 @@ public class CreateTableEditor : EditorWindow
             GUILayout.BeginHorizontal("GroupBox");
             GUILayout.BeginVertical();
             GUILayout.BeginHorizontal();
-            GUILayout.Label("列名：", GUILayout.Width(INFO_LABEL_WIDTH));
+            GUILayout.Label(LanguageUtils.CreateInfoColumnName, GUILayout.Width(INFO_LABEL_WIDTH));
             fieldConfig.FieldName = GUILayout.TextField(fieldConfig.FieldName, GUILayout.Width(INFO_TEXT_WIDTH));
 
             GUILayout.Label("类型：", GUILayout.Width(INFO_LABEL_WIDTH));
@@ -307,14 +307,14 @@ public class CreateTableEditor : EditorWindow
                 }
             }
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("删除", "OL Minus"))
+            if (GUILayout.Button(LanguageUtils.CommonDelete, "OL Minus"))
             {
                 removeList.Add(fieldConfig);
             }
             GUILayout.EndHorizontal();
             GUILayout.Space(5);
             GUILayout.BeginHorizontal();
-            GUILayout.Label("别名：", GUILayout.Width(INFO_LABEL_WIDTH));
+            GUILayout.Label(LanguageUtils.CreateInfoShowName, GUILayout.Width(INFO_LABEL_WIDTH));
             fieldConfig.ShowName = GUILayout.TextField(fieldConfig.ShowName, GUILayout.Width(INFO_TEXT_WIDTH));
 
             if (fieldConfig.FieldType == "List" && (fieldConfig.GenericType == "int" || fieldConfig.GenericType == "string"))

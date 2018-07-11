@@ -13,9 +13,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Setting:
     ColumnWidth: 150
-    SplitVecChar: '|'
+    SplitVarChar: '|'
     SplitListChar: ','
-    CurrentLanguage: 10
+    CurrentLanguage: 1
   TableConfigList:
   - TableName: PlayerInfo
     ShowName: 
@@ -45,7 +45,7 @@ MonoBehaviour:
       GenericType: int
       GenericIndex: 0
       EnumIndex: 0
-      EnumName: 
+      EnumName: TestEnum
       IsExport: 0
       HasForeignKey: 0
       ForeignKeyIndex: 0

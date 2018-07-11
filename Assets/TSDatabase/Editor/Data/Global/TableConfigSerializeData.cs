@@ -14,9 +14,9 @@ public class TableConfigSerializeData : ScriptableObject
 public class TableSetting
 {
     public float ColumnWidth = 150;
-    public string SplitVecChar = "|";
+    public string SplitVarChar = "|";
     public string SplitListChar = ",";
-    public SystemLanguage CurrentLanguage = SystemLanguage.English;
+    public LanguageEnum CurrentLanguage = LanguageEnum.English;
 }
 
 

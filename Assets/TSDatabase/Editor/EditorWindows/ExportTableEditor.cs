@@ -51,10 +51,10 @@ public class ExportTableEditor : EditorWindow
         {
             ExportDto dto = _exportDtoList[i];
             GUILayout.BeginHorizontal("GroupBox");
-            GUILayout.Label(dto.CurrentConfig.TableName);
+            GUILayout.Label(dto.CurrentConfig.TableName,GUILayout.Width(180));
 
-            GUILayout.Label("大约有:" + dto.Count + "条数据");
-            if (GUILayout.Button("导出", GUILayout.Width(50)))
+            GUILayout.Label(LanguageUtils.ExportDataCount(dto.Count));
+            if (GUILayout.Button(LanguageUtils.ExportHead, GUILayout.Width(50)))
             {
                 ExportData(dto);
             }

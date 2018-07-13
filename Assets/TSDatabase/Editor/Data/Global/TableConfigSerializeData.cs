@@ -30,7 +30,7 @@ public class TableConfig
     /// <summary>
     /// ShowName
     /// </summary>
-    public string ShowName = "";
+    public string Description = "";
     /// <summary>
     /// CodePath
     /// </summary>
@@ -63,7 +63,7 @@ public class FieldConfig
     /// <summary>
     /// ShowName
     /// </summary>
-    public string ShowName = "";
+    public string Description = "";
     /// <summary>
     /// FieldType
     /// </summary>

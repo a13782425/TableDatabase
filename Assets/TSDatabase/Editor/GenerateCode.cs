@@ -75,9 +75,9 @@ public class GenerateCode
         codeSb.AppendLine("}");
 
         codeSb.AppendLine("");
-        //if (!string.IsNullOrEmpty(_tempTableConfig.ShowName))
+        //if (!string.IsNullOrEmpty(_tempTableConfig.Description))
         //{
-        //    codeSb.AppendLine("[ShowName(\"" + _tempTableConfig.ShowName + "\")]");
+        //    codeSb.AppendLine("[Description(\"" + _tempTableConfig.Description + "\")]");
         //}
         codeSb.AppendLine("[System.Serializable]");
         codeSb.AppendLine("public class " + tableName);
@@ -108,9 +108,9 @@ public class GenerateCode
                 }
             }
             fieldNameList.Add(fieldConfig.FieldName);
-            //if (!string.IsNullOrEmpty(fieldConfig.ShowName))
+            //if (!string.IsNullOrEmpty(fieldConfig.Description))
             //{
-            //    codeSb.AppendLine("    [ShowName(\"" + fieldConfig.ShowName + "\")]");
+            //    codeSb.AppendLine("    [Description(\"" + fieldConfig.Description + "\")]");
             //}
             switch (fieldConfig.FieldType)
             {
@@ -171,7 +171,7 @@ public class GenerateCode
     private void GenerateEditor()
     {
         string templateText = File.ReadAllText(_templatePath, encoding);
-        templateText = templateText.Replace("$(TableShowName)", string.IsNullOrEmpty(_currentConfig.ShowName) ? _currentConfig.TableName : _currentConfig.ShowName);
+        templateText = templateText.Replace("$(TableDescription)", string.IsNullOrEmpty(_currentConfig.Description) ? _currentConfig.TableName : _currentConfig.Description);
         templateText = templateText.Replace("$(DataClassName)", _currentConfig.TableName);
         templateText = templateText.Replace("$(Primary)", _currentConfig.PrimaryKey);
         StringBuilder sb = new StringBuilder();
@@ -246,7 +246,14 @@ public class GenerateCode
                 {
                     sb.AppendLine("            columnsWidth = _excelConfig.ColumnsWidth[" + i + "];");
                     sb.AppendLine("            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));");
-                    sb.AppendLine("            _dataList[i]." + fieldConfig.FieldName + " = (" + fieldConfig.FieldType + "<" + fieldConfig.GenericType + ">)TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.FieldName + ",_tableConfig.FieldList[" + i + "].ForeignKey);");
+                    if (fieldConfig.GenericType == "enum")
+                    {
+                        sb.AppendLine("            _dataList[i]." + fieldConfig.FieldName + " = (" + fieldConfig.FieldType + "<" + fieldConfig.EnumName + ">)TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.FieldName + ",_tableConfig.FieldList[" + i + "].ForeignKey);");
+                    }
+                    else
+                    {
+                        sb.AppendLine("            _dataList[i]." + fieldConfig.FieldName + " = (" + fieldConfig.FieldType + "<" + fieldConfig.GenericType + ">)TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[" + i + "].FieldType, _dataList[i]." + fieldConfig.FieldName + ",_tableConfig.FieldList[" + i + "].ForeignKey);");
+                    }
                 }
                 else
                 {

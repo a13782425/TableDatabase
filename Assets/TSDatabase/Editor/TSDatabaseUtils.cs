@@ -363,105 +363,6 @@ public enum LanguageEnum
 
 public class LanguageUtils
 {
-    public static string Save
-    {
-        get
-        {
-            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
-            {
-                case LanguageEnum.ChineseSimplified:
-                    return "保存";
-                case LanguageEnum.English:
-                default:
-                    return "Save";
-            }
-        }
-    }
-    public static string Data
-    {
-        get
-        {
-            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
-            {
-                case LanguageEnum.ChineseSimplified:
-                    return "数据";
-                case LanguageEnum.English:
-                default:
-                    return " Data";
-            }
-        }
-    }
-    public static string SaveFail
-    {
-        get
-        {
-            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
-            {
-                case LanguageEnum.ChineseSimplified:
-                    return "保存失败";
-                case LanguageEnum.English:
-                default:
-                    return "Save Fail";
-            }
-        }
-    }
-    public static string SaveFile
-    {
-        get
-        {
-            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
-            {
-                case LanguageEnum.ChineseSimplified:
-                    return "保存文件";
-                case LanguageEnum.English:
-                default:
-                    return "Save File";
-            }
-        }
-    }
-    public static string DataNullPath
-    {
-        get
-        {
-            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
-            {
-                case LanguageEnum.ChineseSimplified:
-                    return "数据路径为空！！！";
-                case LanguageEnum.English:
-                default:
-                    return "data path is null !!!";
-            }
-        }
-    }
-    public static string DataList
-    {
-        get
-        {
-            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
-            {
-                case LanguageEnum.ChineseSimplified:
-                    return "数据列表";
-                case LanguageEnum.English:
-                default:
-                    return "DataList";
-            }
-        }
-    }
-    public static string Count
-    {
-        get
-        {
-            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
-            {
-                case LanguageEnum.ChineseSimplified:
-                    return "条";
-                case LanguageEnum.English:
-                default:
-                    return "Count";
-            }
-        }
-    }
-
     #region Common
 
     public static string CommonSaveSetting
@@ -490,6 +391,66 @@ public class LanguageUtils
                 case LanguageEnum.English:
                 default:
                     return "Del";
+            }
+        }
+    }
+
+    public static string CommonSaveFailed
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "保存失败";
+                case LanguageEnum.English:
+                default:
+                    return "Save Failed";
+            }
+        }
+    }
+
+    public static string CommonNullPath
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "路径为空！！！";
+                case LanguageEnum.English:
+                default:
+                    return "path is null !!!";
+            }
+        }
+    }
+
+    public static string CommonSaveFile
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "保存文件";
+                case LanguageEnum.English:
+                default:
+                    return "Save File";
+            }
+        }
+    }
+
+    public static string CommonSaveSuccess
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "保存成功";
+                case LanguageEnum.English:
+                default:
+                    return "Success";
             }
         }
     }
@@ -542,6 +503,52 @@ public class LanguageUtils
         }
     }
 
+    public static string CreateListDelete
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "删除";
+                case LanguageEnum.English:
+                default:
+                    return "Delete";
+            }
+        }
+    }
+
+
+    public static string CreateListDeleteing
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "正在删除...";
+                case LanguageEnum.English:
+                default:
+                    return "Deleting...";
+            }
+        }
+    }
+
+    public static string CreateListDeleted
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "删除完毕";
+                case LanguageEnum.English:
+                default:
+                    return "Deleted";
+            }
+        }
+    }
+
     public static string CreateInfoTitle
     {
         get
@@ -582,22 +589,36 @@ public class LanguageUtils
                     return "表名:";
                 case LanguageEnum.English:
                 default:
-                    return "TableName:";
+                    return "Table:";
             }
         }
     }
-
-    public static string CreateInfoShowName
+    public static string CreateInfoNotEnum
     {
         get
         {
             switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
             {
                 case LanguageEnum.ChineseSimplified:
-                    return "别名:";
+                    return "没有枚举";
                 case LanguageEnum.English:
                 default:
-                    return "ShowName:";
+                    return "NotEnum";
+            }
+        }
+    }
+
+    public static string CreateInfoDescription
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "描述:";
+                case LanguageEnum.English:
+                default:
+                    return "Desc:";
             }
         }
     }
@@ -612,7 +633,67 @@ public class LanguageUtils
                     return "主键:";
                 case LanguageEnum.English:
                 default:
-                    return "PrimaryKey:";
+                    return "PK:";
+            }
+        }
+    }
+
+    public static string CreateInfoItemType
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "元素类型:";
+                case LanguageEnum.English:
+                default:
+                    return "ItemType:";
+            }
+        }
+    }
+
+    public static string CreateInfoEnumType
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "枚举类型:";
+                case LanguageEnum.English:
+                default:
+                    return "EnumType:";
+            }
+        }
+    }
+
+    public static string CreateInfoExport
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "是否导出:";
+                case LanguageEnum.English:
+                default:
+                    return "IsExport:";
+            }
+        }
+    }
+
+    public static string CreateInfoForeignKey
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "外键:";
+                case LanguageEnum.English:
+                default:
+                    return "FK:";
             }
         }
     }
@@ -626,7 +707,21 @@ public class LanguageUtils
                     return "列名:";
                 case LanguageEnum.English:
                 default:
-                    return "ColName:";
+                    return "Column:";
+            }
+        }
+    }
+    public static string CreateInfoType
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "类型:";
+                case LanguageEnum.English:
+                default:
+                    return "Type:";
             }
         }
     }
@@ -646,7 +741,7 @@ public class LanguageUtils
         }
     }
 
-    public static string CreateInfoSaveOther
+    public static string CreateInfoSaveAs
     {
         get
         {
@@ -656,7 +751,37 @@ public class LanguageUtils
                     return "另存脚本";
                 case LanguageEnum.English:
                 default:
-                    return "Save Other";
+                    return "Save As";
+            }
+        }
+    }
+
+    public static string CreateInfoPrimaryKeyIsNull
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "主键为空!!!";
+                case LanguageEnum.English:
+                default:
+                    return "primary key is null";
+            }
+        }
+    }
+
+    public static string CreateInfoCodeError
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "生成代码失败!!!";
+                case LanguageEnum.English:
+                default:
+                    return "generate code failed";
             }
         }
     }
@@ -665,7 +790,79 @@ public class LanguageUtils
 
     #region Data
 
+    public static string DataHead
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "数据";
+                case LanguageEnum.English:
+                default:
+                    return "Data";
+            }
+        }
+    }
 
+    public static string DataSave
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "保存";
+                case LanguageEnum.English:
+                default:
+                    return "Save";
+            }
+        }
+    }
+
+    public static string DataSaving
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "正在保存。。。";
+                case LanguageEnum.English:
+                default:
+                    return "Saving...";
+            }
+        }
+    }
+
+    public static string DataPageSize
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "每页个数:";
+                case LanguageEnum.English:
+                default:
+                    return "PageSize:";
+            }
+        }
+    }
+    public static string DataRecords
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "数据记录:";
+                case LanguageEnum.English:
+                default:
+                    return "Records:";
+            }
+        }
+    }
 
     #endregion
 
@@ -699,6 +896,22 @@ public class LanguageUtils
                     return "Export";
             }
         }
+    }
+
+    public static string ExportDataCount(int count)
+    {
+        string str = "";
+        switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+        {
+            case LanguageEnum.ChineseSimplified:
+                str = "大约有:" + count + "条数据";
+                break;
+            case LanguageEnum.English:
+            default:
+                str = "Abourt:" + count + " data";
+                break;
+        }
+        return str;
     }
 
     #endregion

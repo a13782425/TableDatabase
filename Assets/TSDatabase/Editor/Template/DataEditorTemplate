@@ -8,10 +8,10 @@ using UnityEngine;
 
 public class $(DataClassName)DataEditor : EditorWindow
 {
-    [MenuItem("TSTable/Tables/$(TableShowName)", priority = 30)]
+    [MenuItem("TSTable/Tables/$(TableDescription)", priority = 30)]
     static void CreateTable()
     {
-        EditorWindow.GetWindow<$(DataClassName)DataEditor>(false, "$(TableShowName)数据").minSize = new Vector2(600, 500);
+        EditorWindow.GetWindow<$(DataClassName)DataEditor>(false, "$(TableDescription)" + LanguageUtils.DataHead).minSize = new Vector2(600, 500);
     }
 
     private $(DataClassName)Config _excelConfig;
@@ -121,9 +121,9 @@ public class $(DataClassName)DataEditor : EditorWindow
         GUILayout.BeginHorizontal("OL Title");
         GUI.color = Color.white;
         GUILayout.Space(-5);
-        if (GUILayout.Button("保存", EditorGUIStyle.MiddleButtonStyle, GUILayout.ExpandHeight(true), GUILayout.Width(100)))
+        if (GUILayout.Button(LanguageUtils.DataSave, EditorGUIStyle.MiddleButtonStyle, GUILayout.ExpandHeight(true), GUILayout.Width(100)))
         {
-            this.ShowNotification(new GUIContent("正在保存。。。"));
+            this.ShowNotification(new GUIContent(LanguageUtils.DataSaving));
             _primaryKeyInfo.Values.Clear();
             for (int i = 0; i < _serializeData.DataList.Count; i++)
             {
@@ -141,11 +141,11 @@ public class $(DataClassName)DataEditor : EditorWindow
             EditorUtility.SetDirty(_serializeData);
             AssetDatabase.SaveAssets();
 			this.RemoveNotification();
-            EditorUtility.DisplayDialog("保存", "保存成功", "Ok");
+            EditorUtility.DisplayDialog(LanguageUtils.DataSave, "Success", "Ok");
         }
 
         GUILayout.FlexibleSpace();
-        if (GUILayout.Button("添加", EditorGUIStyle.MiddleButtonStyle, GUILayout.ExpandHeight(true), GUILayout.Width(100)))
+        if (GUILayout.Button(LanguageUtils.CreateListAdd, EditorGUIStyle.MiddleButtonStyle, GUILayout.ExpandHeight(true), GUILayout.Width(100)))
         {
             $(DataClassName) data = new $(DataClassName)();
             _serializeData.DataList.Add(data);
@@ -296,9 +296,9 @@ public class $(DataClassName)DataEditor : EditorWindow
         {
             GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(_rectList[index].width), GUILayout.MaxHeight(30));
             string fieldName = _tableConfig.FieldList[index].FieldName;
-            if (!string.IsNullOrEmpty(_tableConfig.FieldList[index].ShowName))
+            if (!string.IsNullOrEmpty(_tableConfig.FieldList[index].Description))
             {
-                fieldName += "\r\n" + _tableConfig.FieldList[index].ShowName;
+                fieldName += "\r\n" + _tableConfig.FieldList[index].Description;
             }
             GUILayout.Space(5);
             GUILayout.BeginVertical();
@@ -419,7 +419,7 @@ $(ShowDataInfo)
         GUILayout.BeginArea(new Rect(3, position.height - 55, position.width - 20, 50));
         GUILayout.BeginVertical();
         GUILayout.BeginHorizontal();
-        GUILayout.Label("显示个数:");
+        GUILayout.Label(LanguageUtils.DataPageSize);
         int showCountIndex = GUILayout.Toolbar(_showCountIndex, _showCountArray);
         if (_showCountIndex != showCountIndex)
         {
@@ -452,8 +452,8 @@ $(ShowDataInfo)
         }
         //GUILayout.FlexibleSpace();
         GUILayout.Space((position.width) / 2 - 150);
-        GUILayout.Label("数据列表:");
-        GUILayout.Label(_serializeData.DataList.Count + "条");
+        GUILayout.Label(LanguageUtils.DataRecords);
+        GUILayout.Label(_serializeData.DataList.Count.ToString());
 
         GUILayout.EndHorizontal();
         GUILayout.Space(1);

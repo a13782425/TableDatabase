@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------------------------------------
-//-----------------------------------generate file 2018-07-10 17:05:56----------------------------------------
+//-----------------------------------generate file 2018-07-13 17:35:00----------------------------------------
 //------------------------------------------------------------------------------------------------------------
 
 using System;
@@ -15,6 +15,6 @@ public class PlayerInfoSerializeData : ScriptableObject
 public class PlayerInfo
 {
     public int Id;
-    public string Name;
-    public List<int> ListTest = new List<int>();
+    public TestEnum Name;
+    public List<TestEnum> ListTest = new List<TestEnum>();
 }

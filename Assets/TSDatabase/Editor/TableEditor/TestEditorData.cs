@@ -294,9 +294,9 @@ public class TestDataEditor : EditorWindow
         {
             GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(_rectList[index].width), GUILayout.MaxHeight(30));
             string fieldName = _tableConfig.FieldList[index].FieldName;
-            if (!string.IsNullOrEmpty(_tableConfig.FieldList[index].ShowName))
+            if (!string.IsNullOrEmpty(_tableConfig.FieldList[index].Description))
             {
-                fieldName += "\r\n" + _tableConfig.FieldList[index].ShowName;
+                fieldName += "\r\n" + _tableConfig.FieldList[index].Description;
             }
             GUILayout.Space(5);
             GUILayout.BeginVertical();

@@ -18,7 +18,7 @@ MonoBehaviour:
     CurrentLanguage: 1
   TableConfigList:
   - TableName: PlayerInfo
-    ShowName: 
+    Description: 
     CodePath: D:\Git\TableDatabase\Assets/PlayerInfoSerializeData.cs
     DataPath: Assets/PlayerInfo.asset
     HasPrimaryKey: 1
@@ -27,7 +27,7 @@ MonoBehaviour:
     PrimaryType: int
     FieldList:
     - FieldName: Id
-      ShowName: 
+      Description: 
       FieldType: int
       FieldIndex: 0
       GenericType: int
@@ -39,9 +39,9 @@ MonoBehaviour:
       ForeignKeyIndex: 0
       ForeignKey: 
     - FieldName: Name
-      ShowName: 
-      FieldType: string
-      FieldIndex: 2
+      Description: 
+      FieldType: enum
+      FieldIndex: 4
       GenericType: int
       GenericIndex: 0
       EnumIndex: 0
@@ -51,19 +51,19 @@ MonoBehaviour:
       ForeignKeyIndex: 0
       ForeignKey: 
     - FieldName: ListTest
-      ShowName: 
+      Description: 
       FieldType: List
       FieldIndex: 15
-      GenericType: int
-      GenericIndex: 0
+      GenericType: enum
+      GenericIndex: 4
       EnumIndex: 0
       EnumName: TestEnum
       IsExport: 0
-      HasForeignKey: 1
+      HasForeignKey: 0
       ForeignKeyIndex: 1
       ForeignKey: Test
   - TableName: Test
-    ShowName: 
+    Description: 
     CodePath: D:\Git\TableDatabase\Assets/TestSerializeData.cs
     DataPath: Assets/Test.asset
     HasPrimaryKey: 1
@@ -72,7 +72,7 @@ MonoBehaviour:
     PrimaryType: int
     FieldList:
     - FieldName: Id
-      ShowName: 
+      Description: 
       FieldType: int
       FieldIndex: 0
       GenericType: int

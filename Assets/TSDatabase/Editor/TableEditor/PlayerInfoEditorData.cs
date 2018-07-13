@@ -11,7 +11,7 @@ public class PlayerInfoDataEditor : EditorWindow
     [MenuItem("TSTable/Tables/PlayerInfo", priority = 30)]
     static void CreateTable()
     {
-        EditorWindow.GetWindow<PlayerInfoDataEditor>(false, "PlayerInfo数据").minSize = new Vector2(600, 500);
+        EditorWindow.GetWindow<PlayerInfoDataEditor>(false, "PlayerInfo" + LanguageUtils.DataHead).minSize = new Vector2(600, 500);
     }
 
     private PlayerInfoConfig _excelConfig;
@@ -121,9 +121,9 @@ public class PlayerInfoDataEditor : EditorWindow
         GUILayout.BeginHorizontal("OL Title");
         GUI.color = Color.white;
         GUILayout.Space(-5);
-        if (GUILayout.Button("保存", EditorGUIStyle.MiddleButtonStyle, GUILayout.ExpandHeight(true), GUILayout.Width(100)))
+        if (GUILayout.Button(LanguageUtils.DataSave, EditorGUIStyle.MiddleButtonStyle, GUILayout.ExpandHeight(true), GUILayout.Width(100)))
         {
-            this.ShowNotification(new GUIContent("正在保存。。。"));
+            this.ShowNotification(new GUIContent(LanguageUtils.DataSaving));
             _primaryKeyInfo.Values.Clear();
             for (int i = 0; i < _serializeData.DataList.Count; i++)
             {
@@ -141,11 +141,11 @@ public class PlayerInfoDataEditor : EditorWindow
             EditorUtility.SetDirty(_serializeData);
             AssetDatabase.SaveAssets();
 			this.RemoveNotification();
-            EditorUtility.DisplayDialog("保存", "保存成功", "Ok");
+            EditorUtility.DisplayDialog(LanguageUtils.DataSave, "Success", "Ok");
         }
 
         GUILayout.FlexibleSpace();
-        if (GUILayout.Button("添加", EditorGUIStyle.MiddleButtonStyle, GUILayout.ExpandHeight(true), GUILayout.Width(100)))
+        if (GUILayout.Button(LanguageUtils.CreateListAdd, EditorGUIStyle.MiddleButtonStyle, GUILayout.ExpandHeight(true), GUILayout.Width(100)))
         {
             PlayerInfo data = new PlayerInfo();
             _serializeData.DataList.Add(data);
@@ -296,9 +296,9 @@ public class PlayerInfoDataEditor : EditorWindow
         {
             GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(_rectList[index].width), GUILayout.MaxHeight(30));
             string fieldName = _tableConfig.FieldList[index].FieldName;
-            if (!string.IsNullOrEmpty(_tableConfig.FieldList[index].ShowName))
+            if (!string.IsNullOrEmpty(_tableConfig.FieldList[index].Description))
             {
-                fieldName += "\r\n" + _tableConfig.FieldList[index].ShowName;
+                fieldName += "\r\n" + _tableConfig.FieldList[index].Description;
             }
             GUILayout.Space(5);
             GUILayout.BeginVertical();
@@ -438,14 +438,13 @@ public class PlayerInfoDataEditor : EditorWindow
 
             columnsWidth = _excelConfig.ColumnsWidth[1];
             GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));
-            _dataList[i].Name = (string)TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[1].FieldType, _dataList[i].Name);
+            _dataList[i].Name = (TestEnum)TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[1].FieldType, _dataList[i].Name);
             GUILayout.EndHorizontal();
 
             columnsWidth = _excelConfig.ColumnsWidth[2];
             GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));
-            _dataList[i].ListTest = (List<int>)TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[2].FieldType, _dataList[i].ListTest,_tableConfig.FieldList[2].ForeignKey);
+            _dataList[i].ListTest = (List<TestEnum>)TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[2].FieldType, _dataList[i].ListTest);
             GUILayout.EndHorizontal();
-            GUI.color = Color.white;
 
 
 
@@ -480,7 +479,7 @@ public class PlayerInfoDataEditor : EditorWindow
         GUILayout.BeginArea(new Rect(3, position.height - 55, position.width - 20, 50));
         GUILayout.BeginVertical();
         GUILayout.BeginHorizontal();
-        GUILayout.Label("显示个数:");
+        GUILayout.Label(LanguageUtils.DataPageSize);
         int showCountIndex = GUILayout.Toolbar(_showCountIndex, _showCountArray);
         if (_showCountIndex != showCountIndex)
         {
@@ -513,8 +512,8 @@ public class PlayerInfoDataEditor : EditorWindow
         }
         //GUILayout.FlexibleSpace();
         GUILayout.Space((position.width) / 2 - 150);
-        GUILayout.Label("数据列表:");
-        GUILayout.Label(_serializeData.DataList.Count + "条");
+        GUILayout.Label(LanguageUtils.DataRecords);
+        GUILayout.Label(_serializeData.DataList.Count.ToString());
 
         GUILayout.EndHorizontal();
         GUILayout.Space(1);

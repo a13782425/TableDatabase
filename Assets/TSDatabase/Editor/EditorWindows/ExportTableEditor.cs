@@ -51,7 +51,7 @@ public class ExportTableEditor : EditorWindow
         {
             ExportDto dto = _exportDtoList[i];
             GUILayout.BeginHorizontal("GroupBox");
-            GUILayout.Label(dto.CurrentConfig.TableName,GUILayout.Width(180));
+            GUILayout.Label(dto.CurrentConfig.TableName, GUILayout.Width(180));
 
             GUILayout.Label(LanguageUtils.ExportDataCount(dto.Count));
             if (GUILayout.Button(LanguageUtils.ExportHead, GUILayout.Width(50)))
@@ -68,15 +68,15 @@ public class ExportTableEditor : EditorWindow
     {
         if (string.IsNullOrEmpty(dto.CurrentConfig.DataPath))
         {
-            if (EditorUtility.DisplayDialog("保存失败", "没有找到数据文件!!!", "OK"))
+            if (EditorUtility.DisplayDialog(LanguageUtils.CommonSaveFailed, LanguageUtils.ExportNotFound, "OK"))
             {
                 return;
             }
         }
-        string path = EditorUtility.SaveFilePanel("导出文件", "", dto.CurrentConfig.TableName + ".txt", "txt");
+        string path = EditorUtility.SaveFilePanel(LanguageUtils.ExportFile, "", dto.CurrentConfig.TableName + ".txt", "txt");
         if (string.IsNullOrEmpty(path))
         {
-            if (EditorUtility.DisplayDialog("保存失败", "路径为空!!!", "OK"))
+            if (EditorUtility.DisplayDialog(LanguageUtils.CommonSaveFailed, LanguageUtils.CommonNullPath, "OK"))
             {
                 return;
             }
@@ -122,7 +122,7 @@ public class ExportTableEditor : EditorWindow
             File.Create(path).Dispose();
         }
         File.WriteAllText(path, sb.ToString());
-        EditorUtility.DisplayDialog("导出", "导出成功", "Ok");
+        EditorUtility.DisplayDialog(LanguageUtils.ExportHead, "Success", "Ok");
     }
 
     private void GetString(string fieldType, object obj, ref string str)
@@ -193,7 +193,7 @@ public class ExportTableEditor : EditorWindow
         }
     }
 
-    
+
 
     private void OnEnable()
     {

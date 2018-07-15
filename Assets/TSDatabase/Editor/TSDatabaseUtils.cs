@@ -683,6 +683,20 @@ public class LanguageUtils
         }
     }
 
+    public static string CreateInfoSelectFolder
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "选择文件夹";
+                case LanguageEnum.English:
+                default:
+                    return "Select Folder";
+            }
+        }
+    }
     public static string CreateInfoForeignKey
     {
         get
@@ -912,6 +926,36 @@ public class LanguageUtils
                 break;
         }
         return str;
+    }
+
+    public static string ExportFile
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "导出文件";
+                case LanguageEnum.English:
+                default:
+                    return "Export File";
+            }
+        }
+    }
+
+    public static string ExportNotFound
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "没有找到数据文件!!!";
+                case LanguageEnum.English:
+                default:
+                    return "data file is not found!!!";
+            }
+        }
     }
 
     #endregion

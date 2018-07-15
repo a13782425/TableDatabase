@@ -136,11 +136,11 @@ public class GenerateCode
 
         }
         codeSb.AppendLine("}");
-        if (!File.Exists(_currentConfig.CodePath))
+        if (!File.Exists(Path.GetFullPath(_currentConfig.CodePath)))
         {
-            File.Create(_currentConfig.CodePath).Dispose();
+            File.Create(Path.GetFullPath(_currentConfig.CodePath)).Dispose();
         }
-        File.WriteAllText(_currentConfig.CodePath, codeSb.ToString());
+        File.WriteAllText(Path.GetFullPath(_currentConfig.CodePath), codeSb.ToString());
         return true;
     }
 
@@ -157,6 +157,10 @@ public class GenerateCode
             File.Create(filePath).Dispose();
         }
         StringBuilder sb = new StringBuilder();
+        sb.AppendLine("//------------------------------------------------------------------------------------------------------------");
+        sb.AppendLine("//-----------------------------------generate file " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "----------------------------------------");
+        sb.AppendLine("//------------------------------------------------------------------------------------------------------------");
+        sb.AppendLine("");
         sb.AppendLine("using System.Collections.Generic;");
         sb.AppendLine("using UnityEngine;");
         sb.AppendLine();
@@ -171,8 +175,9 @@ public class GenerateCode
     private void GenerateEditor()
     {
         string templateText = File.ReadAllText(_templatePath, encoding);
+        templateText = templateText.Replace("$(GenerateTime)", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
         templateText = templateText.Replace("$(TableDescription)", string.IsNullOrEmpty(_currentConfig.Description) ? _currentConfig.TableName : _currentConfig.Description);
-        templateText = templateText.Replace("$(DataClassName)", _currentConfig.TableName);
+        templateText = templateText.Replace("$(TableName)", _currentConfig.TableName);
         templateText = templateText.Replace("$(Primary)", _currentConfig.PrimaryKey);
         StringBuilder sb = new StringBuilder();
         GenerateSort(sb);

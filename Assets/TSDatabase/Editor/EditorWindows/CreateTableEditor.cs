@@ -406,8 +406,9 @@ public class CreateTableEditor : EditorWindow
         string csName = _tempTableConfig.TableName + "SerializeData.cs";
         if (string.IsNullOrEmpty(_tempTableConfig.CodePath))
         {
-            string path = EditorUtility.SaveFilePanelInProject(LanguageUtils.CommonSaveFile, _tempTableConfig.TableName + "SerializeData.cs", "cs", "");
-            if (string.IsNullOrEmpty(path))
+            string path = EditorUtility.SaveFolderPanel(LanguageUtils.CreateInfoSelectFolder, Application.dataPath, "");
+            int index = path.IndexOf("Asset");
+            if (index < 0)
             {
                 if (EditorUtility.DisplayDialog(LanguageUtils.CommonSaveFailed, LanguageUtils.CommonNullPath, "OK"))
                 {
@@ -415,7 +416,8 @@ public class CreateTableEditor : EditorWindow
                     return;
                 }
             }
-            _tempTableConfig.CodePath = Path.GetDirectoryName(Path.GetFullPath(path)) + "/" + csName;
+            path = path.Substring(index, path.Length - index);
+            _tempTableConfig.CodePath = path + "/" + csName;
         }
         else
         {

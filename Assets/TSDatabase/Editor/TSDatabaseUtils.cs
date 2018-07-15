@@ -1055,4 +1055,64 @@ public class LanguageUtils
 
     #endregion
 
+    #region GenerateCode
+
+    public static string GenerateFailed
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "生成失败";
+                case LanguageEnum.English:
+                default:
+                    return "Generate Failed";
+            }
+        }
+    }
+
+    public static string GenerateFailedReasonFirst
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "变量名和类名重复!!!";
+                case LanguageEnum.English:
+                default:
+                    return "Variable name and class name are repeated!!!";
+            }
+        }
+    }
+    public static string GenerateFailedReasonSecond
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "变量名为空!!!";
+                case LanguageEnum.English:
+                default:
+                    return "The variable name is empty!!!";
+            }
+        }
+    }
+    public static string GenerateFailedReasonThird
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "变量名重复!!!";
+                case LanguageEnum.English:
+                default:
+                    return "The variable name is repeated!!!";
+            }
+        }
+    }
+    #endregion
 }

@@ -32,7 +32,7 @@ public class $(TableName)DataEditor : EditorWindow
 
     private int _searchFieldIndex = 0;
 
-    private string _searchValue;
+    private string _searchValue = "";
 
 	private bool _isAdvancedSearch = false;
 
@@ -40,7 +40,7 @@ public class $(TableName)DataEditor : EditorWindow
 
     private Vector2 _tableScrollView;
 
-    private bool _isMouseInSearch;
+    private bool _isMouseInSearch = false;
 
     private int _pageNum = 1;
 

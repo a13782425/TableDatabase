@@ -20,13 +20,17 @@ public class GenerateCode
     {
         if (config == null)
         {
-            throw new Exception("表配置异常");
+            ///Abnormal table configuration
+            ///表配置异常
+            throw new Exception("Abnormal table configuration");
         }
         _currentConfig = config;
         string[] guids = AssetDatabase.FindAssets(typeof(GenerateCode).Name);
         if (guids.Length != 1)
         {
-            Debug.LogError("guids存在多个");
+            //There are multiple guids
+            //guids存在多个
+            throw new Exception("There are multiple guids");
         }
         string path = AssetDatabase.GUIDToAssetPath(guids[0]);
         path = Path.GetDirectoryName(Path.GetFullPath(path));
@@ -34,7 +38,10 @@ public class GenerateCode
         if (!File.Exists(_templatePath))
         {
             Debug.LogError(_templatePath);
-            throw new Exception("生成模板被删除!");
+
+            //The generated template is deleted
+            //生成模板被删除
+            throw new Exception("The generated template is deleted!");
         }
         _csPath = Path.Combine(path, "TableEditor") + "/" + _currentConfig.TableName + "EditorData.cs";
         if (!Directory.Exists(Path.GetDirectoryName(_csPath)))
@@ -75,10 +82,7 @@ public class GenerateCode
         codeSb.AppendLine("}");
 
         codeSb.AppendLine("");
-        //if (!string.IsNullOrEmpty(_tempTableConfig.Description))
-        //{
-        //    codeSb.AppendLine("[Description(\"" + _tempTableConfig.Description + "\")]");
-        //}
+
         codeSb.AppendLine("[System.Serializable]");
         codeSb.AppendLine("public class " + tableName);
         codeSb.AppendLine("{");
@@ -88,21 +92,21 @@ public class GenerateCode
             FieldConfig fieldConfig = _currentConfig.FieldList[i];
             if (tableName == fieldConfig.FieldName)
             {
-                if (EditorUtility.DisplayDialog("生成失败", "变量名和类名重复!!!", "OK"))
+                if (EditorUtility.DisplayDialog(LanguageUtils.GenerateFailed, LanguageUtils.GenerateFailedReasonFirst, "OK"))
                 {
                     return false;
                 }
             }
             if (string.IsNullOrEmpty(fieldConfig.FieldName))
             {
-                if (EditorUtility.DisplayDialog("生成失败", "变量名为空!!!", "OK"))
+                if (EditorUtility.DisplayDialog(LanguageUtils.GenerateFailed, LanguageUtils.GenerateFailedReasonSecond, "OK"))
                 {
                     return false;
                 }
             }
             if (fieldNameList.Contains(fieldConfig.FieldName))
             {
-                if (EditorUtility.DisplayDialog("生成失败", "变量名重复!!!", "OK"))
+                if (EditorUtility.DisplayDialog(LanguageUtils.GenerateFailed, LanguageUtils.GenerateFailedReasonSecond, "OK"))
                 {
                     return false;
                 }
@@ -128,6 +132,9 @@ public class GenerateCode
                     break;
                 case "enum":
                     codeSb.AppendLine("    public " + fieldConfig.EnumName + " " + fieldConfig.FieldName + ";");
+                    break;
+                case "string":
+                    codeSb.AppendLine("    public " + fieldConfig.FieldType + " " + fieldConfig.FieldName + " = \"\";");
                     break;
                 default:
                     codeSb.AppendLine("    public " + fieldConfig.FieldType + " " + fieldConfig.FieldName + ";");

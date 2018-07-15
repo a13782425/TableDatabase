@@ -20,13 +20,9 @@ public class CreateTableEditor : EditorWindow
 
     private static TableConfig _tempTableConfig;
 
-    //private List<string> _primaryKeyList = new List<string>();
-
     private string[] _enumArray;
 
     private const int INFO_LABEL_WIDTH = 50;
-    //private const int INFO_TEXT_WIDTH = 60;
-    //private const int INFO_POPUP_WIDTH = 70;
 
     private const int INFO_INPUT_WIDTH = 70;
 
@@ -55,6 +51,7 @@ public class CreateTableEditor : EditorWindow
 
     /// <summary>
     /// 显示类型列表
+    /// Show all table lists
     /// </summary>
     private void ShowTypeList()
     {
@@ -153,6 +150,7 @@ public class CreateTableEditor : EditorWindow
 
     /// <summary>
     /// 显示类型具体信息
+    /// Display the details of the form
     /// </summary>
     private void ShowTypeInfo()
     {
@@ -228,6 +226,10 @@ public class CreateTableEditor : EditorWindow
         }
     }
 
+    /// <summary>
+    /// 显示表格中的字段详情
+    /// Show field details in the table
+    /// </summary>
     private void ShowConfigInfo()
     {
         _infoScollViewVec = GUILayout.BeginScrollView(_infoScollViewVec, false, false, GUIStyle.none, GUI.skin.verticalScrollbar);

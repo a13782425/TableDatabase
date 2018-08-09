@@ -1,4 +1,0 @@
-Id	PlayerName	
-0	ABC	
-1	BCD	
-2	CDE	

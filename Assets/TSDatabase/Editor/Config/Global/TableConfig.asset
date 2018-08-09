@@ -16,4 +16,37 @@ MonoBehaviour:
     SplitVarChar: '|'
     SplitListChar: ','
     CurrentLanguage: 1
-  TableConfigList: []
+  TableConfigList:
+  - TableName: Test
+    Description: 
+    CodePath: Assets/TestSerializeData.cs
+    DataPath: Assets/Test.asset
+    HasPrimaryKey: 1
+    PrimaryKey: Id
+    PrimaryIndex: 1
+    PrimaryType: int
+    FieldList:
+    - FieldName: Id
+      Description: 
+      FieldType: int
+      FieldIndex: 0
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 1
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 
+    - FieldName: Str
+      Description: 
+      FieldType: string
+      FieldIndex: 2
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 1
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 

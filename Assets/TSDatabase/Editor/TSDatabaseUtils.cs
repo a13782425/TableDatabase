@@ -882,6 +882,21 @@ public class LanguageUtils
 
     #region Export
 
+    public static string ExportImport
+    {
+        get
+        {
+            switch (TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage)
+            {
+                case LanguageEnum.ChineseSimplified:
+                    return "导入";
+                case LanguageEnum.English:
+                default:
+                    return "Import";
+            }
+        }
+    }
+
     public static string ExportTitle
     {
         get
@@ -1114,5 +1129,6 @@ public class LanguageUtils
             }
         }
     }
+
     #endregion
 }

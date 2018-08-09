@@ -1,2 +1,4 @@
-Id	color	colorList	
-0	1|1|1|0.484	255|0|0|0,131|55|55|230	
+Id	Str	
+0	sadas	
+1	aaa	#
+1	aaa	

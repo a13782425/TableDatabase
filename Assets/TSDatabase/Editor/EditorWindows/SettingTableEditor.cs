@@ -38,11 +38,14 @@ public class SettingTableEditor : EditorWindow
     {
         GUILayout.BeginVertical();
         GUILayout.Label(LanguageUtils.SettingVariable);
-        TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar = GUILayout.TextField(TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar);
+        char[] splitVar = GUILayout.TextField(TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar.ToString()).ToCharArray();
+        TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar = splitVar.Length > 0 ? splitVar[0] : '|';
 
         GUILayout.Space(5);
         GUILayout.Label(LanguageUtils.SettingList);
-        TSDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar = GUILayout.TextField(TSDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar);
+        char[] splitList = GUILayout.TextField(TSDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar.ToString()).ToCharArray();
+        TSDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar = splitVar.Length > 0 ? splitList[0] : ',';
+        //TSDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar = GUILayout.TextField(TSDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar);
 
         GUILayout.Space(5);
         GUILayout.Label(LanguageUtils.SettingDefaultColumnWidth);

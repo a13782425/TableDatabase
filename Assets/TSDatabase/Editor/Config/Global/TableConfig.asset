@@ -13,8 +13,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Setting:
     ColumnWidth: 150
-    SplitVarChar: '|'
-    SplitListChar: ','
+    SplitVarChar: 124
+    SplitListChar: 44
     CurrentLanguage: 1
   TableConfigList:
   - TableName: Test
@@ -46,6 +46,66 @@ MonoBehaviour:
       GenericIndex: 0
       EnumIndex: 0
       EnumName: 
+      IsExport: 1
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 
+    - FieldName: Vec2
+      Description: 
+      FieldType: Vector2
+      FieldIndex: 5
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 1
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 
+    - FieldName: Quat
+      Description: 
+      FieldType: Quaternion
+      FieldIndex: 9
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 1
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 
+    - FieldName: ListTest
+      Description: 
+      FieldType: List
+      FieldIndex: 15
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 1
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 
+    - FieldName: Obj
+      Description: 
+      FieldType: GameObject
+      FieldIndex: 14
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 1
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 
+    - FieldName: EnumList
+      Description: 
+      FieldType: List
+      FieldIndex: 15
+      GenericType: enum
+      GenericIndex: 4
+      EnumIndex: 0
+      EnumName: TestEnum
       IsExport: 1
       HasForeignKey: 0
       ForeignKeyIndex: 0

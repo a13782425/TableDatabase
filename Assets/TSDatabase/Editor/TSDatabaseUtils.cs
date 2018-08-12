@@ -150,7 +150,7 @@ public class TSDatabaseUtils
                 result = EditorGUILayout.RectField((Rect)value, GUILayout.MaxWidth(width - 10));
                 break;
             case "Vector2":
-                result = EditorGUILayout.Vector3Field("", (Vector2)value, GUILayout.MaxWidth(width - 10));
+                result = EditorGUILayout.Vector2Field("", (Vector2)value, GUILayout.MaxWidth(width - 10));
                 break;
             case "Vector3":
                 result = EditorGUILayout.Vector3Field("", (Vector3)value, GUILayout.MaxWidth(width - 10));

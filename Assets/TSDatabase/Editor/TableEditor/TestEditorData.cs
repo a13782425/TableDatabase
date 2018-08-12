@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------------------------------------
-//-----------------------------------generate file 2018-08-08 15:29:25----------------------------------------
+//-----------------------------------generate file 2018-08-12 21:51:34----------------------------------------
 //------------------------------------------------------------------------------------------------------------
 
 using System;
@@ -348,6 +348,42 @@ public class TestDataEditor : EditorWindow
                             _dataList = _dataList.OrderByDescending(a => a.Str).ToList();
                         }
                         break;
+                    case "Vec2":
+                        if (_sortFieldDic[fieldName] == -1)
+                        {
+                            _sortFieldDic[fieldName] = 1;
+                            _dataList = _dataList.OrderBy(a => a.Vec2).ToList();
+                        }
+                        else
+                        {
+                            _sortFieldDic[fieldName] = -1;
+                            _dataList = _dataList.OrderByDescending(a => a.Vec2).ToList();
+                        }
+                        break;
+                    case "Quat":
+                        if (_sortFieldDic[fieldName] == -1)
+                        {
+                            _sortFieldDic[fieldName] = 1;
+                            _dataList = _dataList.OrderBy(a => a.Quat).ToList();
+                        }
+                        else
+                        {
+                            _sortFieldDic[fieldName] = -1;
+                            _dataList = _dataList.OrderByDescending(a => a.Quat).ToList();
+                        }
+                        break;
+                    case "Obj":
+                        if (_sortFieldDic[fieldName] == -1)
+                        {
+                            _sortFieldDic[fieldName] = 1;
+                            _dataList = _dataList.OrderBy(a => a.Obj).ToList();
+                        }
+                        else
+                        {
+                            _sortFieldDic[fieldName] = -1;
+                            _dataList = _dataList.OrderByDescending(a => a.Obj).ToList();
+                        }
+                        break;
 
                     default:
                         break;
@@ -447,6 +483,31 @@ public class TestDataEditor : EditorWindow
             columnsWidth = _excelConfig.ColumnsWidth[1];
             GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));
             _dataList[i].Str = (string)TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[1].FieldType, _dataList[i].Str);
+            GUILayout.EndHorizontal();
+
+            columnsWidth = _excelConfig.ColumnsWidth[2];
+            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));
+            _dataList[i].Vec2 = (Vector2)TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[2].FieldType, _dataList[i].Vec2);
+            GUILayout.EndHorizontal();
+
+            columnsWidth = _excelConfig.ColumnsWidth[3];
+            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));
+            _dataList[i].Quat = (Quaternion)TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[3].FieldType, _dataList[i].Quat);
+            GUILayout.EndHorizontal();
+
+            columnsWidth = _excelConfig.ColumnsWidth[4];
+            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));
+            _dataList[i].ListTest = (List<int>)TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[4].FieldType, _dataList[i].ListTest);
+            GUILayout.EndHorizontal();
+
+            columnsWidth = _excelConfig.ColumnsWidth[5];
+            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));
+            _dataList[i].Obj = (GameObject)TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[5].FieldType, _dataList[i].Obj);
+            GUILayout.EndHorizontal();
+
+            columnsWidth = _excelConfig.ColumnsWidth[6];
+            GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));
+            _dataList[i].EnumList = (List<TestEnum>)TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[6].FieldType, _dataList[i].EnumList);
             GUILayout.EndHorizontal();
 
 

@@ -14,3 +14,15 @@ MonoBehaviour:
   DataList:
   - Id: 0
     Str: sadas
+    Vec2: {x: 0, y: 0}
+    Quat: {x: 0, y: 0, z: 0, w: 1}
+    ListTest: 0100000002000000
+    Obj: {fileID: 1002209326745940, guid: 01822eb29d2cd6847a352814fb2a7875, type: 2}
+    EnumList: 0000000001000000
+  - Id: 1
+    Str: aaa
+    Vec2: {x: 0, y: 3}
+    Quat: {x: 0, y: 2, z: 0, w: 0}
+    ListTest: 0300000004000000
+    Obj: {fileID: 1002209326745940, guid: 01822eb29d2cd6847a352814fb2a7875, type: 2}
+    EnumList: 0000000001000000

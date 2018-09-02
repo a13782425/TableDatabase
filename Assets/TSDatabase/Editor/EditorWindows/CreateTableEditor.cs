@@ -308,8 +308,38 @@ public class CreateTableEditor : EditorWindow
                             }
                             else
                             {
+                                #region 当项目增加枚举时候确保枚举是之前设置的值
+                                if (_enumArray.Length > fieldConfig.EnumIndex && fieldConfig.EnumIndex != -1)
+                                {
+                                    if (_enumArray[fieldConfig.EnumIndex] != fieldConfig.EnumName)
+                                    {
+                                        bool isFind = false;
+                                        for (int j = 0; j < _enumArray.Length; j++)
+                                        {
+                                            if (_enumArray[j] == fieldConfig.EnumName)
+                                            {
+                                                isFind = true;
+                                                fieldConfig.EnumIndex = j;
+                                                break;
+                                            }
+                                        }
+                                        if (!isFind)
+                                        {
+                                            fieldConfig.EnumIndex = -1;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    fieldConfig.EnumIndex = -1;
+                                }
+                                #endregion
+
                                 fieldConfig.EnumIndex = EditorGUILayout.Popup(fieldConfig.EnumIndex, _enumArray, GUILayout.Width(INFO_INPUT_WIDTH));
-                                fieldConfig.EnumName = _enumArray[fieldConfig.EnumIndex];
+                                if (fieldConfig.EnumIndex != -1)
+                                {
+                                    fieldConfig.EnumName = _enumArray[fieldConfig.EnumIndex];
+                                }
                             }
                         }
                         GUILayout.EndHorizontal();

@@ -104,7 +104,7 @@ MonoBehaviour:
       FieldIndex: 15
       GenericType: enum
       GenericIndex: 4
-      EnumIndex: 0
+      EnumIndex: 1
       EnumName: TestEnum
       IsExport: 1
       HasForeignKey: 0

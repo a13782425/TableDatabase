@@ -67,6 +67,12 @@ public class ExportTableEditor : EditorWindow
             GUILayout.EndHorizontal();
         }
         GUILayout.EndScrollView();
+        GUILayout.FlexibleSpace();
+        GUI.color = new Color(0.8f, 0.8f, 0.8f);
+        GUILayout.BeginHorizontal("OL Title");
+        GUI.color = Color.white;
+        GUILayout.Label(TSDatabaseUtils.VERSION);
+        GUILayout.EndHorizontal();
         GUILayout.EndVertical();
     }
 

@@ -38,12 +38,12 @@ public class SettingTableEditor : EditorWindow
     {
         GUILayout.BeginVertical();
         GUILayout.Label(LanguageUtils.SettingVariable);
-        char[] splitVar = GUILayout.TextField(TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar.ToString()).ToCharArray();
+        char[] splitVar = EditorGUILayout.TextField(TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar.ToString()).ToCharArray();
         TSDatabaseUtils.TableConfigSerializeData.Setting.SplitVarChar = splitVar.Length > 0 ? splitVar[0] : '|';
 
         GUILayout.Space(5);
         GUILayout.Label(LanguageUtils.SettingList);
-        char[] splitList = GUILayout.TextField(TSDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar.ToString()).ToCharArray();
+        char[] splitList = EditorGUILayout.TextField(TSDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar.ToString()).ToCharArray();
         TSDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar = splitVar.Length > 0 ? splitList[0] : ',';
         //TSDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar = GUILayout.TextField(TSDatabaseUtils.TableConfigSerializeData.Setting.SplitListChar);
 
@@ -56,6 +56,11 @@ public class SettingTableEditor : EditorWindow
         TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage = (LanguageEnum)EditorGUILayout.EnumPopup((Enum)TSDatabaseUtils.TableConfigSerializeData.Setting.CurrentLanguage);
 
         GUILayout.FlexibleSpace();
+        GUI.color = new Color(0.8f, 0.8f, 0.8f);
+        GUILayout.BeginHorizontal("OL Title");
+        GUI.color = Color.white;
+        GUILayout.Label(TSDatabaseUtils.VERSION);
+        GUILayout.EndHorizontal();
         GUILayout.EndVertical();
 
     }

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------------------------------------
-//-----------------------------------generate file 2018-08-12 21:51:34----------------------------------------
+//-----------------------------------generate file 2018-10-20 23:09:21----------------------------------------
 //------------------------------------------------------------------------------------------------------------
 
 using System;
@@ -497,7 +497,7 @@ public class TestDataEditor : EditorWindow
 
             columnsWidth = _excelConfig.ColumnsWidth[4];
             GUILayout.BeginHorizontal(EditorGUIStyle.GroupBoxStyle, GUILayout.Width(columnsWidth), GUILayout.MaxWidth(columnsWidth), GUILayout.ExpandHeight(true));
-            _dataList[i].ListTest = (List<int>)TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[4].FieldType, _dataList[i].ListTest);
+            _dataList[i].ListTest = (List<string>)TSDatabaseUtils.RenderFieldInfoControl(columnsWidth, _tableConfig.FieldList[4].FieldType, _dataList[i].ListTest);
             GUILayout.EndHorizontal();
 
             columnsWidth = _excelConfig.ColumnsWidth[5];
@@ -584,7 +584,7 @@ public class TestDataEditor : EditorWindow
         GUI.color = new Color(0.8f, 0.8f, 0.8f);
         GUILayout.BeginHorizontal("OL Title");
         GUI.color = Color.white;
-        GUILayout.Label("Version 2.0.0 Beta");
+        GUILayout.Label("Version 3.1.0 Beta");
         GUILayout.EndHorizontal();
 
         GUILayout.EndVertical();

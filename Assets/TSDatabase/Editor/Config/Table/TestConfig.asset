@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Name: TestConfig
   m_EditorClassIdentifier: 
   ColumnsWidth:
-  - 150
-  - 150
-  - 150
+  - 124
+  - 84
+  - 111
   - 150
   - 150
   - 150

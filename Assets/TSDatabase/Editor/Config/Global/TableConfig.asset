@@ -15,7 +15,7 @@ MonoBehaviour:
     ColumnWidth: 150
     SplitVarChar: 124
     SplitListChar: 44
-    CurrentLanguage: 1
+    CurrentLanguage: 0
   TableConfigList:
   - TableName: Test
     Description: 
@@ -78,9 +78,9 @@ MonoBehaviour:
       Description: 
       FieldType: List
       FieldIndex: 15
-      GenericType: int
-      GenericIndex: 0
-      EnumIndex: 0
+      GenericType: string
+      GenericIndex: 2
+      EnumIndex: -1
       EnumName: 
       IsExport: 1
       HasForeignKey: 0
@@ -107,6 +107,60 @@ MonoBehaviour:
       EnumIndex: 1
       EnumName: TestEnum
       IsExport: 1
+      HasForeignKey: 0
+      ForeignKeyIndex: 0
+      ForeignKey: 
+  - TableName: aaa
+    Description: 
+    CodePath: 
+    DataPath: 
+    HasPrimaryKey: 1
+    PrimaryKey: Id
+    PrimaryIndex: 1
+    PrimaryType: int
+    FieldList:
+    - FieldName: Name
+      Description: 
+      FieldType: List
+      FieldIndex: 15
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 1
+      HasForeignKey: 1
+      ForeignKeyIndex: 2
+      ForeignKey: ccc
+    - FieldName: Id
+      Description: 
+      FieldType: int
+      FieldIndex: 0
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 1
+      HasForeignKey: 1
+      ForeignKeyIndex: 1
+      ForeignKey: Test
+  - TableName: ccc
+    Description: 
+    CodePath: 
+    DataPath: 
+    HasPrimaryKey: 1
+    PrimaryKey: Id
+    PrimaryIndex: 1
+    PrimaryType: int
+    FieldList:
+    - FieldName: Id
+      Description: 
+      FieldType: int
+      FieldIndex: 0
+      GenericType: int
+      GenericIndex: 0
+      EnumIndex: 0
+      EnumName: 
+      IsExport: 0
       HasForeignKey: 0
       ForeignKeyIndex: 0
       ForeignKey: 

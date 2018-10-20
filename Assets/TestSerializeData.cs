@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------------------------------------
-//-----------------------------------generate file 2018-08-12 21:51:34----------------------------------------
+//-----------------------------------generate file 2018-10-20 23:09:21----------------------------------------
 //------------------------------------------------------------------------------------------------------------
 
 using System;
@@ -18,7 +18,7 @@ public class Test
     public string Str = "";
     public Vector2 Vec2;
     public Quaternion Quat;
-    public List<int> ListTest = new List<int>();
+    public List<string> ListTest = new List<string>();
     public GameObject Obj;
     public List<TestEnum> EnumList = new List<TestEnum>();
 }

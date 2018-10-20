@@ -468,7 +468,7 @@ $(ShowDataInfo)
         GUI.color = new Color(0.8f, 0.8f, 0.8f);
         GUILayout.BeginHorizontal("OL Title");
         GUI.color = Color.white;
-        GUILayout.Label("Version 2.0.0 Beta");
+        GUILayout.Label(TSDatabaseUtils.VERSION);
         GUILayout.EndHorizontal();
 
         GUILayout.EndVertical();

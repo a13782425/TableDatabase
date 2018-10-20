@@ -124,6 +124,8 @@ public class TSDatabaseUtils
         return keys.ToArray();
     }
 
+    public const string VERSION = "Version 3.2.0 Beta";
+
 
     public static object RenderFieldInfoControl(float width, string fieldType, object value, string foreignKey = "")
     {

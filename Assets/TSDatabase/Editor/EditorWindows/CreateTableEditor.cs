@@ -235,6 +235,11 @@ public class CreateTableEditor : EditorWindow
     {
         _tempTableConfig = new TableConfig();
         _tempTableConfig.HasPrimaryKey = true;
+        _typeInfoList = new ReorderableList(_tempTableConfig.FieldList, typeof(FieldConfig), true, true, true, false);
+        _typeInfoList.elementHeight = 80;
+        _typeInfoList.drawHeaderCallback = TypeInfoListDrawHeaderCallback;
+        _typeInfoList.drawElementCallback = TypeInfoListDrawElementCallback;
+        _typeInfoList.onAddCallback = TypeInfoListAddCallback;
         TSDatabaseUtils.TableConfigSerializeData.TableConfigList.Add(_tempTableConfig);
     }
 
@@ -246,9 +251,10 @@ public class CreateTableEditor : EditorWindow
         rect.width = 30;
         if (GUI.Button(rect, "", "OL Plus"))
         {
-            _tempTableConfig = new TableConfig();
-            _tempTableConfig.HasPrimaryKey = true;
-            TSDatabaseUtils.TableConfigSerializeData.TableConfigList.Add(_tempTableConfig);
+            TypeListAddCallback(null);
+            //_tempTableConfig = new TableConfig();
+            //_tempTableConfig.HasPrimaryKey = true;
+            //TSDatabaseUtils.TableConfigSerializeData.TableConfigList.Add(_tempTableConfig);
         }
     }
     private void TypeListDrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)

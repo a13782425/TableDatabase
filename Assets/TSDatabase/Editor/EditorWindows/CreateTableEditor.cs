@@ -86,58 +86,64 @@ public class CreateTableEditor : EditorWindow
             GUILayout.Label(LanguageUtils.CreateInfoTitle);
             GUILayout.EndHorizontal();
             GUILayout.BeginVertical();
-            GUILayout.BeginArea(new Rect(10, 30, 550, 440), "", "box");
-            GUILayout.Space(5);
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(LanguageUtils.CreateInfoTableName, GUILayout.Width(INFO_LABEL_WIDTH));
-            _tempTableConfig.TableName = EditorGUILayout.TextField(_tempTableConfig.TableName, GUILayout.Width(INFO_INPUT_WIDTH));
-            GUILayout.Label(LanguageUtils.CreateInfoDescription, GUILayout.Width(INFO_LABEL_WIDTH));
-            _tempTableConfig.Description = EditorGUILayout.TextField(_tempTableConfig.Description, GUILayout.Width(INFO_INPUT_WIDTH));
-            GUILayout.Label(LanguageUtils.CreateInfoPrimaryKey, GUILayout.Width(INFO_LABEL_WIDTH));
-            string[] keys = TSDatabaseUtils.GetPrimaryKey(_tempTableConfig);
-            if (keys.Length == 1)
             {
-                EditorGUILayout.Popup(0, new string[0], GUILayout.Width(INFO_INPUT_WIDTH));
-            }
-            else
-            {
-                _tempTableConfig.PrimaryIndex = EditorGUILayout.Popup(_tempTableConfig.PrimaryIndex, keys, GUILayout.Width(INFO_INPUT_WIDTH));
-
-                _tempTableConfig.PrimaryKey = keys[_tempTableConfig.PrimaryIndex];
-                for (int i = 0; i < _tempTableConfig.FieldList.Count; i++)
+                GUILayout.BeginArea(new Rect(10, 30, 550, 440), "", "box");
+                GUILayout.Space(5);
+                GUILayout.BeginHorizontal();
                 {
-                    if (_tempTableConfig.FieldList[i].FieldName == _tempTableConfig.PrimaryKey)
+                    GUILayout.Label(LanguageUtils.CreateInfoTableName, GUILayout.Width(INFO_LABEL_WIDTH));
+                    _tempTableConfig.TableName = EditorGUILayout.TextField(_tempTableConfig.TableName, GUILayout.Width(INFO_INPUT_WIDTH));
+                    GUILayout.Label(LanguageUtils.CreateInfoDescription, GUILayout.Width(INFO_LABEL_WIDTH));
+                    _tempTableConfig.Description = EditorGUILayout.TextField(_tempTableConfig.Description, GUILayout.Width(INFO_INPUT_WIDTH));
+                    GUILayout.Label(LanguageUtils.CreateInfoPrimaryKey, GUILayout.Width(INFO_LABEL_WIDTH));
+                    string[] keys = TSDatabaseUtils.GetPrimaryKey(_tempTableConfig);
+                    if (keys.Length == 1)
                     {
-                        _tempTableConfig.PrimaryType = _tempTableConfig.FieldList[i].FieldType;
-                        break;
+                        EditorGUILayout.Popup(0, new string[0], GUILayout.Width(INFO_INPUT_WIDTH));
                     }
+                    else
+                    {
+                        _tempTableConfig.PrimaryIndex = EditorGUILayout.Popup(_tempTableConfig.PrimaryIndex, keys, GUILayout.Width(INFO_INPUT_WIDTH));
+
+                        _tempTableConfig.PrimaryKey = keys[_tempTableConfig.PrimaryIndex];
+                        for (int i = 0; i < _tempTableConfig.FieldList.Count; i++)
+                        {
+                            if (_tempTableConfig.FieldList[i].FieldName == _tempTableConfig.PrimaryKey)
+                            {
+                                _tempTableConfig.PrimaryType = _tempTableConfig.FieldList[i].FieldType;
+                                break;
+                            }
+                        }
+                    }
+                    //}
+                    GUILayout.FlexibleSpace();
+                    if (GUILayout.Button(LanguageUtils.CommonSaveSetting))
+                    {
+                        WriteConfig();
+                    }
+                    GUILayout.Space(10);
+                    GUILayout.EndHorizontal();
                 }
+                GUILayout.Space(5);
+                ShowConfigInfo();
+                GUILayout.FlexibleSpace();
+                GUILayout.BeginHorizontal();
+                {
+                    if (GUILayout.Button(LanguageUtils.CreateInfoGenerateScript))
+                    {
+                        GenerateCode();
+                    }
+                    if (GUILayout.Button(LanguageUtils.CreateInfoSaveAs))
+                    {
+                        _tempTableConfig.CodePath = "";
+                        _tempTableConfig.DataPath = "";
+                        GenerateCode();
+                    }
+                    GUILayout.EndHorizontal();
+                }
+                GUILayout.EndArea();
+                GUILayout.EndVertical();
             }
-            //}
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button(LanguageUtils.CommonSaveSetting))
-            {
-                WriteConfig();
-            }
-            GUILayout.Space(10);
-            GUILayout.EndHorizontal();
-            GUILayout.Space(5);
-            ShowConfigInfo();
-            GUILayout.FlexibleSpace();
-            GUILayout.BeginHorizontal();
-            if (GUILayout.Button(LanguageUtils.CreateInfoGenerateScript))
-            {
-                GenerateCode();
-            }
-            if (GUILayout.Button(LanguageUtils.CreateInfoSaveAs))
-            {
-                _tempTableConfig.CodePath = "";
-                _tempTableConfig.DataPath = "";
-                GenerateCode();
-            }
-            GUILayout.EndVertical();
-            GUILayout.EndArea();
-            GUILayout.EndVertical();
 
             GUILayout.EndArea();
 
@@ -262,7 +268,12 @@ public class CreateTableEditor : EditorWindow
         if (index < TSDatabaseUtils.TableConfigSerializeData.TableConfigList.Count)
         {
             rect.width -= 30;
-            EditorGUI.LabelField(rect, TSDatabaseUtils.TableConfigSerializeData.TableConfigList[index].TableName, new GUIStyle("LODRendererAddButton"));
+            string tableName = TSDatabaseUtils.TableConfigSerializeData.TableConfigList[index].Description;
+            if (string.IsNullOrEmpty(tableName))
+            {
+                tableName = TSDatabaseUtils.TableConfigSerializeData.TableConfigList[index].TableName;
+            }
+            EditorGUI.LabelField(rect, tableName, new GUIStyle("LODRendererAddButton"));
             rect.y += 5;
             rect.x = rect.xMax + 5;
             rect.width = 30;
